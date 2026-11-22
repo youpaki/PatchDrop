@@ -12,23 +12,36 @@ struct PatchLinkEditor::SimpleList : juce::Component
     struct Row : juce::Component
     {
         juce::Label name;
-        juce::ToggleButton bypass { "Bypass" };
+        juce::ToggleButton bypass { "BYPASS" };
         juce::TextButton del { "X" };
         juce::AudioProcessorGraph::NodeID id;
+        juce::String indexText;
         PatchLinkProcessor& proc;
-        Row(PatchLinkProcessor& p, PatchLinkProcessor::LoadedNode n) : proc(p), id(n.id)
+        Row(PatchLinkProcessor& p, PatchLinkProcessor::LoadedNode n, int idx) : proc(p), id(n.id)
         {
+            indexText = juce::String::formatted("%02d", idx + 1);
             name.setText(n.desc.name.isNotEmpty() ? n.desc.name : ("Node " + juce::String(n.id.uid)), juce::dontSendNotification);
             bypass.setToggleState(n.bypass, juce::dontSendNotification);
             addAndMakeVisible(name); addAndMakeVisible(bypass); addAndMakeVisible(del);
             bypass.onClick = [this] { proc.setNodeBypass(id, bypass.getToggleState()); };
             del.onClick = [this] { proc.removeNode(id); };
         }
+        void paint(juce::Graphics& g) override
+        {
+            g.setColour(design::card);
+            g.fillRoundedRectangle(getLocalBounds().toFloat(), design::corner);
+            g.setColour(design::yellow);
+            g.fillRect(0, 6, 3, getHeight() - 12);
+            g.setColour(design::yellow);
+            g.setFont(PatchFonts::mono(11.0f));
+            g.drawText(indexText, 10, 0, 30, getHeight(), juce::Justification::centredLeft);
+        }
         void resized() override
         {
             auto r = getLocalBounds().reduced(4);
             del.setBounds(r.removeFromRight(36));
             bypass.setBounds(r.removeFromRight(70));
+            r.removeFromLeft(38);
             name.setBounds(r);
         }
     };
@@ -37,11 +50,11 @@ struct PatchLinkEditor::SimpleList : juce::Component
     void refresh()
     {
         rows.clear();
-        int y = 0;
+        int y = 0, idx = 0;
         for (auto& n : proc.getLoadedNodes())
         {
-            auto* r = new Row(proc, n);
-            r->name.setFont(design::uiFont(13.0f));
+            auto* r = new Row(proc, n, idx++);
+            r->name.setFont(PatchFonts::ui(13.0f));
             r->bypass.setColour(juce::ToggleButton::textColourId, design::secondary);
             addAndMakeVisible(r);
             r->setBounds(0, y, getWidth(), design::simpleRowH);
@@ -80,14 +93,11 @@ struct PatchLinkEditor::FullCanvas : juce::Component
 
     void paint(juce::Graphics& g) override
     {
-        g.fillAll(juce::Colour(0xff14171c));
-        // grille
-        g.setColour(juce::Colour(0xff232830));
-        for (int x = 0; x < getWidth(); x += 24) g.drawVerticalLine(x, 0, (float)getHeight());
-        for (int y = 0; y < getHeight(); y += 24) g.drawHorizontalLine(y, 0, (float)getWidth());
+        g.fillAll(design::bg);
+        Halftone::dots(g, getLocalBounds(), juce::Colour(0x0dffe600), 22, 1.4f);
 
-        // câbles
-        g.setColour(juce::Colours::skyblue);
+        // wires: signal yellow
+        g.setColour(design::audio);
         for (auto& wline : proc.getWires())
         {
             auto a = boxFor(wline.src), b = boxFor(wline.dst);
@@ -97,36 +107,38 @@ struct PatchLinkEditor::FullCanvas : juce::Component
             g.drawLine(p1.x, p1.y, p2.x, p2.y, 2.0f);
         }
         // IN / OUT
-        g.setColour(juce::Colours::grey);
-        g.drawRoundedRectangle(10, 10, 90, 40, 6, 1.5f);
+        g.setColour(design::secondary);
+        g.setFont(PatchFonts::mono(11.0f));
+        g.drawRoundedRectangle(10, 10, 90, 40, design::corner, 1.5f);
         g.drawText("IN", 10, 10, 90, 40, juce::Justification::centred);
-        g.drawRoundedRectangle((float)getWidth() - 100, 10, 90, 40, 6, 1.5f);
+        g.drawRoundedRectangle((float)getWidth() - 100, 10, 90, 40, design::corner, 1.5f);
         g.drawText("OUT", getWidth() - 100, 10, 90, 40, juce::Justification::centred);
 
-        // noeuds
+        // nodes
         for (auto& n : proc.getLoadedNodes())
         {
             bool sel = selected.contains(n.id.uid);
             auto r = juce::Rectangle<int>(n.x, n.y, W, H);
-            g.setColour(sel ? juce::Colour(0xff3a7bd5) : juce::Colour(0xff22262e));
-            g.fillRoundedRectangle(r.toFloat(), 8);
-            g.setColour(sel ? juce::Colours::white : juce::Colour(0xff8b93a3));
-            g.drawRoundedRectangle(r.toFloat(), 8, sel ? 2.0f : 1.0f);
-            g.setColour(juce::Colours::white);
-            g.setFont(13.0f);
+            g.setColour(design::card);
+            g.fillRoundedRectangle(r.toFloat(), design::corner);
+            g.setColour(sel ? design::yellow : design::line);
+            g.drawRoundedRectangle(r.toFloat(), design::corner, sel ? 2.5f : 1.0f);
+            if (sel) { g.setColour(design::yellow); g.fillRect(r.getX(), r.getY(), 5, r.getHeight()); }
+            g.setColour(design::text);
+            g.setFont(PatchFonts::ui(13.0f));
             juce::String nm = n.desc.name.isNotEmpty() ? n.desc.name : ("Node " + juce::String(n.id.uid));
-            if (n.bypass) nm += " (bypass)";
-            g.drawText(nm, r.reduced(8, 4), juce::Justification::topLeft);
-            g.setFont(11.0f);
-            g.setColour(juce::Colour(0xff8b93a3));
-            g.drawText(n.desc.pluginFormatName + "  ·  sel: clic / relier: shift+clic",
-                       r.reduced(8, 4), juce::Justification::bottomLeft);
+            if (n.bypass) nm += " [BYPASSED]";
+            g.drawText(nm, r.reduced(10, 4), juce::Justification::topLeft);
+            g.setFont(PatchFonts::mono(10.0f));
+            g.setColour(design::secondary);
+            g.drawText(n.desc.pluginFormatName + "  // SHIFT+CLICK 2 NODES = WIRE",
+                       r.reduced(10, 4), juce::Justification::bottomLeft);
         }
         if (proc.getLoadedNodes().empty())
         {
-            g.setColour(juce::Colour(0xff8b93a3));
-            g.setFont(14.0f);
-            g.drawText("Double-clique pour ajouter un plugin — Shift+clic sur 2 noeuds pour les relier",
+            g.setColour(design::secondary);
+            g.setFont(PatchFonts::ui(14.0f));
+            g.drawText("DOUBLE-CLICK TO ADD A PLUGIN — SHIFT+CLICK 2 NODES TO WIRE",
                        getLocalBounds(), juce::Justification::centred);
         }
     }
@@ -184,16 +196,19 @@ struct PatchLinkEditor::FullCanvas : juce::Component
 PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& p)
     : AudioProcessorEditor(p), proc(p)
 {
+    setLookAndFeel(&hazardLaf);
     setSize(860, 600);
     setResizable(true, true);
 
-    entryTitle.setText("PatchLink", juce::dontSendNotification);
-    entryTitle.setFont(juce::Font(34.0f, juce::Font::bold));
-    entrySub.setText("Choisis ton mode. Tu pourras changer à tout moment en haut de la fenêtre.",
+    entryTitle.setText("PATCHLINK", juce::dontSendNotification);
+    entryTitle.setFont(PatchFonts::display(52.0f));
+    entryTitle.setColour(juce::Label::textColourId, design::yellow);
+    entrySub.setText("LEVE AUDIO CHAINER — SIMPLE CHAIN OR FULL PATCHER. SAME ENGINE.",
                      juce::dontSendNotification);
-    entrySimple.setButtonText("MODE SIMPLE\nChaîne verticale, rapide");
-    entryFull.setButtonText("MODE PATCHER\nNodal complet comme FL Patcher");
-    entryAsk.setButtonText("Toujours demander au démarrage");
+    entrySub.setFont(PatchFonts::mono(12.0f));
+    entrySimple.setButtonText("SIMPLE MODE\nVERTICAL CHAIN. FAST.");
+    entryFull.setButtonText("PATCHER MODE\nFULL NODAL LIKE FL PATCHER");
+    entryAsk.setButtonText("Always ask on startup");
     entryAsk.setToggleState(true, juce::dontSendNotification);
     for (auto* b : { &btnSimple, &btnFull, &btnAdd, &btnImport, &btnExport, &btnScan, &btnShare, &btnOpenCode,
                      &entrySimple, &entryFull })
@@ -209,7 +224,8 @@ PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& p)
 
     for (auto* b : { &btnSimple, &btnFull, &btnAdd, &btnImport, &btnExport, &btnScan, &btnShare, &btnOpenCode })
         addAndMakeVisible(b);
-    statusLabel.setFont(juce::Font(12.0f));
+    statusLabel.setFont(PatchFonts::mono(12.0f));
+    statusLabel.setColour(juce::Label::textColourId, design::yellow);
     addAndMakeVisible(statusLabel);
 
     simpleView = std::make_unique<juce::Viewport>();
@@ -247,7 +263,7 @@ PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& p)
     startTimer(500);
 }
 
-PatchLinkEditor::~PatchLinkEditor() { stopTimer(); }
+PatchLinkEditor::~PatchLinkEditor() { setLookAndFeel(nullptr); stopTimer(); }
 
 void PatchLinkEditor::setMode(Mode m)
 {
@@ -275,7 +291,17 @@ void PatchLinkEditor::timerCallback() { refreshAll(); }
 
 void PatchLinkEditor::paint(juce::Graphics& g)
 {
-    g.fillAll(design::canvas);
+    g.fillAll(design::bg);
+    Halftone::dots(g, getLocalBounds(), juce::Colour(0x14ffffff), 18, 1.5f);
+    // hazard strip up top
+    Halftone::stripes(g, juce::Rectangle<int>(0, 0, getWidth(), 5));
+    if (mode == Mode::Entry)
+    {
+        // giant watermark
+        g.setColour(juce::Colour(0x0ffffe600));
+        g.setFont(PatchFonts::display(120.0f));
+        g.drawText("LEVE", getLocalBounds().removeFromBottom(200), juce::Justification::centredBottom, true);
+    }
 }
 
 void PatchLinkEditor::resized()

@@ -208,10 +208,11 @@ inline void readAbletonPaths(juce::Array<DawFolder>& out)
             auto q1 = line.indexOfChar('"');
             auto q2 = line.lastIndexOfChar('"');
             if (q1 >= 0 && q2 > q1)
-                addUniqueFolder(out, line.substring(q1 + 1, q2),
-                                line.contains("(user)") ? "Ableton custom folder"
-                                                       : "Ableton scanned folder",
-                                line.contains("(user)"));
+            {
+                // Only the user's CUSTOM folders matter - system scans are just noise.
+                if (line.contains("(user)"))
+                    addUniqueFolder(out, line.substring(q1 + 1, q2), "Ableton custom folder", true);
+            }
         }
         if (!out.isEmpty()) return; // newest log with data wins
     }
@@ -231,9 +232,23 @@ inline void readCubasePaths(juce::Array<DawFolder>& out)
         d.findChildFiles(xmls, juce::File::findFiles, false, "Vst2xPlugin SearchPaths*.xml");
         for (auto x : xmls)
         {
-            // generously extract anything that looks like a directory (validation inside)
-            for (auto tok : juce::StringArray::fromTokens(x.loadFileAsString(), "\"'<>", ""))
-                addUniqueFolder(out, tok, "Cubase VST2 search path");
+            // Structured parse: only real Path entries, no junk tokens.
+            const juce::String marker = "name=\"Path\" value=\"";
+            auto text = x.loadFileAsString();
+            int pos = 0;
+            for (;;)
+            {
+                int k = text.indexOf(pos, marker);
+                if (k < 0) break;
+                int v0 = k + marker.length();
+                int v1 = text.indexOf(v0, "\"");
+                if (v1 < 0) break;
+                juce::String p = text.substring(v0, v1);
+                // Broad roots (C:\Program Files\) scan half the disk — default them OFF.
+                bool broad = p.retainCharacters("\\").length() <= 2;
+                addUniqueFolder(out, p, "Cubase VST2 search path", !broad);
+                pos = v1 + 1;
+            }
             if (!xmls.isEmpty()) return;
         }
     }

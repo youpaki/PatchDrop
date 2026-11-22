@@ -1,5 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
+#include "Core/Hazard.h"
 
 class PatchLinkProcessor;
 
@@ -17,6 +18,7 @@ public:
 
 private:
     PatchLinkProcessor& proc;
+    HazardLookAndFeel hazardLaf;
 
     enum class Mode { Entry = 0, Simple = 1, Full = 2 };
     Mode mode = Mode::Entry;

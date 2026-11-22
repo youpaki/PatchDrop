@@ -45,7 +45,8 @@ ScanDialog::ScanDialog(PluginScanManager& m)
     : mgr(m), progressBar(progressValue)
 {
     titleLabel.setText("Scan Manager", juce::dontSendNotification);
-    titleLabel.setFont(design::uiFont(20.0f, true));
+    titleLabel.setFont(PatchFonts::display(22.0f));
+    titleLabel.setColour(juce::Label::textColourId, design::yellow);
     subLabel.setText("System folders + DAW folders + yours. Only checked folders are scanned — nothing is touched inside your DAWs.",
                      juce::dontSendNotification);
     subLabel.setFont(design::uiFont(12.0f));
@@ -111,7 +112,9 @@ ScanDialog::~ScanDialog()
 
 void ScanDialog::paint(juce::Graphics& g)
 {
-    g.fillAll(design::canvas);
+    g.fillAll(design::bg);
+    Halftone::dots(g, getLocalBounds(), juce::Colour(0x14ffffff), 18, 1.5f);
+    Halftone::stripes(g, juce::Rectangle<int>(0, 0, getWidth(), 5));
 }
 
 void ScanDialog::resized()
