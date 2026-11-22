@@ -3,8 +3,8 @@
 ; Compile: ISCC.exe installer.iss   (run from patchlink/installer/)
 
 #define MyAppName "PatchLink"
-#define MyAppVersion "1.0.0"
-#define MyAppPublisher "PatchDrop"
+#define MyAppVersion "1.0.1"
+#define MyAppPublisher "leve"
 #define MyAppURL "https://gg.trenas.fr/patchdrop/"
 
 [Setup]
