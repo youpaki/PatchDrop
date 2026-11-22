@@ -1,0 +1,9 @@
+{
+  "name": "patchdrop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PatchDrop - partage de chaines PatchLink par code + presets commu",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}

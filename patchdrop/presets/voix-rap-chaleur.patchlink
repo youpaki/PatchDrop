@@ -1,0 +1,1 @@
+{"app": "PatchLink", "connections": [], "nodes": [{"bypass": false, "fileOrId": "TDR Nova", "format": "VST3", "manufacturer": "Tokyo Dawn Labs", "name": "TDR Nova", "pversion": "2.1", "stateBase64": "", "uid": 101, "x": 120, "y": 140}], "version": 1}

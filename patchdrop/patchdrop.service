@@ -1,0 +1,16 @@
+[Unit]
+Description=PatchDrop (partage PatchLink par code + presets commu)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/leo/patchdrop
+Environment=PORT=3250
+Environment=HOST=127.0.0.1
+Environment=BASE_PATH=/patchdrop
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

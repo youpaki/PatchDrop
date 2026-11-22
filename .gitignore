@@ -1,0 +1,24 @@
+# Binaries & build output
+patchlink/build/
+patchdrop/releases/*.zip
+patchdrop/data/
+patchdrop/node_modules/
+*.exe
+*.vst3/
+*.component/
+
+# Secrets: deploy/ops scripts contain server credentials - never commit
+patchlink/tools/inspect_remote.py
+patchlink/tools/inspect2.py
+patchlink/tools/deploy_patchdrop.py
+patchlink/tools/verify_patchdrop.py
+patchlink/tools/seed_patchdrop.py
+patchlink/tools/expose_patchdrop.py
+patchlink/tools/reup_patchdrop.py
+
+# OS / editors
+.DS_Store
+Thumbs.db
+*.user
+.vs/
+.idea/
