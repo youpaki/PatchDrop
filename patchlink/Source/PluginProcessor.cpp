@@ -1,18 +1,14 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "Core/ChainFormat.h"
 
 PatchLinkProcessor::PatchLinkProcessor()
-    : AudioProcessor(BusesProperties().withInput("In", juce::AudioChannelSet::stereo(), true)
-                                       .withOutput("Out", juce::AudioChannelSet::stereo(), true))
+    : scanManager(formatManager, knownList)
 {
     formatManager.addDefaultFormats();
-
-    // Restaure la liste des plugins déjà scannés
-    auto listFile = juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory)
-                        .getChildFile("PatchLink").getChildFile("knownPlugins.xml");
-    if (listFile.existsAsFile())
-        if (auto xml = juce::parseXML(listFile.loadFileAsString()))
-            knownList.recreateFromXml(*xml);
+    scanManager.loadSettings();
+    if (scanManager.getSources().empty())
+        scanManager.buildDefaultSources(); // standards + detected DAW folders, no silent scan
 
     inputId  = graph.addNode(std::make_unique<juce::AudioProcessorGraph::AudioGraphIOProcessor>(
         juce::AudioProcessorGraph::AudioGraphIOProcessor::audioInputNode), juce::AudioProcessorGraph::NodeID(10))->nodeID;
@@ -50,7 +46,7 @@ bool PatchLinkProcessor::isBusesLayoutSupported(const BusesLayout& l) const
         && l.getMainOutputChannelSet() == juce::AudioChannelSet::stereo();
 }
 
-// ---------- Hosting ----------
+// ---------- hosting ----------
 std::vector<PatchLinkProcessor::LoadedNode> PatchLinkProcessor::getLoadedNodes()
 {
     std::vector<LoadedNode> out;
@@ -69,23 +65,26 @@ std::vector<PatchLinkProcessor::LoadedNode> PatchLinkProcessor::getLoadedNodes()
     return out;
 }
 
-juce::String PatchLinkProcessor::addPluginByDescription(const juce::PluginDescription& desc, int x, int y)
+void PatchLinkProcessor::addPluginAsync(const juce::PluginDescription& desc, int x, int y, DoneFn done)
 {
-    juce::String err;
-    graph.suspendProcessing(true);
-    auto inst = formatManager.createPluginInstance(desc, getSampleRate() > 0 ? getSampleRate() : 44100.0,
-                                                   getBlockSize() > 0 ? getBlockSize() : 512, err);
-    if (inst == nullptr) { graph.suspendProcessing(false); return err; }
-
-    auto node = graph.addNode(std::move(inst), juce::AudioProcessorGraph::NodeID(nextUid++));
-    if (node == nullptr) { graph.suspendProcessing(false); return "addNode failed"; }
-    node->properties.set("x", x);
-    node->properties.set("y", y);
-
-    if (autoConnectSerial)
-        rebuildSerialIfNeeded();
-    graph.suspendProcessing(false);
-    return {};
+    // AUv3-safe: never sync-instantiate on the message thread.
+    formatManager.createPluginInstanceAsync(
+        desc, getSampleRate() > 0 ? getSampleRate() : 44100.0,
+        getBlockSize() > 0 ? getBlockSize() : 512,
+        [this, x, y, done](std::unique_ptr<juce::AudioPluginInstance> inst, const juce::String& err) {
+            if (inst == nullptr) { if (done) done(err.isNotEmpty() ? err : "Could not load plugin"); return; }
+            inst->enableAllBuses();
+            graph.suspendProcessing(true);
+            auto node = graph.addNode(std::move(inst), juce::AudioProcessorGraph::NodeID(nextUid++));
+            if (node != nullptr)
+            {
+                node->properties.set("x", x);
+                node->properties.set("y", y);
+                if (autoConnectSerial) rebuildSerialIfNeeded();
+            }
+            graph.suspendProcessing(false);
+            if (done) done(node == nullptr ? juce::String("addNode failed") : juce::String{});
+        });
 }
 
 void PatchLinkProcessor::removeNode(juce::AudioProcessorGraph::NodeID id)
@@ -143,7 +142,6 @@ std::vector<patchlink::Wire> PatchLinkProcessor::getWires()
     std::vector<patchlink::Wire> w;
     for (auto& c : graph.getConnections())
     {
-        // Ignore la connexion directe in->out quand la chaîne est vide
         if (c.source.nodeID == inputId && c.destination.nodeID == outputId) continue;
         w.push_back({ c.source.nodeID.uid, c.destination.nodeID.uid,
                       c.source.channelIndex, c.destination.channelIndex });
@@ -151,7 +149,6 @@ std::vector<patchlink::Wire> PatchLinkProcessor::getWires()
     return w;
 }
 
-// Série auto : in -> n1 -> n2 -> ... -> out (stéréo ch 0/1)
 void PatchLinkProcessor::rebuildSerialIfNeeded()
 {
     for (auto& c : graph.getConnections())
@@ -161,7 +158,6 @@ void PatchLinkProcessor::rebuildSerialIfNeeded()
     for (auto* n : graph.getNodes())
         if (n->nodeID != inputId && n->nodeID != outputId)
             ids.push_back(n->nodeID);
-    // tri par uid = ordre d'ajout
     std::sort(ids.begin(), ids.end(), [](auto a, auto b) { return a.uid < b.uid; });
 
     if (ids.empty())
@@ -179,71 +175,26 @@ void PatchLinkProcessor::rebuildSerialIfNeeded()
     }
 }
 
-void PatchLinkProcessor::scanDefaultPathsAsync()
-{
-    // Scan rapide en thread de fond : VST3 (+ AU sur mac automatiquement via le format)
-    struct Scanner : juce::Thread
-    {
-        PatchLinkProcessor& o;
-        Scanner(PatchLinkProcessor& p) : Thread("scan"), o(p) {}
-        void run() override
-        {
-            juce::FileSearchPath paths;
-           #if JUCE_MAC
-            paths.add(juce::File("/Library/Audio/Plug-Ins/VST3"));
-            paths.add(juce::File("~/Library/Audio/Plug-Ins/VST3"));
-           #else
-            paths.add(juce::File("C:\\Program Files\\Common Files\\VST3"));
-            paths.add(juce::File("C:\\Program Files (x86)\\Common Files\\VST3"));
-           #endif
-            for (int fi = 0; fi < o.formatManager.getNumFormats(); ++fi)
-            {
-                if (threadShouldExit()) break;
-                auto* fmt = o.formatManager.getFormat(fi);
-                if (fmt == nullptr) continue;
-                juce::PluginDirectoryScanner scanner(o.knownList, *fmt, paths, true, juce::File());
-                juce::String failed;
-                while (scanner.scanNextFile(true, failed) && !threadShouldExit()) {}
-            }
-            auto listFile = juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory)
-                                .getChildFile("PatchLink").getChildFile("knownPlugins.xml");
-            listFile.getParentDirectory().createDirectory();
-            if (auto xml = o.knownList.createXml())
-                listFile.replaceWithText(xml->toString());
-        }
-    };
-    // Self-owned background thread: lives until the scan finishes.
-    (new Scanner(*this))->startThread();
-}
-
-// ---------- Patch save/load ----------
+// ---------- patches ----------
 juce::var PatchLinkProcessor::graphToVar()
 {
     juce::DynamicObject::Ptr root = new juce::DynamicObject();
     root->setProperty("app", "PatchLink");
-    root->setProperty("version", patchlink::kFileVersion);
+    root->setProperty("chainFormat", chainformat::kFormatVersion);
 
     juce::Array<juce::var> jnodes;
     for (auto* n : graph.getNodes())
     {
         if (n->nodeID == inputId || n->nodeID == outputId) continue;
         auto* proc = n->getProcessor();
-        juce::DynamicObject::Ptr o = new juce::DynamicObject();
-        o->setProperty("uid", (int)n->nodeID.uid);
-        o->setProperty("stateBase64", patchlink::stateToBase64(proc));
-        o->setProperty("x", (int)n->properties.getWithDefault("x", 60));
-        o->setProperty("y", (int)n->properties.getWithDefault("y", 60));
-        o->setProperty("bypass", n->isBypassed());
+        juce::PluginDescription desc;
         if (auto* inst = dynamic_cast<juce::AudioPluginInstance*>(proc))
-        {
-            auto& d = inst->getPluginDescription();
-            o->setProperty("name", d.name);
-            o->setProperty("manufacturer", d.manufacturerName);
-            o->setProperty("pversion", d.version);
-            o->setProperty("format", d.pluginFormatName);
-            o->setProperty("fileOrId", d.fileOrIdentifier);
-        }
-        jnodes.add(juce::var(o.get()));
+            desc = inst->getPluginDescription();
+        jnodes.add(chainformat::makeNodeVar(desc, patchlink::stateToBase64(proc),
+                                            (int)n->nodeID.uid,
+                                            (int)n->properties.getWithDefault("x", 60),
+                                            (int)n->properties.getWithDefault("y", 60),
+                                            n->isBypassed()));
     }
     root->setProperty("nodes", jnodes);
 
@@ -267,109 +218,158 @@ juce::var PatchLinkProcessor::graphToVar()
     return juce::var(root.get());
 }
 
-bool PatchLinkProcessor::loadFromVar(const juce::var& root, juce::StringArray& missing)
+bool PatchLinkProcessor::loadFromVarSyncLayout(const juce::var& root, juce::String& err)
 {
-    missing.clear();
-    if (!root.isObject()) return false;
-    auto* o = root.getDynamicObject();
-    if (o == nullptr || !o->hasProperty("nodes")) return false;
+    if (!root.isObject()) { err = "Not a patch"; return false; }
+    if (auto* o = root.getDynamicObject())
+        if (o->hasProperty("nodes")) return true;
+    err = "Patch has no nodes";
+    return false;
+}
 
-    graph.suspendProcessing(true);
-    clearChain();
-    // suspend déjà géré : on dégèle à la fin
-    graph.suspendProcessing(false);
-    graph.suspendProcessing(true);
-
+struct PatchLoadState
+{
+    struct NodeSpec
+    {
+        juce::PluginDescription desc;
+        juce::String stateB64;
+        int oldUid = 0, x = 60, y = 60;
+        bool bypass = false;
+    };
+    std::vector<NodeSpec> nodes;
+    std::vector<std::tuple<int,int,int,int>> wires; // src, srcCh, dst, dstCh (old uids; 1=in, 2=out)
+    size_t index = 0;
     std::map<int, juce::AudioProcessorGraph::NodeID> uidMap;
-    uidMap[1] = inputId; uidMap[2] = outputId;
+    juce::StringArray missing;
+};
 
-    if (auto* jnodes = o->getProperty("nodes").getArray())
+void PatchLinkProcessor::loadFromVarAsync(const juce::var& root,
+    std::function<void(juce::StringArray missing, juce::String err)> done)
+{
+    juce::String err;
+    if (!loadFromVarSyncLayout(root, err)) { if (done) done({}, err); return; }
+
+    auto state = std::make_shared<PatchLoadState>();
+    if (auto* jnodes = root.getDynamicObject()->getProperty("nodes").getArray())
     {
         for (auto& jn : *jnodes)
         {
             auto* no = jn.getDynamicObject();
             if (no == nullptr) continue;
-            juce::String name = no->getProperty("name").toString();
-            juce::String fileOrId = no->getProperty("fileOrId").toString();
-            juce::String fmt = no->getProperty("format").toString();
-
-            // cherche dans la liste connue (tolère changement de version)
-            juce::PluginDescription found;
-            bool hasFound = false;
+            PatchLoadState::NodeSpec spec;
+            // v2 stores ids.* ; v1 stores flat fields — read both.
+            if (auto* ids = no->getProperty("ids").getDynamicObject())
+            {
+                spec.desc.name = ids->getProperty("name").toString();
+                spec.desc.manufacturerName = ids->getProperty("manufacturer").toString();
+                spec.desc.version = ids->getProperty("version").toString();
+                spec.desc.pluginFormatName = ids->getProperty("format").toString();
+                spec.desc.fileOrIdentifier = ids->getProperty("fileOrId").toString();
+            }
+            else
+            {
+                spec.desc.name = no->getProperty("name").toString();
+                spec.desc.manufacturerName = no->getProperty("manufacturer").toString();
+                spec.desc.version = no->getProperty("pversion").toString();
+                spec.desc.pluginFormatName = no->getProperty("format").toString();
+                spec.desc.fileOrIdentifier = no->getProperty("fileOrId").toString();
+            }
+            // resolve against the scanned list (tolerates version drift)
+            bool resolved = false;
             for (auto& t : knownList.getTypes())
-            {
-                if (t.fileOrIdentifier == fileOrId) { found = t; hasFound = true; break; }
-            }
-            if (!hasFound)
+                if (t.fileOrIdentifier == spec.desc.fileOrIdentifier) { spec.desc = t; resolved = true; break; }
+            if (!resolved)
                 for (auto& t : knownList.getTypes())
-                    if (t.name == name && t.pluginFormatName == fmt) { found = t; hasFound = true; break; }
-
-            if (!hasFound) // dernier essai : reconstruit depuis le patch
-            {
-                found.name = name;
-                found.fileOrIdentifier = fileOrId;
-                found.pluginFormatName = fmt;
-                found.manufacturerName = no->getProperty("manufacturer").toString();
-                found.version = no->getProperty("pversion").toString();
-            }
-
-            juce::String err;
-            auto inst = formatManager.createPluginInstance(found, getSampleRate() > 0 ? getSampleRate() : 44100.0,
-                                                           getBlockSize() > 0 ? getBlockSize() : 512, err);
-            if (inst == nullptr)
-            {
-                missing.add(name.isNotEmpty() ? name : fileOrId);
-                continue;
-            }
-            int oldUid = (int)no->getProperty("uid");
-            auto node = graph.addNode(std::move(inst), juce::AudioProcessorGraph::NodeID(nextUid++));
-            if (node == nullptr) { missing.add(name); continue; }
-            node->properties.set("x", (int)no->getProperty("x"));
-            node->properties.set("y", (int)no->getProperty("y"));
-            node->setBypassed((bool)no->getProperty("bypass"));
-            patchlink::base64ToState(node->getProcessor(), no->getProperty("stateBase64").toString());
-            uidMap[oldUid] = node->nodeID;
+                    if (t.name == spec.desc.name && t.pluginFormatName == spec.desc.pluginFormatName) { spec.desc = t; resolved = true; break; }
+            juce::ignoreUnused(resolved);
+            spec.stateB64 = no->getProperty("stateBase64").toString();
+            spec.oldUid = (int)no->getProperty("uid");
+            spec.x = (int)no->getProperty("x");
+            spec.y = (int)no->getProperty("y");
+            spec.bypass = (bool)no->getProperty("bypass");
+            state->nodes.push_back(spec);
         }
     }
-
-    bool hasWires = false;
-    if (auto* jw = o->getProperty("connections").getArray())
-    {
+    if (auto* jw = root.getDynamicObject()->getProperty("connections").getArray())
         for (auto& j : *jw)
+            if (auto* co = j.getDynamicObject())
+                state->wires.emplace_back((int)co->getProperty("src"), (int)co->getProperty("srcCh"),
+                                          (int)co->getProperty("dst"), (int)co->getProperty("dstCh"));
+
+    clearChain();
+    state->uidMap[1] = inputId;
+    state->uidMap[2] = outputId;
+    auto self = this;
+    auto next = std::make_shared<std::function<void()>>();
+    *next = [self, state, done, next]() {
+        if (state->index >= state->nodes.size())
         {
-            auto* co = j.getDynamicObject();
-            if (co == nullptr) continue;
-            int s = (int)co->getProperty("src"), d = (int)co->getProperty("dst");
-            if (!uidMap.count(s) || !uidMap.count(d)) continue;
-            graph.addConnection({ { uidMap[s], (int)co->getProperty("srcCh") },
-                                  { uidMap[d], (int)co->getProperty("dstCh") } });
-            hasWires = true;
+            bool hasWires = false;
+            self->graph.suspendProcessing(true);
+            for (auto& [s, sc, d, dc] : state->wires)
+            {
+                if (!state->uidMap.count(s) || !state->uidMap.count(d)) continue;
+                self->graph.addConnection({ { state->uidMap[s], sc }, { state->uidMap[d], dc } });
+                hasWires = true;
+            }
+            if (!hasWires) self->rebuildSerialIfNeeded();
+            self->graph.suspendProcessing(false);
+            if (done) done(state->missing, {});
+            return;
         }
-    }
-    if (!hasWires) rebuildSerialIfNeeded(); // vieux patch ou tout manquant
-    graph.suspendProcessing(false);
-    return true;
+        auto spec = state->nodes[state->index++];
+        self->formatManager.createPluginInstanceAsync(
+            spec.desc, self->getSampleRate() > 0 ? self->getSampleRate() : 44100.0,
+            self->getBlockSize() > 0 ? self->getBlockSize() : 512,
+            [self, state, done, next, spec](std::unique_ptr<juce::AudioPluginInstance> inst,
+                                            const juce::String&) mutable {
+                if (inst == nullptr)
+                {
+                    state->missing.add(spec.desc.name.isNotEmpty() ? spec.desc.name
+                                                                   : spec.desc.fileOrIdentifier);
+                    (*next)();
+                    return;
+                }
+                inst->enableAllBuses();
+                self->graph.suspendProcessing(true);
+                auto node = self->graph.addNode(std::move(inst),
+                                                juce::AudioProcessorGraph::NodeID(self->nextUid++));
+                if (node != nullptr)
+                {
+                    node->properties.set("x", spec.x);
+                    node->properties.set("y", spec.y);
+                    node->setBypassed(spec.bypass);
+                    patchlink::base64ToState(node->getProcessor(), spec.stateB64);
+                    state->uidMap[spec.oldUid] = node->nodeID;
+                }
+                else state->missing.add(spec.desc.name);
+                self->graph.suspendProcessing(false);
+                (*next)();
+            });
+    };
+    (*next)();
 }
 
 bool PatchLinkProcessor::exportPatch(const juce::File& file, juce::String& err)
 {
     auto v = graphToVar();
-    auto json = juce::JSON::toString(v, true);
-    if (!file.replaceWithText(json)) { err = "Ecriture impossible"; return false; }
+    if (!file.replaceWithText(juce::JSON::toString(v, true))) { err = "Write failed"; return false; }
     return true;
 }
 
-bool PatchLinkProcessor::importPatch(const juce::File& file, juce::StringArray& missing, juce::String& err)
+void PatchLinkProcessor::importPatchAsync(const juce::File& file,
+    std::function<void(juce::StringArray missing, juce::String err)> done)
 {
     auto txt = file.loadFileAsString();
-    if (txt.isEmpty()) { err = "Fichier vide"; return false; }
+    if (txt.isEmpty()) { if (done) done({}, "Empty file"); return; }
     auto v = juce::JSON::parse(txt);
-    if (!v.isObject()) { err = "JSON invalide"; return false; }
-    if (!loadFromVar(v, missing)) { err = "Patch illisible"; return false; }
-    return true;
+    if (!v.isObject()) { if (done) done({}, "Invalid JSON"); return; }
+    // v1 files carry "version" instead of "chainFormat" — still readable (see loader).
+    loadFromVarAsync(v, done);
 }
 
-void PatchLinkProcessor::getStateInformation(juce::MemoryBlock& dest){
+void PatchLinkProcessor::getStateInformation(juce::MemoryBlock& dest)
+{
     juce::MemoryOutputStream mos(dest, true);
     mos.writeString(juce::JSON::toString(graphToVar()));
     mos.writeInt(preferredMode);
@@ -379,9 +379,12 @@ void PatchLinkProcessor::setStateInformation(const void* data, int size)
 {
     juce::MemoryInputStream mis(data, (size_t)size, false);
     auto json = mis.readString();
-    juce::StringArray missing;
     auto v = juce::JSON::parse(json);
-    if (v.isObject()) loadFromVar(v, missing);
+    if (v.isObject())
+    {
+        // DAW recall must not block: async load, state preserved in placeholders on failure.
+        loadFromVarAsync(v, [](juce::StringArray, juce::String) {});
+    }
     if (!mis.isExhausted()) preferredMode = mis.readInt();
 }
 

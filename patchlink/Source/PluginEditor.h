@@ -46,8 +46,10 @@ private:
     void setMode(Mode m);
     void refreshAll();
     void pickAndAddPlugin(int x, int y);
-    void doImport(), doExport(), doScan();
+    void doImport(), doExport();
+    void openScanDialog();
     void doShareViaCode(), doOpenViaCode();
+    std::unique_ptr<juce::DialogWindow> scanWindow;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PatchLinkEditor)
 };

@@ -62,7 +62,7 @@
       <div class="dl-card">
         <h3>🪟 Windows</h3>
         <p>One installer, with options. 64-bit. Tested FL Studio 21+ / Ableton 11+.</p>
-        <a class="btn" href="releases/PatchLink-Setup-1.0.1.exe" data-dl>PatchLink-Setup-1.0.1.exe</a>
+        <a class="btn" href="releases/PatchLink-Setup-1.1.0.exe" data-dl>PatchLink-Setup-1.1.0.exe</a>
         <ol class="how">
           <li>Run the setup (asks for admin — needed for the VST3 folder)</li>
           <li>Pick components: <b>VST3 plugin</b> and/or <b>Standalone app</b>, optional desktop icon</li>
@@ -121,6 +121,7 @@
     <h2>Compat &amp; questions</h2>
     <details open><summary>What if my friend doesn't own my plugins?</summary><p>PatchLink compares name + format + version. It restores what it can and shows: <span class="mono">❌ VintageVerb 2.1.0 missing (2.0.0 found)</span>. Zero crashes.</p></details>
     <details><summary>File or code — what's the difference?</summary><p>None in sound: same JSON. The code goes through <span class="mono">gg.trenas.fr/patchdrop</span> (convenient), the file goes through Discord/Drive (unlimited, private).</p></details>
+    <details><summary>The plugin lists no plugins?</summary><p>Click <span class="mono">Scan</span> inside PatchLink. The Scan Manager pre-checks your system folders <em>plus</em> the folders your DAWs (FL Studio, Ableton, REAPER, Cubase…) actually use — detected automatically. Add your own folders, rescan, done. Crashing plugins get blacklisted automatically instead of breaking the scan.</p></details>
     <details><summary>Max size?</summary><p>12 MB per patch (plenty: binary states are base64-compressed). Community presets list their plugins so you can check before downloading.</p></details>
   </section>
 </main>

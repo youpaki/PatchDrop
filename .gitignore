@@ -17,6 +17,7 @@ patchlink/tools/expose_patchdrop.py
 patchlink/tools/reup_patchdrop.py
 patchlink/tools/upload_installer.py
 patchlink/tools/upload_101.py
+patchlink/tools/upload_110.py
 
 # OS / editors
 .DS_Store

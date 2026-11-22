@@ -1,9 +1,13 @@
 #pragma once
 #include <JuceHeader.h>
 #include "Chain/PatchFormat.h"
+#include "Scan/PluginScanManager.h"
 
-// Moteur audio : héberge des plugins tiers dans un AudioProcessorGraph.
-// Partageable via fichier .patchlink (JSON + états base64).
+// PatchLink engine: hosts third-party plugins in an AudioProcessorGraph.
+// - Formats via juce::addDefaultFormatsToManager (JUCE 8, includes VST3 + AU).
+// - Scanning via PluginScanManager (background, pedal-file crash durability).
+// - Instantiation always async (createPluginInstanceAsync, AUv3-safe) + enableAllBuses.
+// - Patches: .patchlink v1 (migrated) / chain v2, IDs-not-paths, missing-plugin report.
 class PatchLinkProcessor : public juce::AudioProcessor
 {
 public:
@@ -39,46 +43,50 @@ public:
     void getStateInformation(juce::MemoryBlock& dest) override;
     void setStateInformation(const void* data, int size) override;
 
-    // Hosting
+    // Engine access
     juce::AudioPluginFormatManager& getFormatManager() { return formatManager; }
     juce::KnownPluginList& getKnownList() { return knownList; }
     juce::AudioProcessorGraph& getGraph() { return graph; }
+    PluginScanManager& getScanManager() { return scanManager; }
     std::vector<LoadedNode> getLoadedNodes();
-    void scanDefaultPathsAsync();
-    juce::String addPluginByDescription(const juce::PluginDescription& desc, int x, int y);
+
+    // Async hosting (message-thread callbacks). err empty = ok.
+    using DoneFn = std::function<void(const juce::String& err)>;
+    void addPluginAsync(const juce::PluginDescription& desc, int x, int y, DoneFn done);
     void removeNode(juce::AudioProcessorGraph::NodeID id);
     void setNodeBypass(juce::AudioProcessorGraph::NodeID id, bool b);
     bool getNodeBypass(juce::AudioProcessorGraph::NodeID id);
     void setNodePosition(juce::AudioProcessorGraph::NodeID id, int x, int y);
     void clearChain();
 
-    // Connexions manuelles (mode Full). V1 : série auto + connexions libres.
+    // Manual connections (Full mode)
     bool connectNodes(juce::AudioProcessorGraph::NodeID src, int srcCh,
                       juce::AudioProcessorGraph::NodeID dst, int dstCh);
     void disconnectAll(juce::AudioProcessorGraph::NodeID id);
     std::vector<patchlink::Wire> getWires();
 
-    // Partage .patchlink
+    // Sharing: files are sync (small JSON), patch recall is async (plugin load).
     bool exportPatch(const juce::File& file, juce::String& err);
-    // Retourne la liste des plugins manquants (noms lisibles)
-    bool importPatch(const juce::File& file, juce::StringArray& missing, juce::String& err);
+    void importPatchAsync(const juce::File& file,
+                          std::function<void(juce::StringArray missing, juce::String err)> done);
     juce::var graphToVar();
-    bool loadFromVar(const juce::var& root, juce::StringArray& missing);
+    void loadFromVarAsync(const juce::var& root,
+                          std::function<void(juce::StringArray missing, juce::String err)> done);
+    static bool loadFromVarSyncLayout(const juce::var& root, juce::String& err); // validation only
 
-    // Préférence UI : 0 = demander, 1 = simple, 2 = full
-    int preferredMode = 0;
+    int preferredMode = 0; // 0 = ask, 1 = simple, 2 = full
 
 private:
     juce::AudioProcessorGraph graph;
     juce::AudioPluginFormatManager formatManager;
     juce::KnownPluginList knownList;
+    PluginScanManager scanManager;
 
     juce::AudioProcessorGraph::NodeID inputId, outputId;
     uint32_t nextUid = 100;
-    juce::CriticalSection lock;
 
     void rebuildSerialIfNeeded();
-    bool autoConnectSerial = true; // true en mode Simple, false en mode Full
+    bool autoConnectSerial = true;
     void setAutoConnect(bool b) { autoConnectSerial = b; }
     friend class PatchLinkEditor;
 

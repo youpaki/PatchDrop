@@ -1,6 +1,8 @@
 #include "PluginEditor.h"
 #include "PluginProcessor.h"
 #include "Chain/ShareClient.h"
+#include "Core/DesignTokens.h"
+#include "UI/ScanDialog.h"
 
 // ---------- Vue Simple : liste verticale ----------
 struct PatchLinkEditor::SimpleList : juce::Component
@@ -26,7 +28,7 @@ struct PatchLinkEditor::SimpleList : juce::Component
         {
             auto r = getLocalBounds().reduced(4);
             del.setBounds(r.removeFromRight(36));
-            bypass.setBounds(r.removeFromRight(90));
+            bypass.setBounds(r.removeFromRight(70));
             name.setBounds(r);
         }
     };
@@ -39,10 +41,12 @@ struct PatchLinkEditor::SimpleList : juce::Component
         for (auto& n : proc.getLoadedNodes())
         {
             auto* r = new Row(proc, n);
+            r->name.setFont(design::uiFont(13.0f));
+            r->bypass.setColour(juce::ToggleButton::textColourId, design::secondary);
             addAndMakeVisible(r);
-            r->setBounds(0, y, getWidth(), 34);
+            r->setBounds(0, y, getWidth(), design::simpleRowH);
             rows.add(r);
-            y += 36;
+            y += design::simpleRowH + 2;
         }
         setSize(getWidth(), juce::jmax(y, 100));
         resized();
@@ -50,7 +54,7 @@ struct PatchLinkEditor::SimpleList : juce::Component
     void resized() override
     {
         int y = 0;
-        for (auto* r : rows) { r->setBounds(0, y, getWidth(), 34); y += 36; }
+        for (auto* r : rows) { r->setBounds(0, y, getWidth(), design::simpleRowH); y += design::simpleRowH + 2; }
     }
 };
 
@@ -191,6 +195,15 @@ PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& p)
     entryFull.setButtonText("MODE PATCHER\nNodal complet comme FL Patcher");
     entryAsk.setButtonText("Toujours demander au démarrage");
     entryAsk.setToggleState(true, juce::dontSendNotification);
+    for (auto* b : { &btnSimple, &btnFull, &btnAdd, &btnImport, &btnExport, &btnScan, &btnShare, &btnOpenCode,
+                     &entrySimple, &entryFull })
+    {
+        b->setColour(juce::TextButton::buttonColourId, design::raised);
+        b->setColour(juce::TextButton::textColourOffId, design::text);
+        b->setColour(juce::TextButton::buttonOnColourId, design::audio);
+    }
+    entryTitle.setColour(juce::Label::textColourId, design::audio);
+    statusLabel.setFont(design::monoFont(12.0f));
     addAndMakeVisible(entryTitle); addAndMakeVisible(entrySub);
     addAndMakeVisible(entrySimple); addAndMakeVisible(entryFull); addAndMakeVisible(entryAsk);
 
@@ -222,7 +235,7 @@ PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& p)
     btnAdd.onClick = [this] { pickAndAddPlugin(120, 120); };
     btnImport.onClick = [this] { doImport(); };
     btnExport.onClick = [this] { doExport(); };
-    btnScan.onClick = [this] { doScan(); };
+    btnScan.onClick = [this] { openScanDialog(); };
     btnShare.onClick = [this] { doShareViaCode(); };
     btnOpenCode.onClick = [this] { doOpenViaCode(); };
 
@@ -250,9 +263,11 @@ void PatchLinkEditor::refreshAll()
     if (simpleList) simpleList->refresh();
     if (fullCanvas) fullCanvas->repaint();
     auto n = proc.getLoadedNodes().size();
-    statusLabel.setText(juce::String((int)n) + " plugin(s)  ·  "
-                        + (mode == Mode::Simple ? "Simple (série auto)" : mode == Mode::Full ? "Patcher (manuel)" : ""),
-                        juce::dontSendNotification);
+    juce::String base = juce::String((int)n) + " plugin(s)  ·  "
+                        + (mode == Mode::Simple ? "Simple (auto-series)" : mode == Mode::Full ? "Patcher (manual)" : "");
+    if (proc.getKnownList().getNumTypes() == 0)
+        base += "  —  No plugins indexed yet: click Scan (your DAW folders are pre-checked)";
+    statusLabel.setText(base, juce::dontSendNotification);
     repaint();
 }
 
@@ -260,7 +275,7 @@ void PatchLinkEditor::timerCallback() { refreshAll(); }
 
 void PatchLinkEditor::paint(juce::Graphics& g)
 {
-    g.fillAll(juce::Colour(0xff101318));
+    g.fillAll(design::canvas);
 }
 
 void PatchLinkEditor::resized()
@@ -311,8 +326,8 @@ void PatchLinkEditor::pickAndAddPlugin(int x, int y)
     auto types = proc.getKnownList().getTypes();
     if (types.isEmpty())
     {
-        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, "Aucun plugin",
-            "Clique Scan d'abord (ou installe un VST3).");
+        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, "No plugins",
+            "Nothing indexed yet — click Scan first (system + DAW folders are pre-checked).");
         return;
     }
     juce::PopupMenu m;
@@ -330,10 +345,12 @@ void PatchLinkEditor::pickAndAddPlugin(int x, int y)
     m.showMenuAsync(juce::PopupMenu::Options(), [this, map, x, y](int r) {
         if (r > 0 && map.count(r))
         {
-            auto err = proc.addPluginByDescription(map.at(r), x, y);
-            if (err.isNotEmpty())
-                juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "Chargement", err);
-            refreshAll();
+            statusLabel.setText("Loading plugin…", juce::dontSendNotification);
+            proc.addPluginAsync(map.at(r), x, y, [this](const juce::String& err) {
+                if (err.isNotEmpty())
+                    juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "Load", err);
+                refreshAll();
+            });
         }
     });
 }
@@ -346,12 +363,16 @@ void PatchLinkEditor::doImport()
             auto f = fc->getResult();
             if (f.existsAsFile())
             {
-                juce::StringArray missing; juce::String err;
-                if (proc.importPatch(f, missing, err)) refreshAll();
-                else juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "Import", err);
-                if (missing.size() > 0)
-                    juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, "Plugins manquants",
-                        "Introuvables chez toi :\n- " + missing.joinIntoString("\n- "));
+                statusLabel.setText("Loading patch…", juce::dontSendNotification);
+                proc.importPatchAsync(f, [this](juce::StringArray missing, juce::String err) {
+                    if (err.isNotEmpty())
+                        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "Import", err);
+                    else
+                        refreshAll();
+                    if (missing.size() > 0)
+                        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, "Missing plugins",
+                            "Not found on your machine:\n- " + missing.joinIntoString("\n- "));
+                });
             }
         });
 }
@@ -372,10 +393,13 @@ void PatchLinkEditor::doExport()
         });
 }
 
-void PatchLinkEditor::doScan()
+void PatchLinkEditor::openScanDialog()
 {
-    statusLabel.setText("Scan en cours...", juce::dontSendNotification);
-    proc.scanDefaultPathsAsync();
+    scanWindow = std::make_unique<juce::DialogWindow>("Scan Manager", design::canvas, true, true);
+    scanWindow->setContentOwned(new ScanDialog(proc.getScanManager()), true);
+    scanWindow->setResizable(true, true);
+    scanWindow->centreAroundComponent(this, 720, 620);
+    scanWindow->setVisible(true);
 }
 
 void PatchLinkEditor::doShareViaCode()
@@ -406,21 +430,24 @@ void PatchLinkEditor::doOpenViaCode()
         if (r != 0) code = aw->getTextEditor("code")->getText();
         delete aw;
         if (r == 0 || code.trim().isEmpty()) return;
+        statusLabel.setText("Fetching code…", juce::dontSendNotification);
         juce::var patch; juce::String title, err;
         if (!ShareClient::fetch(code, apiBase, patch, title, err))
         {
             juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "PatchDrop", err);
             return;
         }
-        juce::StringArray missing;
-        if (!proc.loadFromVar(patch, missing))
-        {
-            juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "PatchDrop", "Patch unreadable.");
-            return;
-        }
-        refreshAll();
-        juce::String msg = "Loaded \"" + title + "\" (" + code.toUpperCase().trim() + ").";
-        if (missing.size() > 0) msg += "\nMissing plugins:\n- " + missing.joinIntoString("\n- ");
-        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, "PatchDrop", msg);
+        statusLabel.setText("Loading patch…", juce::dontSendNotification);
+        proc.loadFromVarAsync(patch, [this, code, title](juce::StringArray missing, juce::String loadErr) {
+            if (loadErr.isNotEmpty())
+            {
+                juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "PatchDrop", "Patch unreadable.");
+                return;
+            }
+            refreshAll();
+            juce::String msg = "Loaded \"" + title + "\" (" + code.toUpperCase().trim() + ").";
+            if (missing.size() > 0) msg += "\nMissing plugins:\n- " + missing.joinIntoString("\n- ");
+            juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, "PatchDrop", msg);
+        });
     }));
 }
