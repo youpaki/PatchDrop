@@ -2,230 +2,270 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PatchDrop — Multi-DAW FX Chain Sharing &amp; PatchLink</title>
-<meta name="description" content="PatchLink and PatchDrop by leve: pack VST3/AU effect chains into a 6-character code, import/export REAPER .RfxChain, Ableton .adg Racks, FL Studio .fst, and Steinberg .vstpreset chains across DAWs.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PatchDrop — Share any VST3 chain across DAWs</title>
+<meta name="description" content="Pack any VST3 effect chain into a 6-character code. Drag presets from the web into PatchLink, then straight into REAPER, Ableton Live, FL Studio, Cubase, or Studio One.">
+<link rel="stylesheet" href="style.css?v=1.6.1">
 </head>
 <body>
+
 <header class="nav">
-  <a class="logo" href="#top">
-    <span class="logo-mark" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2.5" y="7.5" width="11" height="9" rx="4.5"></rect>
-        <rect x="10.5" y="7.5" width="11" height="9" rx="4.5"></rect>
-      </svg>
-    </span>
-    <span class="logo-text">PATCHDROP</span>
-    <span class="logo-sub">BY LEVE</span>
-  </a>
-  <nav>
-    <a href="#daw-drop">Multi-DAW Drop</a>
-    <a href="#workflow">How it works</a>
-    <a href="#download">Download</a>
-    <a href="presets.html">Presets</a>
-    <a href="#publish">Publish</a>
-  </nav>
-  <a class="btn small secondary" href="#download">v1.6.0</a>
+  <div class="wrap">
+    <a class="logo" href="./">
+      <span class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M5 7h8l4 5-4 5H5l4-5-4-5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span class="logo-text">PATCHDROP</span>
+      <span class="logo-sub">v1.6.0</span>
+    </a>
+    <nav>
+      <a href="presets.html">Presets</a>
+      <a href="#publish">Publish</a>
+      <a href="#download">Download</a>
+    </nav>
+    <a class="btn small" href="#download">Get PatchLink</a>
+  </div>
 </header>
 
-<main id="top">
-  <section class="hero">
-    <div>
-      <div class="hero-eyebrow">VST3 + Standalone chainer · REAPER / Ableton Live / FL Studio / Cubase / Studio One</div>
-      <h1>Pack your FX rack into 6 characters.</h1>
-      <p class="lede">Drop FX chains from <b>REAPER</b> (<span class="mono">.RfxChain</span> / <span class="mono">.rpp</span>), <b>Ableton Live</b> (<span class="mono">.adg</span> / <span class="mono">.adv</span>), <b>FL Studio</b> (<span class="mono">.fst</span>), or <b>Cubase / Studio One / Bitwig</b> (<span class="mono">.vstpreset</span>) into PatchLink to share a 6-character code like <b class="code-inline">K7Q2XA</b>. To pull any community chain into your mix: <b>1) drag a preset card from this website into PatchLink</b>, then <b>2) drag from PatchLink straight into your DAW</b> — even in <b>Zero-Load</b> mode.</p>
-      <div class="hero-cta">
-        <a class="btn big" href="#download">Download PatchLink 1.6.0</a>
-        <a class="btn ghost big" href="presets.html">Browse community presets</a>
-      </div>
-      <div class="spec-line">Windows 64-bit VST3 + Standalone · Multi-DAW format auto-detection · Website → PatchLink → DAW</div>
+<section class="hero wrap">
+  <div>
+    <div class="pill">6-CHAR CODES &middot; CROSS-DAW FX CHAINS &middot; WINDOWS &amp; MACOS</div>
+    <h1>Share any VST3 chain<br>in 6 characters.</h1>
+    <p class="lede">
+      Drag presets from this site into <strong>PatchLink</strong>, then drag from PatchLink straight onto any mixer track in your DAW.
+    </p>
+    <div class="cta">
+      <a class="btn" href="downloads/PatchLink-Setup-1.6.0.exe" data-dl="win">Download PatchLink 1.6.0</a>
+      <a class="btn secondary" href="presets.html">Browse presets</a>
     </div>
+    <p class="hero-note">
+      Windows 10/11 (64-bit VST3 &amp; Standalone) &middot; Open source
+    </p>
+  </div>
 
-    <div class="rack-preview" aria-label="Example PatchLink chain manifest">
+  <div class="hero-side">
+    <div class="rack" aria-hidden="true">
       <div class="rack-head">
-        <span>CHAIN // LEAD_VOX_26</span>
+        <span class="rack-dot"></span>
+        <span class="mono">PATCHLINK RACK</span>
         <span class="rack-code">K7Q2XA</span>
       </div>
       <div class="rack-slots">
-        <div class="rack-slot"><div><span class="idx">01</span><b>FabFilter Pro-Q 3</b></div><span class="fmt">VST3</span></div>
-        <div class="rack-slot"><div><span class="idx">02</span><b>Auto-Tune Pro</b></div><span class="fmt">VST3</span></div>
-        <div class="rack-slot"><div><span class="idx">03</span><b>CLA-76 Stereo</b></div><span class="fmt">VST3</span></div>
-        <div class="rack-slot"><div><span class="idx">04</span><b>FabFilter Pro-R</b></div><span class="fmt">VST3</span></div>
+        <div class="rack-slot"><span class="idx">01</span><span>FabFilter Pro-Q 3</span><span class="fmt">VST3</span></div>
+        <div class="rack-slot"><span class="idx">02</span><span>Soundtoys Decapitator</span><span class="fmt">VST3</span></div>
+        <div class="rack-slot"><span class="idx">03</span><span>Valhalla VintageVerb</span><span class="fmt">VST3</span></div>
+        <div class="rack-slot"><span class="idx">04</span><span>CLA-76 Stereo</span><span class="fmt">VST3</span></div>
       </div>
       <div class="rack-foot">
-        <span>4/4 VST3 blobs packed</span>
-        <span>REAPER · ABLETON · FL · VST3</span>
-      </div>
-    </div>
-  </section>
-
-  <section id="daw-drop" class="section">
-    <h2>Multi-DAW Mixer &amp; FX Chain Drag &amp; Drop</h2>
-    <p class="sub">Translate complete third-party VST3 chains between DAWs without rebuilding racks by hand: import chains from any supported DAW, share by 6-character code, and unpack natively into whichever DAW you use.</p>
-
-    <div class="fl-drop-grid">
-      <div class="fl-card">
-        <div class="fl-card-tag">Direction 1 · Any DAW / Explorer → PatchLink</div>
-        <h3>Drop Mixer Chains &amp; Racks</h3>
-        <p>Drag or import an entire chain directly from your DAW or file explorer into PatchLink — no manual recreation required:</p>
-        <div class="fl-diagram">
-          <div class="fl-menu-mock">
-            <div class="fl-menu-item active">REAPER (.RfxChain / .rpp)</div>
-            <div class="fl-menu-item active">Ableton Live (.adg / .adv)</div>
-            <div class="fl-menu-item active">FL (.fst) · VST3 (.vstpreset)</div>
-          </div>
-          <div class="fl-arrow">drop →</div>
-          <div class="fl-rack-mock">
-            <div class="fl-rack-label">Zero-Load or Live Host</div>
-            <div class="fl-rack-chip">Share 6-char code instantly</div>
-            <div class="fl-rack-chip">Convert / Drag to another DAW</div>
-            <div class="fl-rack-chip dim">Or load live in PatchLink</div>
-          </div>
-        </div>
-        <p>When PatchLink is empty, dropping any DAW file offers <b>Zero-Load mode</b> so you can generate a code or convert to another DAW's format immediately without loading plugin binaries.</p>
-      </div>
-
-      <div class="fl-card">
-        <div class="fl-card-tag">Direction 2 · Website → PatchLink → Any DAW</div>
-        <h3>Two-Step Drag: Website → PatchLink → DAW</h3>
-        <p>Browsers can't drop files directly onto DAW mixer tracks, so PatchLink bridges every drop cleanly: <b>1) drag any preset card from this website into PatchLink</b>, then <b>2) drag from PatchLink into your DAW</b>.</p>
-        <div class="fl-diagram">
-          <div class="fl-menu-mock">
-            <div class="fl-menu-item active">1. Web card → PatchLink</div>
-            <div class="fl-menu-item active">2. → REAPER (.RfxChain) / FL (.fst)</div>
-            <div class="fl-menu-item active">2. → Ableton (.adg) / .vstpreset</div>
-          </div>
-          <div class="fl-arrow">2 steps →</div>
-          <div class="fl-rack-mock">
-            <div class="fl-rack-label">Unpacked Native Slots</div>
-            <div class="fl-rack-chip">01 Pro-Q 3 (native slot)</div>
-            <div class="fl-rack-chip">02 Auto-Tune Pro</div>
-            <div class="fl-rack-chip dim">03 Preserves states + bypass</div>
-          </div>
-        </div>
-        <p>PatchLink auto-detects its host DAW (<span class="mono">.RfxChain</span> in REAPER, <span class="mono">.adg</span> Audio Effect Rack in Ableton Live, <span class="mono">.fst</span> in FL Studio, <span class="mono">.vstpreset</span> in Cubase / Studio One / Bitwig, or asks in Standalone).</p>
+        <span>Site &rarr; PatchLink &rarr; DAW</span>
+        <span>Auto DAW export</span>
       </div>
     </div>
 
-    <div class="fl-note">
-      <b>Browser workflow:</b> Drop <span class="mono">.RfxChain</span>, <span class="mono">.rpp</span>, <span class="mono">.adg</span>, <span class="mono">.adv</span>, <span class="mono">.fst</span>, <span class="mono">.vstpreset</span>, <span class="mono">.fxchainpreset</span>, <span class="mono">.bwpreset</span>, or <span class="mono">.patchlink</span> files onto <a href="#publish">Publish</a> below to create a share code. To bring a web chain into your DAW: <b>1)</b> drag the preset card into <b>PatchLink</b>, then <b>2)</b> drag from <b>PatchLink</b> straight into your DAW (or click the <span class="mono">FL .fst</span>, <span class="mono">REAPER</span>, <span class="mono">Ableton</span>, or <span class="mono">.vstpreset</span> pill to download a converted file directly).
+    <div class="hero-drop-box" id="hero-drop-box" role="button" tabindex="0" title="Drop a DAW preset or click to pick a file">
+      <strong>Drop a chain from FL Studio, REAPER, Ableton, or Cubase here</strong>
+      <span id="hero-drop-summary">or click to pick a file (<span class="mono">.fst, .RfxChain, .adg, .vstpreset, .patchlink</span>) &rarr; instant 6-char code</span>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section id="workflow" class="section">
-    <h2>How PatchLink works</h2>
-    <div class="steps">
-      <div class="step"><b>STEP 01</b><h3>Drop, build, or fetch</h3><p>Drag any preset card from this website into <b>PatchLink</b>, drop <span class="mono">.RfxChain</span>, <span class="mono">.adg</span>, <span class="mono">.fst</span>, or <span class="mono">.vstpreset</span> files, or paste a 6-character code.</p></div>
-      <div class="step"><b>STEP 02</b><h3>Share code or file</h3><p>Click <i>Share</i> inside PatchLink, or drop any supported DAW preset file directly onto this website to publish a 6-character code in your browser.</p></div>
-      <div class="step"><b>STEP 03</b><h3>Host or unpack in DAW</h3><p>Run the chain inside PatchLink, or drag PatchLink's <b>Drag</b> handle straight into REAPER, Ableton Live, FL Studio, Cubase, or Studio One — even in Zero-Load mode.</p></div>
+<section class="wrap daw-strip" aria-label="Supported DAWs">
+  <span class="daw-strip-label">WORKS WITH</span>
+  <div class="daw-logos-bar">
+    <div class="daw-logo-pill" title="REAPER — .RfxChain &amp; .rpp">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="2" y="2" width="20" height="20" rx="5" fill="#132a1e" stroke="#22d87a" stroke-width="1.5"/>
+        <path d="M16.5 6.5c-3.8 0-6.8 2.4-7.8 5.8-.5 1.8-.4 3.6.3 5.2l2.1-1.2c-.4-1-.4-2.1-.1-3.2.6-2 2.4-3.6 4.7-4l-3.4 8.4h2.4l3.5-8.6c.4-.9-.2-2.4-1.7-2.4z" fill="#22d87a"/>
+      </svg>
+      <span>REAPER</span>
+      <small>.RfxChain</small>
     </div>
-    <div class="warn">All VST3 state blobs stay intact even in Zero-Load mode, so you can convert chains between REAPER (.RfxChain), Ableton (.adg), FL Studio (.fst), and Steinberg (.vstpreset) without owning or opening the plugins on the converting machine.</div>
-  </section>
 
-  <section id="download" class="section">
-    <h2>Download</h2>
-    <p class="sub">Install PatchLink on both computers, scan your VST3 folder once under <b>Library</b>, and trade chains across DAWs by code, file, or direct drag-and-drop.</p>
-    <div class="dl-grid">
-      <div class="dl-card featured">
-        <div class="dl-tag">Windows 64-bit · v1.6.0</div>
-        <h3>Windows Installer</h3>
-        <p>Includes both the VST3 plugin and Standalone executable. Close your DAW before running so Windows can update the VST3 cleanly.</p>
-        <a class="btn" href="releases/PatchLink-Setup-1.6.0.exe" data-dl>PatchLink-Setup-1.6.0.exe</a>
-        <ol class="how">
-          <li>Run setup (admin needed for the shared VST3 directory)</li>
-          <li>VST3 installs to <span class="mono">C:\Program Files\Common Files\VST3\</span></li>
-          <li>Open REAPER, Ableton, FL, Cubase, or Studio One, rescan plugins, and load <b>PatchLink</b></li>
-        </ol>
-      </div>
-      <div class="dl-card">
-        <div class="dl-tag">macOS · Source / CMake</div>
-        <h3>macOS (VST3 + AU)</h3>
-        <p>JUCE 8 CMake project supporting VST3 and native Audio Unit hosting for Ableton Live, REAPER, and Logic Pro.</p>
-        <a class="btn secondary" href="releases/PatchLink-macOS.zip" data-dl>PatchLink-macOS.zip</a>
-        <ol class="how">
-          <li>Build via CMake or extract prebuilt components when posted</li>
-          <li>Copy VST3 → <span class="mono">/Library/Audio/Plug-Ins/VST3</span></li>
-          <li>Rescan in your DAW and open any PatchDrop code</li>
-        </ol>
-      </div>
-      <div class="dl-card alt">
-        <div class="dl-tag">What's New</div>
-        <h3>v1.6.0 Highlights</h3>
-        <ol class="how">
-          <li>Native Ableton Live <span class="mono">.adg</span> / <span class="mono">.adv</span> Rack &amp; 3-chunk REAPER <span class="mono">.RfxChain</span> / <span class="mono">.rpp</span> import &amp; export</li>
-          <li>Import <span class="mono">.vstpreset</span>, <span class="mono">.fxchainpreset</span>, <span class="mono">.fxchain</span>, <span class="mono">.bwpreset</span>, and FL <span class="mono">.fst</span> chains cleanly</li>
-          <li>Multi-DAW preset cards &amp; server conversion endpoints on PatchDrop</li>
-        </ol>
-      </div>
+    <div class="daw-logo-pill" title="Ableton Live — .adg &amp; .adv">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="2" y="2" width="20" height="20" rx="5" fill="#1b1c20" stroke="#454752" stroke-width="1.5"/>
+        <g fill="#f0f0f3">
+          <rect x="5" y="6" width="1.6" height="5.5"/>
+          <rect x="7.5" y="6" width="1.6" height="5.5"/>
+          <rect x="10" y="6" width="1.6" height="5.5"/>
+          <rect x="12.5" y="6" width="1.6" height="5.5"/>
+          <rect x="5" y="13.2" width="5.8" height="1.4"/>
+          <rect x="5" y="15.5" width="5.8" height="1.4"/>
+          <rect x="5" y="17.8" width="5.8" height="1.4"/>
+          <rect x="12.8" y="13.2" width="6.2" height="1.4" fill="#ff7b3b"/>
+          <rect x="12.8" y="15.5" width="6.2" height="1.4" fill="#ff7b3b"/>
+          <rect x="12.8" y="17.8" width="6.2" height="1.4" fill="#ff7b3b"/>
+        </g>
+      </svg>
+      <span>Ableton Live</span>
+      <small>.adg</small>
     </div>
-    <p class="tiny" id="dl-note">Current official Windows release: v1.6.0. Source code, multi-DAW preset converters, and installer script on GitHub: <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.</p>
-  </section>
 
-  <section id="explorer" class="section">
-    <div class="row-head">
-      <div>
-        <h2>Community presets</h2>
-        <p class="sub">Latest chains uploaded by users. Drag any card below into <b>PatchLink</b>, then drag from <b>PatchLink</b> into your DAW — or use the per-DAW export buttons on each card.</p>
-      </div>
-      <a class="btn small secondary" href="presets.html">Open full directory →</a>
+    <div class="daw-logo-pill" title="FL Studio — Mixer &amp; Patcher .fst">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="2" y="2" width="20" height="20" rx="5" fill="#2b170b" stroke="#ff7a18" stroke-width="1.5"/>
+        <path d="M12.2 7.2c1.2-1.8 3-2 4.3-1.4-.5 1.4-1.7 2.4-3.4 2.5z" fill="#4cd964"/>
+        <path d="M12.2 8.2c-2.6 0-4.4 1.9-4.1 4.6.3 2.5 2 4.8 4.1 5.2 2.1-.4 3.8-2.7 4.1-5.2.3-2.7-1.5-4.6-4.1-4.6z" fill="#ff7a18"/>
+        <path d="M10.2 10.6c-.4.9-.5 2-.2 3.1" stroke="#ffd2a6" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      <span>FL Studio</span>
+      <small>.fst</small>
     </div>
-    <div id="preview-cats" class="cat-tabs" aria-label="Preset categories"></div>
-    <div id="preview-tags" class="tag-bar" aria-label="Popular hashtags"></div>
-    <div id="preview-grid" class="grid"><div class="empty">Loading preview…</div></div>
-    <div class="preview-bar">
-      <span id="preview-count" class="filter-status"></span>
-      <a class="btn secondary" href="presets.html">Explore all community presets, categories &amp; #tags →</a>
+
+    <div class="daw-logo-pill" title="Cubase &amp; Nuendo — .vstpreset">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="2" y="2" width="20" height="20" rx="5" fill="#2a1119" stroke="#ff3b5c" stroke-width="1.5"/>
+        <path d="M15.8 8.3a5.3 5.3 0 1 0 0 7.4" stroke="#ff3b5c" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="15.8" cy="12" r="1.7" fill="#f3f3f5"/>
+      </svg>
+      <span>Cubase</span>
+      <small>.vstpreset</small>
     </div>
-  </section>
 
-  <section id="publish" class="section">
-    <h2>Publish from any DAW file or drag &amp; drop</h2>
-    <p class="sub">Drop an <span class="mono">.RfxChain</span> / <span class="mono">.rpp</span>, Ableton <span class="mono">.adg</span> / <span class="mono">.adv</span>, FL Studio <span class="mono">.fst</span>, <span class="mono">.vstpreset</span> / <span class="mono">.fxchainpreset</span>, or <span class="mono">.patchlink</span> file straight onto this window, add a category and <span class="mono">#tags</span>, and generate a share code in your browser.</p>
-    <form id="pubform" class="pub">
-      <div class="pub-row">
-        <label>Title<input id="f-title" maxlength="80" placeholder="Lead vocal chain" required></label>
-        <label>Author<input id="f-author" maxlength="40" placeholder="leve"></label>
-      </div>
-      <div class="pub-row">
-        <label>Category
-          <select id="f-category">
-            <option value="">Auto-detect from title &amp; plugins</option>
-            <option value="vocals">Vocals</option>
-            <option value="master">Mix Bus &amp; Master</option>
-            <option value="drums">Drums &amp; 808</option>
-            <option value="synths">Synths &amp; Pads</option>
-            <option value="inst">Guitars &amp; Keys</option>
-            <option value="fx">FX &amp; Creative</option>
-          </select>
-        </label>
-        <label>Hashtags<input id="f-tags" maxlength="160" placeholder="#vocals #rap #warmth"></label>
-      </div>
-      <label>Description<input id="f-desc" maxlength="500" placeholder="Pro-Q 3 -> CLA-76 -> Pro-DS"></label>
-      <div id="drop-box" class="drop-hint-box">
-        <label>DAW chain or preset file<input id="f-file" type="file" accept=".patchlink,.fst,.rfxchain,.rpp,.adg,.adv,.als,.vstpreset,.bwpreset,.fxchainpreset,.fxchain,.multipreset,.json,application/json" required></label>
-        <div id="drop-summary" class="drop-summary">Or drag &amp; drop .RfxChain, .adg, .fst, .vstpreset, or .patchlink anywhere on this page.</div>
-      </div>
-      <label class="check"><input id="f-public" type="checkbox" checked> List publicly in community presets</label>
-      <button class="btn big" type="submit">Upload and generate code</button>
-      <div id="pubres"></div>
-    </form>
-  </section>
+    <div class="daw-logo-pill" title="Studio One — .vstpreset">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="2" y="2" width="20" height="20" rx="5" fill="#0e2236" stroke="#38a3ff" stroke-width="1.5"/>
+        <path d="M7.5 15.2c1.5-4.2 5-6.9 9.5-7.4-1.6 4.1-5.1 6.8-9.5 7.4z" stroke="#38a3ff" stroke-width="1.9" stroke-linejoin="round"/>
+        <circle cx="12.2" cy="11.6" r="1.6" fill="#38a3ff"/>
+      </svg>
+      <span>Studio One</span>
+      <small>.vstpreset</small>
+    </div>
 
-  <section class="section faq">
-    <h2>Technical FAQ</h2>
-    <details open><summary>How do Multi-DAW Drag &amp; Drop and Zero-Load mode work?</summary><p><b>Step 1 (Website → PatchLink):</b> Drag any preset card or DAW pill from this website onto PatchLink (or paste its 6-character code), or drop local <span class="mono">.RfxChain</span>, <span class="mono">.adg</span>, <span class="mono">.fst</span>, or <span class="mono">.vstpreset</span> files onto PatchLink. <b>Step 2 (PatchLink → DAW):</b> PatchLink auto-detects its host DAW — <b>REAPER</b> gets <span class="mono">.RfxChain</span>, <b>Ableton Live</b> gets an <span class="mono">.adg</span> Audio Effect Rack, <b>FL Studio</b> gets <span class="mono">.fst</span>, and <b>Cubase / Nuendo / Studio One / Bitwig</b> get <span class="mono">.vstpreset</span> (Standalone asks you to choose). In Zero-Load mode, PatchLink keeps raw binary VST3 states in RAM so you can convert or drag into your DAW without instantiating plugins.</p></details>
-    <details><summary>Which DAW built-in plugins don't transfer across DAWs?</summary><p>DAW-exclusive stock plugins (Ableton EQ Eight, REAPER JSFX, FL WaveShaper, etc.) only exist inside their own host engine and can't run inside third-party DAWs. When you import a project or rack, PatchLink keeps all third-party VST3 slots with their exact states and bypass flags and notes any DAW-native slots cleanly.</p></details>
-    <details><summary>What happens if my friend doesn't own one of the VST3 plugins?</summary><p>PatchLink resolves each plugin by format, Steinberg FUID/UID, and name across FL Studio, REAPER, Cubase, Ableton, and standard VST3 scans. Installed plugins load with full state; missing plugins are reported clearly without crashing the host or deleting saved data.</p></details>
-    <details><summary>My plugin list inside PatchLink is empty after installing</summary><p>Open <b>Library</b> in the top bar and click <i>Scan selected</i>. Standard VST3 system paths and detected DAW folders (FL Studio, REAPER, Ableton, Cubase) are pre-listed automatically, and any unstable plugins are quarantined in the blacklist.</p></details>
-    <details><summary>Max preset size?</summary><p>Up to 12 MB per uploaded patch, covering multi-plugin chains and binary VST3 preset states.</p></details>
-  </section>
-</main>
+    <div class="daw-logo-pill" title="Bitwig Studio — .vstpreset">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="2" y="2" width="20" height="20" rx="5" fill="#29140d" stroke="#ff5a26" stroke-width="1.5"/>
+        <g fill="#ff5a26">
+          <circle cx="8" cy="9.5" r="1.4"/>
+          <circle cx="12" cy="9.5" r="1.4"/>
+          <circle cx="16" cy="9.5" r="1.4"/>
+          <circle cx="8" cy="14" r="1.4"/>
+          <circle cx="12" cy="14" r="1.4"/>
+          <circle cx="16" cy="14" r="1.4"/>
+        </g>
+      </svg>
+      <span>Bitwig</span>
+      <small>.vstpreset</small>
+    </div>
+  </div>
+</section>
 
-<footer>PATCHDROP · PatchLink v1.6.0 by leve · <a href="presets.html">Community presets</a> · <a href="#top">Top</a></footer>
-<script src="app.js"></script>
+<section class="wrap section" id="workflow">
+  <h2>How it works</h2>
+  <div class="steps">
+    <div class="step">
+      <b>STEP 01</b>
+      <h3>Website &rarr; PatchLink</h3>
+      <p>Drag any preset card from this site onto PatchLink (or paste its 6-character code). Works even without all plugins installed.</p>
+    </div>
+    <div class="step">
+      <b>STEP 02</b>
+      <h3>PatchLink &rarr; Your DAW</h3>
+      <p>Drag PatchLink&rsquo;s toolbar handle onto any mixer track. It auto-detects your DAW and converts every plugin slot natively.</p>
+    </div>
+    <div class="step">
+      <b>STEP 03</b>
+      <h3>Share in 6 chars</h3>
+      <p>Drop a chain file from REAPER, Ableton, FL Studio, Cubase, or Studio One onto this page or PatchLink to get a 6-char code.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap section" id="explorer">
+  <div class="row-head">
+    <div>
+      <h2>Community presets</h2>
+      <p class="sub">Drag any card straight onto PatchLink &mdash; or copy its 6-character code.</p>
+    </div>
+    <a class="btn secondary" href="presets.html">Browse all presets &rarr;</a>
+  </div>
+  <div id="preview-cats" class="cat-tabs"></div>
+  <div id="preview-tags" class="tag-bar"></div>
+  <p id="preview-count" class="filter-status"></p>
+  <div id="preview-grid" class="grid"></div>
+</section>
+
+<section class="wrap section" id="publish">
+  <h2>Share a chain</h2>
+  <p class="sub">
+    Drop any DAW preset or <span class="code-inline">.patchlink</span> file below to turn it into a 6-character code.
+  </p>
+
+  <form id="pubform" class="pub">
+    <div class="drop-hint-box" id="drop-box">
+      <strong>Drop a chain file anywhere here</strong>
+      <span id="drop-summary">Supports REAPER, Ableton, FL Studio, Cubase/Studio One, or .patchlink &mdash; plugin names &amp; metadata auto-fill.</span>
+      <input id="f-file" type="file" accept=".patchlink,.fst,.rfxchain,.RfxChain,.rpp,.RPP,.adg,.adv,.vstpreset,application/json">
+    </div>
+
+    <div class="pub-row">
+      <label>Title <input id="f-title" required placeholder="e.g. Clean Pop Vocal Chain"></label>
+      <label>Author <input id="f-author" placeholder="Your name or handle"></label>
+    </div>
+    <div class="pub-row">
+      <label>Category
+        <select id="f-category">
+          <option value="vocals">Vocals</option>
+          <option value="drums">Drums</option>
+          <option value="bass">Bass &amp; 808</option>
+          <option value="guitar">Guitar &amp; Keys</option>
+          <option value="master">Master &amp; Bus</option>
+          <option value="creative">Creative &amp; FX</option>
+          <option value="other" selected>Other</option>
+        </select>
+      </label>
+      <label>Tags (comma or # separated) <input id="f-tags" placeholder="#vocal, #rap, #clean"></label>
+    </div>
+    <label>Description <input id="f-desc" placeholder="Signal path or quick mixing tips (optional)"></label>
+    <label class="check"><input id="f-public" type="checkbox" checked> List publicly in Community Presets</label>
+    <button class="btn" type="submit">Publish &amp; generate code</button>
+    <div id="pubres"></div>
+  </form>
+</section>
+
+<section class="wrap section" id="download">
+  <h2>Download PatchLink</h2>
+  <p class="sub">Load PatchLink as a VST3 insert or launch the Standalone converter alongside any DAW.</p>
+  <div class="dl-grid dl-grid-2">
+    <div class="dl-card featured">
+      <div class="dl-tag">WINDOWS 64-BIT &middot; VST3 + STANDALONE</div>
+      <h3>PatchLink 1.6.0 Installer</h3>
+      <p>Installs the VST3 plugin into <span class="mono">Common Files\VST3</span> plus the Standalone app for quick cross-DAW drag &amp; drop.</p>
+      <a class="btn" href="downloads/PatchLink-Setup-1.6.0.exe" data-dl="win">Download Installer (.exe)</a>
+    </div>
+
+    <div class="dl-card">
+      <div class="dl-tag">MACOS &amp; SOURCE BUILD</div>
+      <h3>Build via CMake</h3>
+      <p>Full JUCE 8 source repository for macOS Universal (Apple Silicon + Intel) and Windows development.</p>
+      <a class="btn secondary" href="https://github.com/youpaki/PatchDrop" target="_blank" rel="noopener">Open on GitHub</a>
+    </div>
+  </div>
+  <p id="dl-note" class="tiny"></p>
+</section>
+
+<section class="wrap section faq" id="faq">
+  <h2>FAQ</h2>
+  <details>
+    <summary>Why Website &rarr; PatchLink &rarr; DAW instead of dragging straight into my DAW?</summary>
+    <p>Web browsers cannot drop native binary files directly into external desktop apps on Windows/macOS. PatchLink accepts browser drops (cards, links, or 6-char codes), then hands your DAW the real native file on disk when you drag from PatchLink&rsquo;s toolbar.</p>
+  </details>
+  <details>
+    <summary>Which DAW formats does PatchLink convert between?</summary>
+    <p>PatchLink auto-detects its host DAW or lets you choose the target in Standalone mode: REAPER (<span class="mono">.RfxChain</span>), Ableton Live (<span class="mono">.adg</span>), FL Studio (<span class="mono">.fst</span>), and Cubase / Studio One / Bitwig (<span class="mono">.vstpreset</span>).</p>
+  </details>
+  <details>
+    <summary>Can I convert or share a chain without having every plugin installed?</summary>
+    <p>Yes. PatchLink stores and translates the raw plugin names, IDs, and VST3 states without needing to instantiate every effect inside the rack first.</p>
+  </details>
+</section>
+
+<footer>
+  PatchDrop &amp; PatchLink &middot; Built by <a href="https://github.com/youpaki" target="_blank" rel="noopener">youpaki</a> &middot; <a href="presets.html">Community Presets</a> &middot; <a href="#download">v1.6.0</a>
+</footer>
+
+<script src="app.js?v=1.6.1"></script>
 </body>
 </html>

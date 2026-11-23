@@ -706,7 +706,7 @@ function buildPresetCard(p, { isPreview = false, activeTag = '', onTagSelect = n
   if (Array.isArray(p.tags) && p.tags.length) {
     const tagsEl = document.createElement('div');
     tagsEl.className = 'card-tags';
-    for (const rawTag of p.tags.slice(0, 6)) {
+    for (const rawTag of p.tags.slice(0, 3)) {
       const slug = rawTag.replace(/^#+/, '').toLowerCase();
       if (isPreview) {
         const a = document.createElement('a');
@@ -728,12 +728,18 @@ function buildPresetCard(p, { isPreview = false, activeTag = '', onTagSelect = n
 
   const pl = document.createElement('div');
   pl.className = 'plugins';
-  const pluginList = (p.plugins || []).slice(0, 6);
+  const allPlugins = p.plugins || [];
+  const pluginList = allPlugins.slice(0, 4);
   if (pluginList.length) {
     for (const n of pluginList) {
       const s = document.createElement('span');
       s.textContent = n;
       pl.appendChild(s);
+    }
+    if (allPlugins.length > 4) {
+      const more = document.createElement('span');
+      more.textContent = `+${allPlugins.length - 4}`;
+      pl.appendChild(more);
     }
   } else {
     const s = document.createElement('span');
@@ -752,36 +758,35 @@ function buildPresetCard(p, { isPreview = false, activeTag = '', onTagSelect = n
     copyBtn.textContent = 'Copied ✓';
     setTimeout(() => { copyBtn.textContent = 'Copy code'; }, 1600);
   };
-  const dlBtn = document.createElement('button');
-  dlBtn.type = 'button';
-  dlBtn.textContent = '.patchlink';
-  dlBtn.onclick = () => { window.location.href = `api/p/${p.code}/download`; };
-  row.append(copyBtn, dlBtn);
 
-  const dawRow = document.createElement('div');
-  dawRow.className = 'daw-row';
-  const dawTargets = [
-    { label: 'FL .fst', ext: 'fst', tip: 'FL Studio .fst — drag to PatchLink or click to download' },
-    { label: 'REAPER', ext: 'RfxChain', tip: 'REAPER .RfxChain — drag to PatchLink or click to download' },
-    { label: 'Ableton', ext: 'adg', tip: 'Ableton Live Rack .adg — drag to PatchLink or click to download' },
-    { label: '.vstpreset', ext: 'vstpreset', tip: 'VST3 Preset (Cubase/Studio One/Bitwig) — drag to PatchLink or click to download' },
+  const dlSelect = document.createElement('select');
+  dlSelect.className = 'dl-select';
+  dlSelect.setAttribute('aria-label', 'Download format');
+  const dlOptions = [
+    { value: '', label: 'Download ▾' },
+    { value: 'patchlink', label: 'PatchLink (.patchlink)' },
+    { value: 'RfxChain', label: 'REAPER (.RfxChain)' },
+    { value: 'adg', label: 'Ableton Live (.adg)' },
+    { value: 'fst', label: 'FL Studio (.fst)' },
+    { value: 'vstpreset', label: 'Cubase / Studio One (.vstpreset)' },
   ];
-  for (const d of dawTargets) {
-    const a = document.createElement('a');
-    a.className = 'btn-daw';
-    a.draggable = true;
-    a.href = `api/p/${p.code}/patchdrop-${p.code}.${d.ext}`;
-    a.setAttribute('download', `patchdrop-${p.code}.${d.ext}`);
-    a.title = `Step 1: Drag onto PatchLink (Step 2: drag to your DAW) — or click to download ${d.tip}`;
-    a.textContent = d.label;
-    a.addEventListener('dragstart', (ev) => {
-      ev.stopPropagation();
-      attachDawDragData(ev, p, d.ext);
-    });
-    dawRow.appendChild(a);
+  for (const opt of dlOptions) {
+    const o = document.createElement('option');
+    o.value = opt.value;
+    o.textContent = opt.label;
+    dlSelect.appendChild(o);
   }
+  dlSelect.addEventListener('change', () => {
+    const ext = dlSelect.value;
+    if (!ext) return;
+    dlSelect.selectedIndex = 0;
+    window.location.href = ext === 'patchlink'
+      ? `api/p/${p.code}/download`
+      : `api/p/${p.code}/patchdrop-${p.code}.${ext}`;
+  });
 
-  el.append(row, dawRow);
+  row.append(copyBtn, dlSelect);
+  el.append(row);
   return el;
 }
 
@@ -1025,15 +1030,42 @@ if (pubForm) {
   const titleInput = document.getElementById('f-title');
   const dropBox = document.getElementById('drop-box');
   const dropSummary = document.getElementById('drop-summary');
+  const heroDropBox = document.getElementById('hero-drop-box');
+  const heroDropSummary = document.getElementById('hero-drop-summary');
+
+  const setDropStatus = (msg) => {
+    if (dropSummary) dropSummary.textContent = msg;
+    if (heroDropSummary) heroDropSummary.textContent = msg;
+  };
+
+  const setDragActive = (active) => {
+    veil.classList.toggle('active', active);
+    if (dropBox) dropBox.classList.toggle('dragover', active);
+    if (heroDropBox) heroDropBox.classList.toggle('dragover', active);
+  };
 
   const veil = document.createElement('div');
   veil.className = 'page-drop-veil';
   veil.textContent = 'Drop any DAW chain (.fst, .RfxChain, .adg, .vstpreset, .patchlink) to publish a code';
   document.body.appendChild(veil);
 
+  if (heroDropBox && fileInput) {
+    heroDropBox.addEventListener('click', () => {
+      fileInput.click();
+      pubForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    heroDropBox.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        fileInput.click();
+        pubForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  }
+
   const loadLocalPresetFile = async (f) => {
     if (!f) return;
-    if (dropSummary) dropSummary.textContent = 'Parsing ' + f.name + '…';
+    setDropStatus('Parsing ' + f.name + '…');
     try {
       const res = await parseAnyDawFileInBrowser(f);
       const patch = res.patch;
@@ -1044,12 +1076,10 @@ if (pubForm) {
         titleInput.value = (patch.name && patch.name !== 'Untitled chain') ? patch.name : f.name.replace(/\.[^/.]+$/, '');
       }
       const names = (patch.nodes || []).map((n) => (n.ids && n.ids.name) || n.name || '?').filter(Boolean);
-      if (dropSummary) {
-        dropSummary.textContent = `Loaded ${f.name}: ${names.length} plugin(s) [${names.slice(0, 6).join(', ')}]${note}`;
-      }
+      setDropStatus(`Loaded ${f.name}: ${names.length} plugin(s) [${names.slice(0, 6).join(', ')}]${note}`);
     } catch (err) {
       stagedFilePatch = null;
-      if (dropSummary) dropSummary.textContent = 'Error reading ' + f.name + ': ' + err.message;
+      setDropStatus('Error reading ' + f.name + ': ' + err.message);
     }
   };
 
@@ -1059,40 +1089,51 @@ if (pubForm) {
     });
   }
 
+  const isFileDrag = (e) => {
+    const dt = e.dataTransfer;
+    if (!dt) return false;
+    const types = Array.from(dt.types || []);
+    if (types.includes('Files') || types.includes('application/x-moz-file')) return true;
+    return Array.from(dt.items || []).some((it) => it.kind === 'file');
+  };
+
   let dragDepth = 0;
-  window.addEventListener('dragenter', (e) => {
-    if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) {
-      dragDepth++;
-      veil.classList.add('active');
-      if (dropBox) dropBox.classList.add('dragover');
-    }
-  });
-  window.addEventListener('dragover', (e) => {
-    if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) {
+  document.addEventListener('dragenter', (e) => {
+    if (isFileDrag(e)) {
       e.preventDefault();
+      e.stopPropagation();
+      dragDepth++;
+      setDragActive(true);
     }
-  });
-  window.addEventListener('dragleave', () => {
+  }, true);
+  document.addEventListener('dragover', (e) => {
+    if (isFileDrag(e)) {
+      e.preventDefault();
+      e.stopPropagation();
+      try { e.dataTransfer.dropEffect = 'copy'; } catch {}
+    }
+  }, true);
+  document.addEventListener('dragleave', () => {
     dragDepth = Math.max(0, dragDepth - 1);
-    if (dragDepth === 0) {
-      veil.classList.remove('active');
-      if (dropBox) dropBox.classList.remove('dragover');
-    }
-  });
-  window.addEventListener('drop', (e) => {
+    if (dragDepth === 0) setDragActive(false);
+  }, true);
+  document.addEventListener('drop', (e) => {
     dragDepth = 0;
-    veil.classList.remove('active');
-    if (dropBox) dropBox.classList.remove('dragover');
+    setDragActive(false);
     const files = e.dataTransfer && e.dataTransfer.files;
-    if (files && files.length) {
-      const f = files[0];
-      if (/\.(fst|rfxchain|rpp|adg|adv|als|vstpreset|bwpreset|fxchainpreset|fxchain|multipreset|patchlink|json)$/i.test(f.name)) {
-        e.preventDefault();
+    if (isFileDrag(e) || (files && files.length)) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (files && files.length) {
+        const f = files[0];
         loadLocalPresetFile(f);
+        pubForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        setDropStatus('Browser did not receive a readable file from that drag — drop it onto PatchLink or click to pick the file.');
         pubForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
-  });
+  }, true);
 
   pubForm.addEventListener('submit', async (e) => {
     e.preventDefault();

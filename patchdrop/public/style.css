@@ -803,8 +803,113 @@ footer {
 footer a { color: var(--muted); text-decoration: none; }
 footer a:hover { color: var(--accent); }
 
+/* Clean DAW logos strip, hero drop zone, and simplified card download menu */
+.hero { padding: 40px 24px 18px; }
+.section { padding: 36px 24px 8px; }
+
+.hero-side {
+  display: grid;
+  gap: 12px;
+}
+
+.hero-drop-box {
+  border: 1.5px dashed rgba(240, 126, 62, 0.5);
+  background: rgba(240, 126, 62, 0.06);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.hero-drop-box:hover,
+.hero-drop-box.dragover {
+  border-color: var(--accent);
+  background: rgba(240, 126, 62, 0.14);
+}
+.hero-drop-box strong {
+  display: block;
+  font-size: 13.5px;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.hero-drop-box span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.daw-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 24px 6px;
+}
+.daw-strip-compact {
+  padding: 14px 0 4px;
+}
+.daw-strip-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.09em;
+  color: var(--faint);
+  white-space: nowrap;
+}
+.daw-logos-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 1;
+}
+.daw-logo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 11px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  background: var(--card);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+.daw-logo-pill svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.daw-logo-pill small {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 400;
+  color: var(--faint);
+}
+
+.dl-grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.dl-select {
+  flex: 1.4;
+  min-width: 0;
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid rgba(240, 126, 62, 0.35);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  font-size: 12.5px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.dl-select:hover,
+.dl-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--raised);
+}
+
 @media (max-width: 900px) {
-  .hero, .fl-drop-grid, .steps, .dl-grid, .grid, .pub-row { grid-template-columns: 1fr; }
+  .hero, .fl-drop-grid, .steps, .dl-grid, .dl-grid-2, .grid, .pub-row { grid-template-columns: 1fr; }
   .fl-diagram { grid-template-columns: 1fr; }
   .nav nav { display: none; }
 }

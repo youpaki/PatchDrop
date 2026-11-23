@@ -2,96 +2,173 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Community Presets — PatchDrop by leve</title>
-<meta name="description" content="Browse PatchLink community effect chains filtered by category, #hashtag, and VST3 plugin names.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Community Presets — PatchDrop</title>
+<meta name="description" content="Browse, filter, and drag community VST3 effect chains across REAPER, Ableton Live, FL Studio, Cubase, and Studio One.">
+<link rel="stylesheet" href="style.css?v=1.6.1">
 </head>
 <body>
+
 <header class="nav">
-  <a class="logo" href="index.html">
-    <span class="logo-mark" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2.5" y="7.5" width="11" height="9" rx="4.5"></rect>
-        <rect x="10.5" y="7.5" width="11" height="9" rx="4.5"></rect>
-      </svg>
-    </span>
-    <span class="logo-text">PATCHDROP</span>
-    <span class="logo-sub">BY LEVE</span>
-  </a>
-  <nav>
-    <a href="index.html#fl-drop">FL Studio Drop</a>
-    <a href="index.html#workflow">How it works</a>
-    <a href="index.html#download">Download</a>
-    <a href="presets.html" class="active">Presets</a>
-    <a href="#publish">Publish</a>
-  </nav>
-  <a class="btn small secondary" href="index.html#download">v1.6.0</a>
+  <div class="wrap">
+    <a class="logo" href="./">
+      <span class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M5 7h8l4 5-4 5H5l4-5-4-5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span class="logo-text">PATCHDROP</span>
+      <span class="logo-sub">COMMUNITY</span>
+    </a>
+    <nav>
+      <a href="./">Home</a>
+      <a href="presets.html" class="active">Presets</a>
+      <a href="#publish">Publish</a>
+    </nav>
+    <a class="btn small" href="./#download">Download</a>
+  </div>
 </header>
 
-<main id="top">
-  <section class="section page-head">
-    <div class="hero-eyebrow">PATCHDROP // COMMUNITY PRESET DIRECTORY</div>
-    <h1>Community presets</h1>
-    <p class="sub">Browse chains shared by other producers. Filter by category, click any <span class="mono">#hashtag</span>, search by VST3 plugin name, or download directly as <span class="mono">.fst</span>, <span class="mono">.RfxChain</span>, <span class="mono">.adg</span>, or <span class="mono">.vstpreset</span>. <b>Two-step drag &amp; drop:</b> drag any preset card from this website into <b>PatchLink</b>, then drag from <b>PatchLink</b> straight into your DAW.</p>
+<section class="wrap section page-head">
+  <div class="row-head">
+    <div>
+      <h1>Community Presets</h1>
+      <p class="sub">Drag any card into PatchLink, then drag from PatchLink into your DAW &mdash; or copy its 6-character code.</p>
+    </div>
+    <a class="btn secondary" href="#publish">+ Share a preset</a>
+  </div>
 
-    <div class="filter-bar">
-      <div class="search">
-        <input id="q" placeholder="Search title, plugin, author, or #tag…">
-        <select id="sort" aria-label="Sort presets">
-          <option value="newest">Newest first</option>
-          <option value="popular">Most downloaded</option>
-        </select>
-        <button id="qbtn" class="btn small secondary" type="button">Filter</button>
-        <button id="clear-filters" class="btn small ghost" type="button" hidden>Clear</button>
+  <div class="daw-strip daw-strip-compact" aria-label="Supported DAWs">
+    <div class="daw-logos-bar">
+      <div class="daw-logo-pill" title="REAPER — .RfxChain &amp; .rpp">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5" fill="#132a1e" stroke="#22d87a" stroke-width="1.5"/>
+          <path d="M16.5 6.5c-3.8 0-6.8 2.4-7.8 5.8-.5 1.8-.4 3.6.3 5.2l2.1-1.2c-.4-1-.4-2.1-.1-3.2.6-2 2.4-3.6 4.7-4l-3.4 8.4h2.4l3.5-8.6c.4-.9-.2-2.4-1.7-2.4z" fill="#22d87a"/>
+        </svg>
+        <span>REAPER</span>
+      </div>
+      <div class="daw-logo-pill" title="Ableton Live — .adg &amp; .adv">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5" fill="#1b1c20" stroke="#454752" stroke-width="1.5"/>
+          <g fill="#f0f0f3">
+            <rect x="5" y="6" width="1.6" height="5.5"/>
+            <rect x="7.5" y="6" width="1.6" height="5.5"/>
+            <rect x="10" y="6" width="1.6" height="5.5"/>
+            <rect x="12.5" y="6" width="1.6" height="5.5"/>
+            <rect x="5" y="13.2" width="5.8" height="1.4"/>
+            <rect x="5" y="15.5" width="5.8" height="1.4"/>
+            <rect x="5" y="17.8" width="5.8" height="1.4"/>
+            <rect x="12.8" y="13.2" width="6.2" height="1.4" fill="#ff7b3b"/>
+            <rect x="12.8" y="15.5" width="6.2" height="1.4" fill="#ff7b3b"/>
+            <rect x="12.8" y="17.8" width="6.2" height="1.4" fill="#ff7b3b"/>
+          </g>
+        </svg>
+        <span>Ableton Live</span>
+      </div>
+      <div class="daw-logo-pill" title="FL Studio — Mixer &amp; Patcher .fst">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5" fill="#2b170b" stroke="#ff7a18" stroke-width="1.5"/>
+          <path d="M12.2 7.2c1.2-1.8 3-2 4.3-1.4-.5 1.4-1.7 2.4-3.4 2.5z" fill="#4cd964"/>
+          <path d="M12.2 8.2c-2.6 0-4.4 1.9-4.1 4.6.3 2.5 2 4.8 4.1 5.2 2.1-.4 3.8-2.7 4.1-5.2.3-2.7-1.5-4.6-4.1-4.6z" fill="#ff7a18"/>
+          <path d="M10.2 10.6c-.4.9-.5 2-.2 3.1" stroke="#ffd2a6" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        <span>FL Studio</span>
+      </div>
+      <div class="daw-logo-pill" title="Cubase &amp; Nuendo — .vstpreset">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5" fill="#2a1119" stroke="#ff3b5c" stroke-width="1.5"/>
+          <path d="M15.8 8.3a5.3 5.3 0 1 0 0 7.4" stroke="#ff3b5c" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="15.8" cy="12" r="1.7" fill="#f3f3f5"/>
+        </svg>
+        <span>Cubase</span>
+      </div>
+      <div class="daw-logo-pill" title="Studio One — .vstpreset">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5" fill="#0e2236" stroke="#38a3ff" stroke-width="1.5"/>
+          <path d="M7.5 15.2c1.5-4.2 5-6.9 9.5-7.4-1.6 4.1-5.1 6.8-9.5 7.4z" stroke="#38a3ff" stroke-width="1.9" stroke-linejoin="round"/>
+          <circle cx="12.2" cy="11.6" r="1.6" fill="#38a3ff"/>
+        </svg>
+        <span>Studio One</span>
+      </div>
+      <div class="daw-logo-pill" title="Bitwig Studio — .vstpreset">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5" fill="#29140d" stroke="#ff5a26" stroke-width="1.5"/>
+          <g fill="#ff5a26">
+            <circle cx="8" cy="9.5" r="1.4"/>
+            <circle cx="12" cy="9.5" r="1.4"/>
+            <circle cx="16" cy="9.5" r="1.4"/>
+            <circle cx="8" cy="14" r="1.4"/>
+            <circle cx="12" cy="14" r="1.4"/>
+            <circle cx="16" cy="14" r="1.4"/>
+          </g>
+        </svg>
+        <span>Bitwig</span>
       </div>
     </div>
+  </div>
 
-    <div id="cat-tabs" class="cat-tabs" aria-label="Categories"></div>
-    <div id="tag-bar" class="tag-bar" aria-label="Hashtags"></div>
-    <div id="filter-status" class="filter-status">Loading directory…</div>
+  <div class="filter-bar">
+    <div class="cat-tabs" id="cat-tabs"></div>
 
-    <div id="grid" class="grid"><div class="empty">Loading presets…</div></div>
-  </section>
+    <div class="search">
+      <input id="q" placeholder="Search title, plugin, author, tag, or 6-char code...">
+      <select id="sort" aria-label="Sort presets">
+        <option value="recent">Newest first</option>
+        <option value="popular">Most downloaded</option>
+      </select>
+      <button id="qbtn" type="button">Search</button>
+    </div>
 
-  <section id="publish" class="section">
-    <h2>Publish from any DAW file or drag &amp; drop</h2>
-    <p class="sub">Drop an <span class="mono">.RfxChain</span>, Ableton <span class="mono">.adg</span> / <span class="mono">.adv</span>, FL Studio <span class="mono">.fst</span>, <span class="mono">.vstpreset</span> / <span class="mono">.fxchainpreset</span>, or <span class="mono">.patchlink</span> file anywhere onto this window, add a category and <span class="mono">#hashtags</span>, and generate a share code in your browser.</p>
-    <form id="pubform" class="pub">
-      <div class="pub-row">
-        <label>Title<input id="f-title" maxlength="80" placeholder="Lead vocal chain" required></label>
-        <label>Author<input id="f-author" maxlength="40" placeholder="leve"></label>
-      </div>
-      <div class="pub-row">
-        <label>Category
-          <select id="f-category">
-            <option value="">Auto-detect from title &amp; plugins</option>
-            <option value="vocals">Vocals</option>
-            <option value="master">Mix Bus &amp; Master</option>
-            <option value="drums">Drums &amp; 808</option>
-            <option value="synths">Synths &amp; Pads</option>
-            <option value="inst">Guitars &amp; Keys</option>
-            <option value="fx">FX &amp; Creative</option>
-          </select>
-        </label>
-        <label>Hashtags<input id="f-tags" maxlength="160" placeholder="#vocals #rap #autotune #warmth"></label>
-      </div>
-      <label>Description<input id="f-desc" maxlength="500" placeholder="Pro-Q 3 -> CLA-76 -> Pro-DS"></label>
-      <div id="drop-box" class="drop-hint-box">
-        <label>DAW preset or chain file<input id="f-file" type="file" accept=".patchlink,.fst,.rfxchain,.rpp,.adg,.adv,.als,.vstpreset,.bwpreset,.fxchainpreset,.fxchain,.multipreset,.json,application/json" required></label>
-        <div id="drop-summary" class="drop-summary">Or drag &amp; drop .RfxChain, .adg, .fst, .vstpreset, or .patchlink anywhere on this page.</div>
-      </div>
-      <label class="check"><input id="f-public" type="checkbox" checked> List publicly in community presets above</label>
-      <button class="btn big" type="submit">Upload and generate code</button>
-      <div id="pubres"></div>
-    </form>
-  </section>
-</main>
+    <div class="tag-bar" id="tag-bar"></div>
+    <div class="filter-status" id="filter-status"></div>
+    <button id="clear-filters" class="btn small ghost" type="button" hidden>Clear filters</button>
+  </div>
 
-<footer>PATCHDROP · PatchLink v1.6.0 by leve · <a href="index.html">Back to main site</a> · <a href="#top">Top</a></footer>
-<script src="app.js"></script>
+  <div id="grid" class="grid"></div>
+</section>
+
+<section class="wrap section" id="publish">
+  <h2>Share a chain</h2>
+  <p class="sub">
+    Drop any DAW preset or <span class="code-inline">.patchlink</span> file below to publish it with a 6-character code.
+  </p>
+
+  <form id="pubform" class="pub">
+    <div class="drop-hint-box" id="drop-box">
+      <strong>Drop a chain file anywhere here</strong>
+      <span id="drop-summary">Supports REAPER, Ableton, FL Studio, Cubase/Studio One, or .patchlink &mdash; plugin names &amp; metadata auto-fill.</span>
+      <input id="f-file" type="file" accept=".patchlink,.fst,.rfxchain,.RfxChain,.rpp,.RPP,.adg,.adv,.vstpreset,application/json">
+    </div>
+
+    <div class="pub-row">
+      <label>Title <input id="f-title" required placeholder="e.g. Clean Pop Vocal Chain"></label>
+      <label>Author <input id="f-author" placeholder="Your name or handle"></label>
+    </div>
+    <div class="pub-row">
+      <label>Category
+        <select id="f-category">
+          <option value="vocals">Vocals</option>
+          <option value="drums">Drums</option>
+          <option value="bass">Bass &amp; 808</option>
+          <option value="guitar">Guitar &amp; Keys</option>
+          <option value="master">Master &amp; Bus</option>
+          <option value="creative">Creative &amp; FX</option>
+          <option value="other" selected>Other</option>
+        </select>
+      </label>
+      <label>Tags (comma or # separated) <input id="f-tags" placeholder="#vocal, #rap, #clean"></label>
+    </div>
+    <label>Description <input id="f-desc" placeholder="Signal path or quick mixing tips (optional)"></label>
+    <label class="check"><input id="f-public" type="checkbox" checked> List publicly in Community Presets</label>
+    <button class="btn" type="submit">Publish &amp; generate code</button>
+    <div id="pubres"></div>
+  </form>
+</section>
+
+<footer>
+  PatchDrop &amp; PatchLink &middot; Built by <a href="https://github.com/youpaki" target="_blank" rel="noopener">youpaki</a> &middot; <a href="./">Home</a>
+</footer>
+
+<script src="app.js?v=1.6.1"></script>
 </body>
 </html>
