@@ -13,6 +13,7 @@ struct FstPluginEntry
     juce::String pluginName;
     juce::String vendor;
     juce::String filePath;
+    juce::String tuidHex;
     int juceUniqueId = 0;
     bool bypass = false;
     bool isVst2 = false;
@@ -123,6 +124,77 @@ inline juce::String extractVst3StateBase64(const uint8_t* subData, size_t subLen
     juce::MemoryBlock vst3StateBlock;
     juce::AudioProcessor::copyXmlToBinary(state, vst3StateBlock);
     return juce::Base64::toBase64(vst3StateBlock.getData(), vst3StateBlock.getSize());
+}
+
+inline bool extractRawVst3ChunksFromBase64(const juce::String& stateBase64,
+                                           juce::MemoryBlock& outComp,
+                                           juce::MemoryBlock& outCont)
+{
+    outComp.reset();
+    outCont.reset();
+    if (stateBase64.isEmpty())
+        return false;
+
+    juce::MemoryOutputStream mos;
+    if (!juce::Base64::convertFromBase64(mos, stateBase64) || mos.getDataSize() == 0)
+        return false;
+
+    auto xml = juce::AudioProcessor::getXmlFromBinary(mos.getData(), static_cast<int>(mos.getDataSize()));
+    if (xml == nullptr)
+        return false;
+
+    if (auto* comp = xml->getChildByName("IComponent"))
+        outComp.fromBase64Encoding(comp->getAllSubText().trim());
+    if (auto* cont = xml->getChildByName("IEditController"))
+        outCont.fromBase64Encoding(cont->getAllSubText().trim());
+
+    return xml->hasTagName("VST3PluginState") || outComp.getSize() > 0 || outCont.getSize() > 0;
+}
+
+inline juce::MemoryBlock buildVst3WrapperSub53(const juce::String& stateBase64)
+{
+    juce::MemoryBlock comp, cont;
+    if (!extractRawVst3ChunksFromBase64(stateBase64, comp, cont))
+        return {};
+
+    juce::MemoryBlock out;
+    juce::MemoryOutputStream mos(out, false);
+    mos.writeInt(1); // VST3 wrapper blob version 1
+
+    // cid 1: 64-byte header flags
+    mos.writeInt(1);
+    mos.writeInt64(64);
+    mos.writeInt(1);
+    for (int i = 0; i < 60; ++i)
+        mos.writeByte(0);
+
+    // cid 3: IComponent state
+    mos.writeInt(3);
+    mos.writeInt64(static_cast<juce::int64>(comp.getSize()));
+    if (comp.getSize() > 0)
+        mos.write(comp.getData(), comp.getSize());
+
+    // cid 2: IEditController state
+    mos.writeInt(2);
+    mos.writeInt64(static_cast<juce::int64>(cont.getSize()));
+    if (cont.getSize() > 0)
+        mos.write(cont.getData(), cont.getSize());
+
+    mos.flush();
+    return out;
+}
+
+inline juce::String bytesToLowerHex(const uint8_t* ptr, size_t len)
+{
+    static constexpr char kHex[] = "0123456789abcdef";
+    juce::String s;
+    s.preallocateBytes(len * 2);
+    for (size_t i = 0; i < len; ++i)
+    {
+        const uint8_t b = ptr[i];
+        s << kHex[(b >> 4) & 0xF] << kHex[b & 0xF];
+    }
+    return s;
 }
 
 inline ParsedFst parseFstData(const void* rawData, size_t totalSize)
@@ -272,6 +344,7 @@ inline ParsedFst parseFstData(const void* rawData, size_t totalSize)
                         if (subId == 52 && subLen >= 16)
                         {
                             entry.juceUniqueId = computeJuceUniqueIdFromTuid(subData);
+                            entry.tuidHex = bytesToLowerHex(subData, 16);
                         }
                         else if (subId == 54)
                         {
@@ -330,5 +403,82 @@ inline ParsedFst parseFstFile(const juce::File& file)
     if (parsed.valid && parsed.trackName.isEmpty())
         parsed.trackName = file.getFileNameWithoutExtension();
     return parsed;
+}
+
+inline juce::var parsedFstToPatchVar(const ParsedFst& parsed, const juce::KnownPluginList* knownList = nullptr)
+{
+    juce::DynamicObject::Ptr root = new juce::DynamicObject();
+    root->setProperty("app", "PatchLink");
+    root->setProperty("chainFormat", 2);
+    root->setProperty("name", parsed.trackName.isNotEmpty() ? parsed.trackName : "FL Chain");
+
+    auto matchType = [&](const FstPluginEntry& entry, juce::PluginDescription& out) -> bool {
+        if (knownList == nullptr || entry.isVst2)
+            return false;
+        const auto types = knownList->getTypes();
+        if (entry.juceUniqueId != 0)
+            for (const auto& t : types)
+                if (t.pluginFormatName == "VST3" && t.uniqueId == entry.juceUniqueId)
+                    { out = t; return true; }
+        if (entry.filePath.isNotEmpty())
+            for (const auto& t : types)
+                if (t.pluginFormatName == "VST3" && t.fileOrIdentifier.equalsIgnoreCase(entry.filePath)
+                    && (t.name.equalsIgnoreCase(entry.slotName) || t.name.equalsIgnoreCase(entry.pluginName)))
+                    { out = t; return true; }
+        for (const auto& t : types)
+            if (t.pluginFormatName == "VST3" && (t.name.equalsIgnoreCase(entry.slotName) || t.name.equalsIgnoreCase(entry.pluginName)))
+                { out = t; return true; }
+        return false;
+    };
+
+    juce::Array<juce::var> jnodes;
+    int idx = 0;
+    for (const auto& entry : parsed.plugins)
+    {
+        const auto displayName = entry.slotName.isNotEmpty() ? entry.slotName : entry.pluginName;
+        juce::PluginDescription desc;
+        const bool resolved = matchType(entry, desc);
+        if (!resolved)
+        {
+            desc.name = displayName;
+            desc.manufacturerName = entry.vendor;
+            desc.pluginFormatName = entry.isVst2 ? "VST" : "VST3";
+            desc.fileOrIdentifier = entry.filePath;
+            desc.uniqueId = entry.juceUniqueId;
+        }
+
+        auto* no = new juce::DynamicObject();
+        no->setProperty("uid", 100 + idx);
+        no->setProperty("x", 280 + (idx % 4) * 230);
+        no->setProperty("y", 200 + (idx / 4) * 140);
+        no->setProperty("order", idx);
+        no->setProperty("bypass", entry.bypass);
+        no->setProperty("wet", 1.0);
+        no->setProperty("gainDb", 0.0);
+
+        auto* ids = new juce::DynamicObject();
+        ids->setProperty("name", desc.name);
+        ids->setProperty("manufacturer", desc.manufacturerName);
+        ids->setProperty("version", desc.version);
+        ids->setProperty("format", desc.pluginFormatName);
+        ids->setProperty("fileOrId", desc.fileOrIdentifier);
+        if (resolved)
+            ids->setProperty("identifier", desc.createIdentifierString());
+        if (desc.uniqueId != 0)
+            ids->setProperty("uniqueId", desc.uniqueId);
+        if (entry.tuidHex.isNotEmpty())
+            ids->setProperty("tuidHex", entry.tuidHex);
+        if (entry.pluginName.isNotEmpty())
+            ids->setProperty("flPluginName", entry.pluginName);
+        no->setProperty("ids", juce::var(ids));
+        no->setProperty("stateBase64", entry.isVst2 ? juce::String{} : entry.stateBase64);
+
+        jnodes.add(juce::var(no));
+        ++idx;
+    }
+
+    root->setProperty("nodes", jnodes);
+    root->setProperty("connections", juce::Array<juce::var>());
+    return juce::var(root.get());
 }
 } // namespace flstudio

@@ -184,6 +184,36 @@ void PlButton::mouseExit(const juce::MouseEvent& e)
     startTimerHz(60);
 }
 
+void PlButton::mouseDown(const juce::MouseEvent& e)
+{
+    dragTriggered = false;
+    juce::Button::mouseDown(e);
+}
+
+void PlButton::mouseDrag(const juce::MouseEvent& e)
+{
+    if (onDragStart && !dragTriggered && isEnabled() && e.mods.isLeftButtonDown()
+        && e.getDistanceFromDragStart() >= 5)
+    {
+        dragTriggered = true;
+        onDragStart();
+        return;
+    }
+    juce::Button::mouseDrag(e);
+}
+
+void PlButton::mouseUp(const juce::MouseEvent& e)
+{
+    if (dragTriggered)
+    {
+        dragTriggered = false;
+        setState(Button::buttonNormal);
+        repaint();
+        return;
+    }
+    juce::Button::mouseUp(e);
+}
+
 void PlButton::timerCallback()
 {
     const auto delta = hoverTarget - hover;

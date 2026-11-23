@@ -28,6 +28,7 @@ public:
 private:
     Content& owner;
     PlButton power { "", Icon::power, PlButton::Style::ghost };
+    PlButton dragPreset { "", Icon::exportFile, PlButton::Style::ghost };
     PlButton open { "Open", Icon::open, PlButton::Style::secondary };
     PlButton more { "", Icon::more, PlButton::Style::ghost };
     bool enabled = true;
@@ -272,6 +273,9 @@ ChainView::Slot::Slot(Content& contentOwner, const PatchLinkProcessor::LoadedNod
         owner.repaint();
         if (owner.owner.onBypass) owner.owner.onBypass(node.id, !enabled);
     };
+    dragPreset.setTooltip("Drag this preset directly to your DAW (or click to save)");
+    dragPreset.onDragStart = [this] { if (owner.owner.onDragSlot) owner.owner.onDragSlot(owner.slots.indexOf(this)); };
+    dragPreset.onClick = [this] { if (owner.owner.onExportSlot) owner.owner.onExportSlot(owner.slots.indexOf(this)); };
     open.setTooltip("Open the plugin interface (double-click the card)");
     open.onClick = [this] { if (owner.owner.onOpen) owner.owner.onOpen(node.id); };
     more.setTooltip("Plugin actions");
@@ -279,6 +283,7 @@ ChainView::Slot::Slot(Content& contentOwner, const PatchLinkProcessor::LoadedNod
         juce::PopupMenu menu;
         menu.addItem(1, "Open interface");
         menu.addItem(2, enabled ? "Bypass" : "Enable");
+        menu.addItem(6, "Save single preset file...");
         const auto index = owner.slots.indexOf(this);
         menu.addSeparator();
         menu.addItem(3, "Move up", index > 0);
@@ -293,11 +298,13 @@ ChainView::Slot::Slot(Content& contentOwner, const PatchLinkProcessor::LoadedNod
                 case 3: if (owner.owner.onReorder) owner.owner.onReorder(node.id, owner.slots.indexOf(this) - 1); break;
                 case 4: if (owner.owner.onReorder) owner.owner.onReorder(node.id, owner.slots.indexOf(this) + 1); break;
                 case 5: if (owner.owner.onRemove) owner.owner.onRemove(node.id); break;
+                case 6: if (owner.owner.onExportSlot) owner.owner.onExportSlot(owner.slots.indexOf(this)); break;
                 default: break;
             }
         });
     };
     addAndMakeVisible(power);
+    addAndMakeVisible(dragPreset);
     addAndMakeVisible(open);
     addAndMakeVisible(more);
 }
@@ -378,7 +385,7 @@ void ChainView::Slot::paint(juce::Graphics& g)
     g.drawText(juce::String::formatted("%02d", number), 32, 0, 30, getHeight(), juce::Justification::centred);
 
     auto text = getLocalBounds().reduced(72, 0);
-    text.removeFromRight(172);
+    text.removeFromRight(212);
     g.setColour(enabled ? theme::text : theme::muted);
     g.setFont(theme::font(15.0f, true));
     const auto name = node.desc.name.isNotEmpty() ? node.desc.name : "Plugin " + juce::String(node.id.uid);
@@ -398,7 +405,9 @@ void ChainView::Slot::resized()
     more.setBounds(r.removeFromRight(34).withSizeKeepingCentre(34, 34));
     r.removeFromRight(4);
     power.setBounds(r.removeFromRight(34).withSizeKeepingCentre(34, 34));
-    r.removeFromRight(12);
+    r.removeFromRight(4);
+    dragPreset.setBounds(r.removeFromRight(34).withSizeKeepingCentre(34, 34));
+    r.removeFromRight(10);
     open.setBounds(r.removeFromRight(82).withSizeKeepingCentre(82, 34));
 }
 

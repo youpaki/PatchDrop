@@ -1,8 +1,9 @@
-// ScanTest: headless end-to-end check of DAW detection, scanning, and FL Studio .fst parsing.
-// Usage: ScanTest [--full] [--folder "C:\path"] [--test-fst "C:\path\preset.fst" [--instantiate]]
+// ScanTest: headless end-to-end check of DAW detection, scanning, and FL Studio .fst parsing/export.
+// Usage: ScanTest [--full] [--folder "C:\path"] [--test-fst "C:\path\preset.fst" [--instantiate]] [--test-export "C:\path\preset.fst"]
 #include <JuceHeader.h>
 #include "../Scan/PluginScanManager.h"
 #include "../Chain/FlStudioFstParser.h"
+#include "../Chain/DawExport.h"
 
 namespace
 {
@@ -212,6 +213,111 @@ int runFstTest(const juce::String& fstPath, bool instantiate)
 
     return (parsed.plugins.empty() && parsed.skipped.isEmpty()) ? 1 : (resolvedCount == 0 && !parsed.plugins.empty() ? 1 : 0);
 }
+
+int runExportRoundtripTest(const juce::String& fstPath)
+{
+    juce::AudioPluginFormatManager fm;
+    fm.addDefaultFormats();
+    juce::KnownPluginList list;
+    PluginScanManager mgr(fm, list);
+    mgr.loadSettings();
+
+    const auto parsed = flstudio::parseFstFile(juce::File(fstPath));
+    if (!parsed.valid || parsed.plugins.empty())
+    {
+        printf("EXPORT TEST FAIL: could not parse input %s\n", fstPath.toRawUTF8());
+        return 2;
+    }
+
+    const auto patchVar = flstudio::parsedFstToPatchVar(parsed, &list);
+    auto* root = patchVar.getDynamicObject();
+    auto* arr = root ? root->getProperty("nodes").getArray() : nullptr;
+    if (arr == nullptr || arr->isEmpty())
+    {
+        printf("EXPORT TEST FAIL: parsedFstToPatchVar produced empty nodes\n");
+        return 3;
+    }
+
+    juce::String err;
+    juce::MemoryBlock fstOut;
+    if (!dawexport::buildFlStudioMixerTrackFst(patchVar, fstOut, err))
+    {
+        printf("EXPORT TEST FAIL: buildFlStudioMixerTrackFst: %s\n", err.toRawUTF8());
+        return 4;
+    }
+
+    const auto reparsed = flstudio::parseFstData(fstOut.getData(), fstOut.getSize());
+    if (!reparsed.valid)
+    {
+        printf("EXPORT TEST FAIL: reparse error: %s\n", reparsed.error.toRawUTF8());
+        return 5;
+    }
+
+    int expectedVst3 = 0;
+    for (const auto& p : parsed.plugins)
+        if (!p.isVst2) ++expectedVst3;
+
+    printf("ROUNDTRIP FST: origVst3=%d reparsed=%d trackName=\"%s\" bytes=%d\n",
+           expectedVst3, (int)reparsed.plugins.size(), reparsed.trackName.toRawUTF8(), (int)fstOut.getSize());
+    if ((int)reparsed.plugins.size() != expectedVst3)
+    {
+        printf("EXPORT TEST FAIL: count mismatch\n");
+        return 6;
+    }
+
+    for (size_t i = 0; i < reparsed.plugins.size(); ++i)
+    {
+        const auto& rp = reparsed.plugins[i];
+        printf("  [%d] slot=\"%s\" tuid=%s bypass=%s stateB64Len=%d\n",
+               (int)i, rp.slotName.toRawUTF8(), rp.tuidHex.toRawUTF8(),
+               rp.bypass ? "true" : "false", rp.stateBase64.length());
+        if (rp.tuidHex.length() != 32 || rp.stateBase64.isEmpty())
+        {
+            printf("EXPORT TEST FAIL: missing tuid or state on slot %d\n", (int)i);
+            return 7;
+        }
+    }
+
+    juce::MemoryBlock singleFst;
+    if (!dawexport::buildFlStudioSingleFst(arr->getReference(0), singleFst, err))
+    {
+        printf("EXPORT TEST FAIL: single fst: %s\n", err.toRawUTF8());
+        return 8;
+    }
+    const auto reparsedSingle = flstudio::parseFstData(singleFst.getData(), singleFst.getSize());
+    if (!reparsedSingle.valid || reparsedSingle.plugins.size() != 1 || reparsedSingle.plugins[0].stateBase64.isEmpty())
+    {
+        printf("EXPORT TEST FAIL: single fst roundtrip failed\n");
+        return 9;
+    }
+    printf("SINGLE FST OK: %s (%d bytes)\n", reparsedSingle.plugins[0].slotName.toRawUTF8(), (int)singleFst.getSize());
+
+    juce::MemoryBlock vstPreset;
+    if (!dawexport::buildSteinbergVstPreset(arr->getReference(0), vstPreset, err)
+        || vstPreset.getSize() < 48 || std::memcmp(vstPreset.getData(), "VST3", 4) != 0)
+    {
+        printf("EXPORT TEST FAIL: .vstpreset: %s\n", err.toRawUTF8());
+        return 10;
+    }
+    printf("VSTPRESET OK: %d bytes\n", (int)vstPreset.getSize());
+
+    juce::String rfx;
+    if (!dawexport::buildReaperRfxChain(patchVar, rfx, err) || !rfx.contains("<VST \"VST3:"))
+    {
+        printf("EXPORT TEST FAIL: .RfxChain: %s\n", err.toRawUTF8());
+        return 11;
+    }
+    printf("RFXCHAIN OK: %d chars\n", rfx.length());
+
+    const auto dragFiles = dawexport::prepareDragFiles(patchVar, dawexport::TargetFormat::flStudioFst, err, -1);
+    if (dragFiles.isEmpty() || !juce::File(dragFiles[0]).existsAsFile())
+    {
+        printf("EXPORT TEST FAIL: prepareDragFiles: %s\n", err.toRawUTF8());
+        return 12;
+    }
+    printf("PREPARE DRAG OK: %s\n", dragFiles[0].toRawUTF8());
+    return 0;
+}
 } // namespace
 
 int main(int argc, char** argv)
@@ -222,14 +328,18 @@ int main(int argc, char** argv)
     bool instantiate = false;
     juce::String singleFolder;
     juce::String testFstPath;
+    juce::String testExportPath;
     for (int i = 1; i < argc; ++i)
     {
         if (juce::String(argv[i]) == "--full") full = true;
         if (juce::String(argv[i]) == "--instantiate") instantiate = true;
         if (juce::String(argv[i]) == "--folder" && i + 1 < argc) singleFolder = argv[++i];
         if (juce::String(argv[i]) == "--test-fst" && i + 1 < argc) testFstPath = argv[++i];
+        if (juce::String(argv[i]) == "--test-export" && i + 1 < argc) testExportPath = argv[++i];
     }
 
+    if (testExportPath.isNotEmpty())
+        return runExportRoundtripTest(testExportPath);
     if (testFstPath.isNotEmpty())
         return runFstTest(testFstPath, instantiate);
 

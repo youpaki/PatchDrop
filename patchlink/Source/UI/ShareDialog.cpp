@@ -99,6 +99,13 @@ ShareDialog::ShareDialog(Mode dialogMode, const juce::var& patchRoot) : mode(dia
     status.setColour(juce::Label::textColourId, theme::muted);
     status.setJustificationType(juce::Justification::centredLeft);
     addAndMakeVisible(status);
+    stageButton.setTooltip("Store this chain without loading plugins so you can export or drag it");
+    stageButton.onClick = [this] { if (onStageFetched) onStageFetched(fetchedPatch, fetchedTitle); };
+    addChildComponent(stageButton);
+    dragDawButton.setTooltip("Drag onto your DAW (or click for format options) without loading plugins inside PatchLink");
+    dragDawButton.onDragStart = [this] { if (onDragFetchedToDaw) onDragFetchedToDaw(fetchedPatch, fetchedTitle, true); };
+    dragDawButton.onClick = [this] { if (onDragFetchedToDaw) onDragFetchedToDaw(fetchedPatch, fetchedTitle, false); };
+    addChildComponent(dragDawButton);
     actionButton.onClick = [this] { submit(); };
     addAndMakeVisible(actionButton);
 
@@ -126,7 +133,7 @@ ShareDialog::ShareDialog(Mode dialogMode, const juce::var& patchRoot) : mode(dia
 juce::Rectangle<int> ShareDialog::getCardBounds() const
 {
     const auto w = juce::jmin(720, getWidth() - 48);
-    const auto desiredHeight = mode == Mode::publish ? 620 : 360;
+    const auto desiredHeight = (mode == Mode::publish) ? 620 : (fetchedReady ? 540 : 360);
     const auto h = juce::jmin(desiredHeight, getHeight() - 48);
     return juce::Rectangle<int>(w, h).withCentre(getLocalBounds().getCentre());
 }
@@ -136,6 +143,11 @@ void ShareDialog::submit()
     if (succeeded)
     {
         if (onDismiss) onDismiss();
+        return;
+    }
+    if (fetchedReady)
+    {
+        if (onLoadFetched) onLoadFetched(fetchedPatch, fetchedTitle);
         return;
     }
     if (busy) return;
@@ -170,9 +182,12 @@ void ShareDialog::setBusy(bool shouldBeBusy, const juce::String& message)
     descriptionEditor.setEnabled(!busy);
     codeEditor.setEnabled(!busy);
     publicToggle.setEnabled(!busy);
-    actionButton.setEnabled(!busy && (mode == Mode::publish || codeEditor.getText().length() == 6));
-    actionButton.setButtonText(busy ? (mode == Mode::publish ? "Publishing..." : "Opening...")
-                                    : (mode == Mode::publish ? "Publish chain" : "Open chain"));
+    stageButton.setEnabled(!busy);
+    dragDawButton.setEnabled(!busy);
+    actionButton.setEnabled(!busy && (mode == Mode::publish || fetchedReady || codeEditor.getText().length() == 6));
+    actionButton.setButtonText(busy ? (mode == Mode::publish ? "Publishing..." : "Fetching...")
+                                    : (fetchedReady ? "Load effects"
+                                                    : (mode == Mode::publish ? "Publish chain" : "Open chain")));
     status.setColour(juce::Label::textColourId, theme::muted);
     status.setText(message.isNotEmpty() ? message : (busy ? "Contacting PatchDrop..." : ""), juce::dontSendNotification);
 }
@@ -191,6 +206,36 @@ void ShareDialog::publishSucceeded(const juce::String& code)
     resized();
 }
 
+void ShareDialog::codeFetched(const juce::String& code, const juce::String& titleText, const juce::var& patch)
+{
+    busy = false;
+    fetchedReady = true;
+    fetchedCode = code.toUpperCase().trim();
+    fetchedTitle = titleText.isNotEmpty() ? titleText : fetchedCode;
+    fetchedPatch = patch;
+
+    title.setText("Code " + fetchedCode + " ready", juce::dontSendNotification);
+    subtitle.setText("Load effects inside PatchLink, or use Zero-Load mode to drag directly into your DAW.",
+                     juce::dontSendNotification);
+
+    auto lines = chainformat::manifestLines(patch);
+    int portable = 0;
+    for (const auto& line : lines) if (line.startsWith("[ok]")) ++portable;
+    manifestCaption.setText("CHAIN PLUGINS — " + fetchedTitle.toUpperCase(), juce::dontSendNotification);
+    manifestSummary.setText(juce::String(lines.size()) + (lines.size() == 1 ? " plugin" : " plugins")
+                            + "  /  " + juce::String(portable) + " portable", juce::dontSendNotification);
+    manifest.setText(lines.isEmpty() ? "No plugins in this chain." : lines.joinIntoString("\n"));
+
+    actionButton.setButtonText("Load effects");
+    actionButton.setEnabled(true);
+    status.setColour(juce::Label::textColourId, theme::muted);
+    status.setText("Zero-Load: drag 'Drag to DAW' onto your DAW window without loading any plugins.",
+                   juce::dontSendNotification);
+
+    updateVisibility();
+    resized();
+}
+
 void ShareDialog::operationFailed(const juce::String& message)
 {
     setBusy(false);
@@ -202,13 +247,18 @@ void ShareDialog::updateVisibility()
 {
     const auto publishing = mode == Mode::publish;
     for (auto* component : { (juce::Component*)&titleCaption, (juce::Component*)&authorCaption,
-                             (juce::Component*)&descriptionCaption, (juce::Component*)&manifestCaption,
-                             (juce::Component*)&manifestSummary, (juce::Component*)&titleEditor,
-                             (juce::Component*)&authorEditor, (juce::Component*)&descriptionEditor,
-                             (juce::Component*)&manifest, (juce::Component*)&publicToggle })
+                             (juce::Component*)&descriptionCaption,
+                             (juce::Component*)&titleEditor, (juce::Component*)&authorEditor,
+                             (juce::Component*)&descriptionEditor, (juce::Component*)&publicToggle })
         component->setVisible(publishing && !succeeded);
-    manifestCaption.setVisible(!succeeded);
-    codeEditor.setVisible(!publishing && !succeeded);
+
+    const bool showManifest = (publishing && !succeeded) || fetchedReady;
+    manifestCaption.setVisible(showManifest || (!publishing && !succeeded));
+    manifestSummary.setVisible(showManifest);
+    manifest.setVisible(showManifest);
+    codeEditor.setVisible(!publishing && !fetchedReady && !succeeded);
+    stageButton.setVisible(!publishing && fetchedReady);
+    dragDawButton.setVisible(!publishing && fetchedReady);
     successCaption.setVisible(succeeded);
     codeLabel.setVisible(succeeded);
     copyButton.setVisible(succeeded);
@@ -223,6 +273,26 @@ void ShareDialog::layoutCard(juce::Rectangle<int> card)
     title.setBounds(r.removeFromTop(36).withTrimmedRight(44));
     subtitle.setBounds(r.removeFromTop(26));
     r.removeFromTop(18);
+
+    if (fetchedReady)
+    {
+        auto footer = r.removeFromBottom(42);
+        actionButton.setBounds(footer.removeFromRight(142).reduced(0, 2));
+        footer.removeFromRight(8);
+        dragDawButton.setBounds(footer.removeFromRight(144).reduced(0, 2));
+        footer.removeFromRight(8);
+        stageButton.setBounds(footer.removeFromRight(106).reduced(0, 2));
+        r.removeFromBottom(6);
+        status.setBounds(r.removeFromBottom(22));
+        r.removeFromBottom(8);
+
+        auto manifestHeader = r.removeFromTop(20);
+        manifestSummary.setBounds(manifestHeader.removeFromRight(190));
+        manifestCaption.setBounds(manifestHeader);
+        r.removeFromTop(6);
+        manifest.setBounds(r);
+        return;
+    }
 
     auto footer = r.removeFromBottom(42);
     actionButton.setBounds(footer.removeFromRight(156).reduced(0, 2));

@@ -27,6 +27,8 @@ inline juce::var makeNodeVar(const juce::PluginDescription& d,
     ids->setProperty("format", d.pluginFormatName);
     ids->setProperty("fileOrId", d.fileOrIdentifier);
     ids->setProperty("identifier", d.createIdentifierString());
+    if (d.uniqueId != 0)
+        ids->setProperty("uniqueId", d.uniqueId);
     o->setProperty("ids", juce::var(ids));
     o->setProperty("stateBase64", stateBase64);
     return juce::var(o);

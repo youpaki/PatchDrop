@@ -25,12 +25,18 @@ public:
     void paintButton(juce::Graphics&, bool highlighted, bool down) override;
     void mouseEnter(const juce::MouseEvent&) override;
     void mouseExit(const juce::MouseEvent&) override;
+    void mouseDown(const juce::MouseEvent&) override;
+    void mouseDrag(const juce::MouseEvent&) override;
+    void mouseUp(const juce::MouseEvent&) override;
+
+    std::function<void()> onDragStart;
 
 private:
     Style style;
     Icon icon;
     float hover = 0.0f;
     float hoverTarget = 0.0f;
+    bool dragTriggered = false;
     void timerCallback() override;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlButton)

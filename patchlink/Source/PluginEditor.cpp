@@ -1,6 +1,7 @@
 #include "PluginEditor.h"
 #include "PluginProcessor.h"
 #include "Chain/ShareClient.h"
+#include "Core/ChainFormat.h"
 #include "UI/PluginBrowser.h"
 #include "UI/ShareDialog.h"
 #include "UI/ScanDialog.h"
@@ -68,8 +69,10 @@ PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& processor)
     codeButton.onClick = [this] { openShareDialog(false); };
     importButton.onClick = [this] { doImport(); };
     exportButton.onClick = [this] { doExport(); };
+    dragDawButton.onDragStart = [this] { startExternalDawDrag({}, -1); };
+    dragDawButton.onClick = [this] { showFormatPickerMenu({}, -1, false); };
     for (auto* button : { &simpleButton, &patcherButton, &themeButton, &libraryButton, &codeButton, &shareButton,
-                          &importButton, &exportButton, &addButton })
+                          &importButton, &exportButton, &dragDawButton, &addButton })
         addAndMakeVisible(button);
 
     patchName.setText(proc.getPatchName(), juce::dontSendNotification);
@@ -77,7 +80,17 @@ PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& processor)
     patchName.setEditable(true, true, false);
     patchName.setTooltip("Double-click to rename this chain");
     patchName.onTextChange = [this] {
-        if (patchName.getText().trim().isNotEmpty()) proc.setPatchName(patchName.getText());
+        const auto txt = patchName.getText().trim();
+        if (txt.isNotEmpty())
+        {
+            proc.setPatchName(txt);
+            if (stagedPatchVar.isObject())
+            {
+                stagedPatchTitle = txt;
+                if (auto* o = stagedPatchVar.getDynamicObject())
+                    o->setProperty("name", txt);
+            }
+        }
     };
     addAndMakeVisible(patchName);
 
@@ -97,6 +110,8 @@ PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& processor)
     chainView.onRemove = [this](auto id) { closeWindowsForNode(id); proc.removeNode(id); };
     chainView.onOpen = [this](auto id) { openPluginWindow(id); };
     chainView.onReorder = [this](auto id, int index) { proc.moveNode(id, index); };
+    chainView.onDragSlot = [this](int slotIdx) { startExternalDawDrag({}, slotIdx); };
+    chainView.onExportSlot = [this](int slotIdx) { showFormatPickerMenu({}, slotIdx, false); };
     chainView.onAdd = [this] { addButton.triggerClick(); };
     chainView.onClear = [this] { confirmClearChain(); };
     addAndMakeVisible(chainView);
@@ -118,10 +133,15 @@ PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& processor)
     addChildComponent(patcherView);
     addChildComponent(toast);
 
+    hostDetection = dawexport::detectHostDaw(proc.wrapperType);
+    selectedExportFormat = hostDetection.isStandalone ? dawexport::TargetFormat::autoDetect
+                                                      : hostDetection.detectedFormat;
+    updateExportButtonState();
+
     proc.addChangeListener(this);
     proc.getScanManager().addChangeListener(this);
     setMode(proc.preferredMode == 2 ? Mode::patcher : Mode::simple);
-    setStatus("Ready");
+    setStatus("Ready  ·  " + (hostDetection.isStandalone ? juce::String("Standalone") : ("Host: " + hostDetection.hostName)));
 }
 
 PatchLinkEditor::~PatchLinkEditor()
@@ -197,11 +217,38 @@ void PatchLinkEditor::changeListenerCallback(juce::ChangeBroadcaster*)
 void PatchLinkEditor::refreshViews()
 {
     const auto nodes = proc.getLoadedNodes();
+    if (!nodes.empty() && stagedPatchVar.isObject())
+    {
+        stagedPatchVar = juce::var();
+        stagedPatchTitle.clear();
+    }
+
     chainView.refresh(nodes);
     patcherView.refresh(nodes, proc.getWires());
-    if (!patchName.hasKeyboardFocus(true)) patchName.setText(proc.getPatchName(), juce::dontSendNotification);
-    chainInfo.setText(juce::String((int)nodes.size()) + (nodes.size() == 1 ? " plugin" : " plugins")
-                      + "  /  STEREO", juce::dontSendNotification);
+
+    int stagedCount = 0;
+    if (nodes.empty() && stagedPatchVar.isObject())
+        if (auto* arr = stagedPatchVar.getDynamicObject()->getProperty("nodes").getArray())
+            stagedCount = arr->size();
+
+    if (!patchName.hasKeyboardFocus(true))
+    {
+        if (nodes.empty() && stagedPatchVar.isObject() && stagedPatchTitle.isNotEmpty())
+            patchName.setText(stagedPatchTitle, juce::dontSendNotification);
+        else
+            patchName.setText(proc.getPatchName(), juce::dontSendNotification);
+    }
+
+    if (nodes.empty() && stagedCount > 0)
+    {
+        chainInfo.setText(juce::String(stagedCount) + " staged (zero-load)", juce::dontSendNotification);
+    }
+    else
+    {
+        chainInfo.setText(juce::String((int)nodes.size()) + (nodes.size() == 1 ? " plugin" : " plugins")
+                          + "  /  STEREO", juce::dontSendNotification);
+    }
+
     const auto sampleRate = proc.getSampleRate() > 0 ? proc.getSampleRate() : 44100.0;
     systemInfo.setText(juce::String(proc.getKnownList().getNumTypes()) + " indexed  /  "
                        + juce::String(sampleRate / 1000.0, 1) + " kHz", juce::dontSendNotification);
@@ -271,11 +318,13 @@ void PatchLinkEditor::resized()
     auto toolbar = r.removeFromTop(theme::toolbarHeight).reduced(22, 10);
     addButton.setBounds(toolbar.removeFromRight(132));
     toolbar.removeFromRight(6);
-    exportButton.setBounds(toolbar.removeFromRight(88));
-    exportButton.setVisible(toolbar.getWidth() > 230);
+    dragDawButton.setBounds(toolbar.removeFromRight(124));
+    toolbar.removeFromRight(6);
+    exportButton.setBounds(toolbar.removeFromRight(84));
+    exportButton.setVisible(toolbar.getWidth() > 210);
     toolbar.removeFromRight(4);
-    importButton.setBounds(toolbar.removeFromRight(88));
-    importButton.setVisible(toolbar.getWidth() > 180);
+    importButton.setBounds(toolbar.removeFromRight(84));
+    importButton.setVisible(toolbar.getWidth() > 160);
     patchName.setBounds(toolbar.withTrimmedRight(16));
 
     auto footer = r.removeFromBottom(theme::footerHeight).reduced(36, 0);
@@ -347,13 +396,14 @@ void PatchLinkEditor::openShareDialog(bool publish)
 {
     dismissOverlay();
     auto mode = publish ? ShareDialog::Mode::publish : ShareDialog::Mode::openCode;
-    auto* dialog = new ShareDialog(mode, proc.graphToVar());
+    const auto activePatch = publish ? getActiveOrStagedPatchVar() : juce::var();
+    auto* dialog = new ShareDialog(mode, activePatch);
     overlay.reset(dialog);
     dialog->onDismiss = [safe = juce::Component::SafePointer<PatchLinkEditor>(this)] { if (safe) safe->dismissOverlay(); };
 
     dialog->onPublish = [safe = juce::Component::SafePointer<PatchLinkEditor>(this),
                          dialogSafe = juce::Component::SafePointer<ShareDialog>(dialog),
-                         patch = proc.graphToVar(), base = apiBase](const juce::String& title,
+                         patch = activePatch, base = apiBase](const juce::String& title,
                             const juce::String& author, const juce::String& description, bool isPublic) {
         if (!safe || !dialogSafe) return;
         dialogSafe->setBusy(true, "Publishing your chain to PatchDrop...");
@@ -398,28 +448,65 @@ void PatchLinkEditor::openShareDialog(bool publish)
                     else safe->showToast(error.isNotEmpty() ? error : "Code not found", true);
                     return;
                 }
-                if (dialogSafe && safe->overlay.get() == dialogSafe.getComponent()) safe->dismissOverlay();
-                safe->pluginWindows.clear();
-                safe->setStatus("Loading " + (title.isNotEmpty() ? title : code) + "...");
-                safe->proc.loadFromVarAsync(patch, [safe, code, title](juce::StringArray missing, juce::String loadError) {
-                    if (!safe) return;
-                    if (loadError.isNotEmpty())
-                    {
-                        safe->setStatus("Could not open " + code);
-                        safe->showToast(loadError, true);
-                        return;
-                    }
-                    safe->setStatus((title.isNotEmpty() ? title : code) + " is ready");
-                    safe->refreshViews();
-                    safe->showMissingPlugins(missing, title.isNotEmpty() ? title : code);
-                });
+                if (dialogSafe && safe->overlay.get() == dialogSafe.getComponent())
+                {
+                    dialogSafe->codeFetched(code, title, patch);
+                }
+                else
+                {
+                    safe->loadPatchIntoProcessor(patch, title.isNotEmpty() ? title : code);
+                }
             });
         }).detach();
+    };
+
+    dialog->onLoadFetched = [safe = juce::Component::SafePointer<PatchLinkEditor>(this)](const juce::var& patch,
+                                                                                        const juce::String& title) {
+        if (!safe) return;
+        safe->dismissOverlay();
+        safe->loadPatchIntoProcessor(patch, title);
+    };
+
+    dialog->onStageFetched = [safe = juce::Component::SafePointer<PatchLinkEditor>(this)](const juce::var& patch,
+                                                                                         const juce::String& title) {
+        if (!safe) return;
+        safe->dismissOverlay();
+        safe->stagePatch(patch, title, "Staged \"" + title + "\" (zero-load) - drag button to your DAW");
+    };
+
+    dialog->onDragFetchedToDaw = [safe = juce::Component::SafePointer<PatchLinkEditor>(this)](const juce::var& patch,
+                                                                                             const juce::String& title,
+                                                                                             bool startDrag) {
+        if (!safe) return;
+        safe->stagePatch(patch, title);
+        if (startDrag)
+            safe->startExternalDawDrag(patch, -1);
+        else
+            safe->showFormatPickerMenu(patch, -1, false);
     };
 
     dialog->setBounds(getLocalBounds());
     addAndMakeVisible(dialog);
     dialog->grabKeyboardFocus();
+}
+
+void PatchLinkEditor::loadPatchIntoProcessor(const juce::var& patch, const juce::String& label)
+{
+    clearStagedPatch();
+    pluginWindows.clear();
+    setStatus("Loading " + label + "...");
+    proc.loadFromVarAsync(patch, [safe = juce::Component::SafePointer<PatchLinkEditor>(this), label](juce::StringArray missing, juce::String loadError) {
+        if (!safe) return;
+        if (loadError.isNotEmpty())
+        {
+            safe->setStatus("Could not open " + label);
+            safe->showToast(loadError, true);
+            return;
+        }
+        safe->setStatus(label + " is ready");
+        safe->refreshViews();
+        safe->showMissingPlugins(missing, label);
+    });
 }
 
 void PatchLinkEditor::doImport()
@@ -437,17 +524,22 @@ void PatchLinkEditor::doImport()
 
 void PatchLinkEditor::doExport()
 {
+    const auto patch = getActiveOrStagedPatchVar();
+    if (!patch.isObject())
+    {
+        showToast("No chain to export", true);
+        return;
+    }
     auto chooser = std::make_shared<juce::FileChooser>("Save a PatchLink chain", juce::File(), "*.patchlink");
     chooser->launchAsync(juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles,
-        [safe = juce::Component::SafePointer<PatchLinkEditor>(this), chooser](const juce::FileChooser&) mutable {
+        [safe = juce::Component::SafePointer<PatchLinkEditor>(this), chooser, patch](const juce::FileChooser&) mutable {
             if (!safe) return;
             auto file = chooser->getResult();
             if (file.getFullPathName().isEmpty()) return;
             if (file.getFileExtension().isEmpty()) file = file.withFileExtension("patchlink");
-            juce::String error;
-            if (!safe->proc.exportPatch(file, error))
+            if (!file.replaceWithText(juce::JSON::toString(patch, true)))
             {
-                safe->showToast(error, true);
+                safe->showToast("Write failed", true);
                 return;
             }
             safe->setStatus("Exported " + file.getFileName());
@@ -665,6 +757,344 @@ void PatchLinkEditor::filesDropped(const juce::StringArray& files, int x, int y)
     importFiles(files, x, y);
 }
 
+dawexport::TargetFormat PatchLinkEditor::effectiveExportFormat() const
+{
+    if (selectedExportFormat != dawexport::TargetFormat::autoDetect)
+        return selectedExportFormat;
+    if (!hostDetection.isStandalone && hostDetection.detectedFormat != dawexport::TargetFormat::autoDetect)
+        return hostDetection.detectedFormat;
+    return dawexport::TargetFormat::flStudioFst;
+}
+
+void PatchLinkEditor::updateExportButtonState()
+{
+    if (hostDetection.isStandalone && selectedExportFormat == dawexport::TargetFormat::autoDetect)
+    {
+        dragDawButton.setButtonText("Drag to DAW");
+        dragDawButton.setTooltip("Standalone mode: click to pick DAW format (FL .fst / REAPER / VST3), then drag out to your DAW");
+    }
+    else
+    {
+        const auto fmt = effectiveExportFormat();
+        dragDawButton.setButtonText("Drag ." + dawexport::formatExtension(fmt));
+        const auto src = hostDetection.isStandalone ? juce::String("Format: ")
+                                                    : ("Auto-detected " + hostDetection.hostName + ": ");
+        dragDawButton.setTooltip(src + dawexport::formatLabel(fmt) + " - drag onto your DAW, or click to change format / save");
+    }
+}
+
+juce::var PatchLinkEditor::getActiveOrStagedPatchVar()
+{
+    if (!proc.getLoadedNodes().empty())
+        return proc.graphToVar();
+    if (stagedPatchVar.isObject())
+        return stagedPatchVar;
+    return proc.graphToVar();
+}
+
+void PatchLinkEditor::stagePatch(const juce::var& patchVar, const juce::String& title, const juce::String& toastMsg)
+{
+    stagedPatchVar = patchVar;
+    stagedPatchTitle = title.trim();
+    if (stagedPatchTitle.isEmpty())
+        if (auto* o = patchVar.getDynamicObject())
+            stagedPatchTitle = o->getProperty("name").toString();
+    if (stagedPatchTitle.isNotEmpty())
+        proc.setPatchName(stagedPatchTitle);
+    refreshViews();
+    if (toastMsg.isNotEmpty())
+    {
+        setStatus(toastMsg);
+        showToast(toastMsg);
+    }
+}
+
+void PatchLinkEditor::clearStagedPatch()
+{
+    stagedPatchVar = juce::var();
+    stagedPatchTitle.clear();
+}
+
+void PatchLinkEditor::showFormatPickerMenu(const juce::var& customPatch, int singleSlotIndex, bool fromDragAttempt)
+{
+    const auto patch = customPatch.isObject() ? customPatch : getActiveOrStagedPatchVar();
+    const bool hasNodes = [&]() {
+        if (auto* o = patch.getDynamicObject())
+            if (auto* arr = o->getProperty("nodes").getArray())
+                return !arr->isEmpty();
+        return false;
+    }();
+
+    juce::PopupMenu menu;
+    menu.addSectionHeader(hostDetection.isStandalone
+                              ? "Standalone export format"
+                              : ("Detected host: " + hostDetection.hostName));
+    menu.addItem(1, "FL Studio (.fst)", true, selectedExportFormat == dawexport::TargetFormat::flStudioFst);
+    menu.addItem(2, "REAPER (.RfxChain)", true, selectedExportFormat == dawexport::TargetFormat::reaperRfxChain);
+    menu.addItem(3, "VST3 Preset (.vstpreset)", true, selectedExportFormat == dawexport::TargetFormat::vstPreset);
+    menu.addItem(4, "PatchLink (.patchlink)", true, selectedExportFormat == dawexport::TargetFormat::patchlinkFile);
+    menu.addSeparator();
+    menu.addItem(10, singleSlotIndex >= 0 ? "Save single preset file..." : "Save DAW preset file...", hasNodes);
+
+    auto opts = juce::PopupMenu::Options();
+    if (!customPatch.isObject() && singleSlotIndex < 0)
+        opts = opts.withTargetComponent(&dragDawButton);
+
+    menu.showMenuAsync(opts,
+        [safe = juce::Component::SafePointer<PatchLinkEditor>(this), patch, singleSlotIndex, fromDragAttempt](int result) {
+            if (!safe || result == 0) return;
+            if (result >= 1 && result <= 4)
+            {
+                const dawexport::TargetFormat map[] = {
+                    dawexport::TargetFormat::flStudioFst,
+                    dawexport::TargetFormat::reaperRfxChain,
+                    dawexport::TargetFormat::vstPreset,
+                    dawexport::TargetFormat::patchlinkFile
+                };
+                safe->selectedExportFormat = map[result - 1];
+                safe->updateExportButtonState();
+                const auto lbl = dawexport::formatLabel(safe->selectedExportFormat);
+                safe->setStatus("DAW target: " + lbl);
+                safe->showToast(fromDragAttempt ? ("Format set to " + lbl + " - now drag button into your DAW!")
+                                                : ("Format set to " + lbl + " (drag button to DAW)"));
+            }
+            else if (result == 10)
+            {
+                safe->saveDawPresetToDisk(patch, safe->effectiveExportFormat(), singleSlotIndex);
+            }
+        });
+}
+
+void PatchLinkEditor::startExternalDawDrag(const juce::var& customPatch, int singleSlotIndex)
+{
+    const auto patch = customPatch.isObject() ? customPatch : getActiveOrStagedPatchVar();
+    const bool hasNodes = [&]() {
+        if (auto* o = patch.getDynamicObject())
+            if (auto* arr = o->getProperty("nodes").getArray())
+                return !arr->isEmpty();
+        return false;
+    }();
+    if (!hasNodes)
+    {
+        showToast("Add, drop, or open a chain first before dragging to your DAW", true);
+        return;
+    }
+
+    if (hostDetection.isStandalone && selectedExportFormat == dawexport::TargetFormat::autoDetect)
+    {
+        showFormatPickerMenu(customPatch, singleSlotIndex, true);
+        return;
+    }
+
+    const auto fmt = effectiveExportFormat();
+    juce::String err;
+    const auto files = dawexport::prepareDragFiles(patch, fmt, err, singleSlotIndex);
+    if (files.isEmpty())
+    {
+        showToast(err.isNotEmpty() ? err : "Could not prepare DAW preset", true);
+        return;
+    }
+
+    setStatus("Dragging " + dawexport::formatLabel(fmt) + " to DAW...");
+    performExternalDragDropOfFiles(files, false, this,
+        [safe = juce::Component::SafePointer<PatchLinkEditor>(this)] {
+            if (safe) safe->setStatus("Ready");
+        });
+}
+
+void PatchLinkEditor::saveDawPresetToDisk(const juce::var& customPatch, dawexport::TargetFormat fmt, int singleSlotIndex)
+{
+    const auto patch = customPatch.isObject() ? customPatch : getActiveOrStagedPatchVar();
+    const auto ext = dawexport::formatExtension(fmt);
+    juce::String defaultName = "PatchLink";
+    if (auto* root = patch.getDynamicObject())
+    {
+        const auto n = root->getProperty("name").toString().trim();
+        if (n.isNotEmpty()) defaultName = n;
+        if (singleSlotIndex >= 0)
+            if (auto* arr = root->getProperty("nodes").getArray())
+                if (singleSlotIndex < arr->size())
+                    defaultName = dawexport::detail::extractNodeInfo(arr->getReference(singleSlotIndex)).name;
+    }
+
+    auto chooser = std::make_shared<juce::FileChooser>(
+        "Save " + dawexport::formatLabel(fmt),
+        juce::File::getSpecialLocation(juce::File::userDesktopDirectory).getChildFile(
+            dawexport::detail::sanitizeFileBase(defaultName, "PatchLink") + "." + ext),
+        "*." + ext);
+    chooser->launchAsync(juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles,
+        [safe = juce::Component::SafePointer<PatchLinkEditor>(this), chooser, patch, fmt, singleSlotIndex, ext](const juce::FileChooser&) mutable {
+            if (!safe) return;
+            auto target = chooser->getResult();
+            if (target.getFullPathName().isEmpty()) return;
+            if (target.getFileExtension().isEmpty()) target = target.withFileExtension(ext);
+
+            juce::String err;
+            const auto generated = dawexport::prepareDragFiles(patch, fmt, err, singleSlotIndex);
+            if (generated.isEmpty())
+            {
+                safe->showToast(err.isNotEmpty() ? err : "Export failed", true);
+                return;
+            }
+            const juce::File src(generated[0]);
+            if (!src.copyFileTo(target))
+            {
+                safe->showToast("Could not write " + target.getFileName(), true);
+                return;
+            }
+            safe->setStatus("Saved " + target.getFileName());
+            safe->showToast("Saved " + target.getFileName());
+        });
+}
+
+namespace
+{
+class EmptyDropModal final : public ModalOverlay
+{
+public:
+    EmptyDropModal(const juce::String& titleText,
+                   const juce::var& patchVar,
+                   const juce::StringArray& extraNotes)
+    {
+        title.setText("Zero-Load or Import: " + titleText, juce::dontSendNotification);
+        title.setFont(theme::font(20.0f, true));
+        subtitle.setText("PatchLink is empty. Share a code or drag to your DAW cleanly without loading plugins, or load effects now.",
+                         juce::dontSendNotification);
+        subtitle.setFont(theme::font(12.5f));
+        subtitle.setColour(juce::Label::textColourId, theme::muted);
+        addAndMakeVisible(title);
+        addAndMakeVisible(subtitle);
+
+        closeButton.setTooltip("Cancel (Esc)");
+        closeButton.onClick = [this] { if (onDismiss) onDismiss(); };
+        addAndMakeVisible(closeButton);
+
+        auto lines = chainformat::manifestLines(patchVar);
+        for (const auto& note : extraNotes)
+            if (note.isNotEmpty()) lines.add("[note] " + note);
+
+        caption.setText("DETECTED PLUGINS (" + juce::String(lines.size()) + ")", juce::dontSendNotification);
+        caption.setFont(theme::font(11.0f, true));
+        caption.setColour(juce::Label::textColourId, theme::muted);
+        addAndMakeVisible(caption);
+
+        manifest.setMultiLine(true);
+        manifest.setReadOnly(true);
+        manifest.setFont(theme::mono(11.0f));
+        manifest.setText(lines.isEmpty() ? "No plugins detected." : lines.joinIntoString("\n"));
+        addAndMakeVisible(manifest);
+
+        stageBtn.setTooltip("Keep staged in toolbar without instantiating any plugin DLLs");
+        dragBtn.setTooltip("Drag this button directly into your DAW (zero plugins loaded inside PatchLink)");
+        shareBtn.setTooltip("Publish and get a 6-character code immediately without loading plugins");
+        loadBtn.setTooltip("Load all available VST3 plugins into PatchLink now");
+
+        stageBtn.onClick = [this] { if (onStageOnly) onStageOnly(); };
+        dragBtn.onDragStart = [this] { if (onDragOnly) onDragOnly(true); };
+        dragBtn.onClick = [this] { if (onDragOnly) onDragOnly(false); };
+        shareBtn.onClick = [this] { if (onShareOnly) onShareOnly(); };
+        loadBtn.onClick = [this] { if (onLoadEffects) onLoadEffects(); };
+
+        addAndMakeVisible(stageBtn);
+        addAndMakeVisible(dragBtn);
+        addAndMakeVisible(shareBtn);
+        addAndMakeVisible(loadBtn);
+    }
+
+    juce::Rectangle<int> getCardBounds() const override
+    {
+        const int w = juce::jmin(680, getWidth() - 48);
+        const int h = juce::jmin(470, getHeight() - 48);
+        return juce::Rectangle<int>(w, h).withCentre(getLocalBounds().getCentre());
+    }
+
+    std::function<void()> onStageOnly;
+    std::function<void(bool startDrag)> onDragOnly;
+    std::function<void()> onShareOnly;
+    std::function<void()> onLoadEffects;
+
+private:
+    juce::Label title, subtitle, caption;
+    juce::TextEditor manifest;
+    PlButton closeButton { "", Icon::close, PlButton::Style::ghost };
+    PlButton stageBtn { "Stage only", Icon::none, PlButton::Style::ghost };
+    PlButton dragBtn { "Drag to DAW", Icon::exportFile, PlButton::Style::secondary };
+    PlButton shareBtn { "Share code", Icon::share, PlButton::Style::secondary };
+    PlButton loadBtn { "Load effects", Icon::plus, PlButton::Style::primary };
+
+    void layoutCard(juce::Rectangle<int> card) override
+    {
+        auto r = card.reduced(24, 20);
+        closeButton.setBounds(r.getRight() - 34, r.getY(), 34, 34);
+        title.setBounds(r.removeFromTop(32).withTrimmedRight(44));
+        subtitle.setBounds(r.removeFromTop(34));
+        r.removeFromTop(10);
+
+        auto footer = r.removeFromBottom(40);
+        loadBtn.setBounds(footer.removeFromRight(124).reduced(0, 2));
+        footer.removeFromRight(8);
+        shareBtn.setBounds(footer.removeFromRight(118).reduced(0, 2));
+        footer.removeFromRight(8);
+        dragBtn.setBounds(footer.removeFromRight(128).reduced(0, 2));
+        footer.removeFromRight(8);
+        stageBtn.setBounds(footer.removeFromRight(98).reduced(0, 2));
+        r.removeFromBottom(12);
+
+        caption.setBounds(r.removeFromTop(20));
+        r.removeFromTop(4);
+        manifest.setBounds(r);
+    }
+};
+} // namespace
+
+void PatchLinkEditor::showEmptyDropModal(const juce::var& stagedVar,
+                                         const juce::String& label,
+                                         const juce::StringArray& notes,
+                                         std::function<void()> loadIntoPatchLinkFn)
+{
+    dismissOverlay();
+    auto* modal = new EmptyDropModal(label, stagedVar, notes);
+    overlay.reset(modal);
+    modal->onDismiss = [safe = juce::Component::SafePointer<PatchLinkEditor>(this)] { if (safe) safe->dismissOverlay(); };
+
+    modal->onStageOnly = [safe = juce::Component::SafePointer<PatchLinkEditor>(this), stagedVar, label] {
+        if (!safe) return;
+        safe->dismissOverlay();
+        safe->stagePatch(stagedVar, label, "Staged \"" + label + "\" (zero-load) - drag button to your DAW");
+    };
+
+    modal->onDragOnly = [safe = juce::Component::SafePointer<PatchLinkEditor>(this), stagedVar, label](bool startDrag) {
+        if (!safe) return;
+        safe->stagePatch(stagedVar, label);
+        if (startDrag)
+        {
+            safe->startExternalDawDrag(stagedVar, -1);
+        }
+        else
+        {
+            safe->dismissOverlay();
+            safe->showFormatPickerMenu(stagedVar, -1, false);
+        }
+    };
+
+    modal->onShareOnly = [safe = juce::Component::SafePointer<PatchLinkEditor>(this), stagedVar, label] {
+        if (!safe) return;
+        safe->stagePatch(stagedVar, label);
+        safe->openShareDialog(true);
+    };
+
+    modal->onLoadEffects = [safe = juce::Component::SafePointer<PatchLinkEditor>(this), loadFn = std::move(loadIntoPatchLinkFn)] {
+        if (!safe) return;
+        safe->dismissOverlay();
+        safe->clearStagedPatch();
+        if (loadFn) loadFn();
+    };
+
+    modal->setBounds(getLocalBounds());
+    addAndMakeVisible(modal);
+    modal->grabKeyboardFocus();
+}
+
 void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
 {
     auto cachedFiles = std::move(droppedFileCache);
@@ -745,162 +1175,239 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
         return;
 
     auto safe = juce::Component::SafePointer<PatchLinkEditor>(this);
-    auto step = std::make_shared<std::function<void()>>();
-
-    *step = [safe, state, step, x, y]() mutable {
+    auto runBatch = [safe, state, x, y]() mutable {
         if (!safe) return;
+        safe->clearStagedPatch();
+        auto step = std::make_shared<std::function<void()>>();
 
-        if (state->index >= state->items.size())
-        {
-            if (state->anyReplaced)
-                safe->lastShareCode.clear();
-            safe->refreshViews();
+        *step = [safe, state, step, x, y]() mutable {
+            if (!safe) return;
 
-            if (!state->errors.isEmpty() && state->loadedEffects == 0
-                && state->loadedChains == 0 && state->loadedMixerTracks == 0)
+            if (state->index >= state->items.size())
             {
-                safe->setStatus("Import failed");
-                juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
-                                                       "Cannot import file",
-                                                       state->errors.joinIntoString("\n"));
+                if (state->anyReplaced)
+                    safe->lastShareCode.clear();
+                safe->refreshViews();
+
+                if (!state->errors.isEmpty() && state->loadedEffects == 0
+                    && state->loadedChains == 0 && state->loadedMixerTracks == 0)
+                {
+                    safe->setStatus("Import failed");
+                    juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
+                                                           "Cannot import file",
+                                                           state->errors.joinIntoString("\n"));
+                    return;
+                }
+
+                if (!state->notes.isEmpty())
+                {
+                    const juce::String status = (state->loadedEffects > 0 || state->loadedChains > 0 || state->loadedMixerTracks > 0)
+                        ? "Imported with missing or skipped plugins"
+                        : "Nothing loaded";
+                    safe->setStatus(status);
+                    safe->showMissingPlugins(state->notes,
+                                             state->loadedMixerTracks > 0 ? "FL Studio mixer track imported"
+                                             : state->loadedChains > 0   ? "Chain imported"
+                                                                         : "FL Studio preset import");
+                    return;
+                }
+
+                if (state->loadedEffects == 1 && state->loadedChains == 0 && state->loadedMixerTracks == 0)
+                {
+                    safe->setStatus("Added " + state->lastLabel);
+                    safe->showToast("Added " + state->lastLabel + " preset");
+                }
+                else if (state->loadedEffects > 1 && state->loadedChains == 0 && state->loadedMixerTracks == 0)
+                {
+                    const auto msg = "Added " + juce::String(state->loadedEffects) + " FL Studio presets";
+                    safe->setStatus(msg);
+                    safe->showToast(msg);
+                }
+                else if (state->loadedMixerTracks > 0)
+                {
+                    const auto msg = "Loaded FL track \"" + state->lastLabel + "\"";
+                    safe->setStatus(msg);
+                    safe->showToast(msg);
+                }
+                else
+                {
+                    safe->setStatus("Chain imported");
+                    safe->showToast("Chain imported");
+                }
                 return;
             }
 
-            if (!state->notes.isEmpty())
+            const auto item = state->items[state->index++];
+            if (item.error.isNotEmpty())
             {
-                const juce::String status = (state->loadedEffects > 0 || state->loadedChains > 0 || state->loadedMixerTracks > 0)
-                    ? "Imported with missing or skipped plugins"
-                    : "Nothing loaded";
-                safe->setStatus(status);
-                safe->showMissingPlugins(state->notes,
-                                         state->loadedMixerTracks > 0 ? "FL Studio mixer track imported"
-                                         : state->loadedChains > 0   ? "Chain imported"
-                                                                     : "FL Studio preset import");
+                state->errors.add(item.error);
+                (*step)();
                 return;
             }
 
-            if (state->loadedEffects == 1 && state->loadedChains == 0 && state->loadedMixerTracks == 0)
+            if (!item.isFst)
             {
-                safe->setStatus("Added " + state->lastLabel);
-                safe->showToast("Added " + state->lastLabel + " preset");
+                safe->pluginWindows.clear();
+                state->anyReplaced = true;
+                state->lastLabel = item.displayName;
+                safe->setStatus("Opening " + item.displayName + "...");
+                safe->proc.loadFromVarAsync(item.patchVar,
+                    [safe, state, step](juce::StringArray missing, juce::String err) {
+                        if (!safe) return;
+                        if (err.isNotEmpty()) state->errors.add(err);
+                        else ++state->loadedChains;
+                        for (const auto& m : missing) state->notes.add(m);
+                        (*step)();
+                    });
+                return;
             }
-            else if (state->loadedEffects > 1 && state->loadedChains == 0 && state->loadedMixerTracks == 0)
+
+            if (!item.fst.valid)
             {
-                const auto msg = "Added " + juce::String(state->loadedEffects) + " FL Studio presets";
-                safe->setStatus(msg);
-                safe->showToast(msg);
+                state->errors.add(item.fst.error.isNotEmpty() ? item.fst.error : ("Invalid .fst: " + item.displayName));
+                (*step)();
+                return;
             }
-            else if (state->loadedMixerTracks > 0)
+
+            if (item.fst.plugins.empty())
             {
-                const auto msg = "Loaded FL track \"" + state->lastLabel + "\"";
-                safe->setStatus(msg);
-                safe->showToast(msg);
+                if (item.fst.skipped.isEmpty())
+                    state->errors.add("No plugins found in " + item.displayName);
+                else
+                    for (const auto& s : item.fst.skipped) state->notes.add(s);
+                (*step)();
+                return;
+            }
+
+            const bool isMixerOrMulti = item.fst.isMixerTrack || item.fst.plugins.size() > 1;
+            int dropX = 282;
+            int dropY = 208;
+            if (!isMixerOrMulti && x >= 0 && y >= 0 && safe->mode == Mode::patcher)
+            {
+                const auto localPt = safe->patcherView.getLocalPoint(safe.getComponent(), juce::Point<int>(x, y))
+                                   + safe->patcherView.getScrollOffset();
+                dropX = juce::jlimit(60, 1620, localPt.x - 98 + state->effectOffset * 36);
+                dropY = juce::jlimit(40, 1060, localPt.y - 46 + state->effectOffset * 28);
+                ++state->effectOffset;
             }
             else
             {
-                safe->setStatus("Chain imported");
-                safe->showToast("Chain imported");
+                const int count = static_cast<int>(safe->proc.getLoadedNodes().size());
+                dropX = 282 + (count % 5) * 224;
+                dropY = 208 + (count / 5) * 132;
             }
-            return;
-        }
 
-        const auto item = state->items[state->index++];
-        if (item.error.isNotEmpty())
-        {
-            state->errors.add(item.error);
-            (*step)();
-            return;
-        }
+            if (isMixerOrMulti)
+            {
+                safe->pluginWindows.clear();
+                safe->setStatus("Loading FL Studio mixer track...");
+            }
+            else
+            {
+                safe->setStatus("Loading FL Studio preset " + item.displayName + "...");
+            }
 
-        if (!item.isFst)
-        {
-            safe->pluginWindows.clear();
-            state->anyReplaced = true;
-            state->lastLabel = item.displayName;
-            safe->setStatus("Opening " + item.displayName + "...");
-            safe->proc.loadFromVarAsync(item.patchVar,
-                [safe, state, step](juce::StringArray missing, juce::String err) {
+            safe->proc.importParsedFstAsync(item.fst, dropX, dropY, true,
+                [safe, state, step, isMixerOrMulti, label = item.displayName](bool isMixerTrack, int loadedCount,
+                                                                               juce::StringArray skippedOrMissing, juce::String err) {
                     if (!safe) return;
-                    if (err.isNotEmpty()) state->errors.add(err);
-                    else ++state->loadedChains;
-                    for (const auto& m : missing) state->notes.add(m);
+                    if (err.isNotEmpty())
+                    {
+                        state->errors.add(err);
+                    }
+                    else if (loadedCount > 0)
+                    {
+                        state->lastLabel = label;
+                        if (isMixerTrack || isMixerOrMulti)
+                        {
+                            state->anyReplaced = true;
+                            ++state->loadedMixerTracks;
+                        }
+                        else
+                        {
+                            ++state->loadedEffects;
+                        }
+                    }
+                    for (const auto& m : skippedOrMissing)
+                        state->notes.add(m);
+                    safe->refreshViews();
                     (*step)();
                 });
-            return;
-        }
+        };
 
-        if (!item.fst.valid)
-        {
-            state->errors.add(item.fst.error.isNotEmpty() ? item.fst.error : ("Invalid .fst: " + item.displayName));
-            (*step)();
-            return;
-        }
-
-        if (item.fst.plugins.empty())
-        {
-            if (item.fst.skipped.isEmpty())
-                state->errors.add("No plugins found in " + item.displayName);
-            else
-                for (const auto& s : item.fst.skipped) state->notes.add(s);
-            (*step)();
-            return;
-        }
-
-        const bool isMixerOrMulti = item.fst.isMixerTrack || item.fst.plugins.size() > 1;
-        int dropX = 282;
-        int dropY = 208;
-        if (!isMixerOrMulti && x >= 0 && y >= 0 && safe->mode == Mode::patcher)
-        {
-            const auto localPt = safe->patcherView.getLocalPoint(safe.getComponent(), juce::Point<int>(x, y))
-                               + safe->patcherView.getScrollOffset();
-            dropX = juce::jlimit(60, 1620, localPt.x - 98 + state->effectOffset * 36);
-            dropY = juce::jlimit(40, 1060, localPt.y - 46 + state->effectOffset * 28);
-            ++state->effectOffset;
-        }
-        else
-        {
-            const int count = static_cast<int>(safe->proc.getLoadedNodes().size());
-            dropX = 282 + (count % 5) * 224;
-            dropY = 208 + (count / 5) * 132;
-        }
-
-        if (isMixerOrMulti)
-        {
-            safe->pluginWindows.clear();
-            safe->setStatus("Loading FL Studio mixer track...");
-        }
-        else
-        {
-            safe->setStatus("Loading FL Studio preset " + item.displayName + "...");
-        }
-
-        safe->proc.importParsedFstAsync(item.fst, dropX, dropY, true,
-            [safe, state, step, isMixerOrMulti, label = item.displayName](bool isMixerTrack, int loadedCount,
-                                                                           juce::StringArray skippedOrMissing, juce::String err) {
-                if (!safe) return;
-                if (err.isNotEmpty())
-                {
-                    state->errors.add(err);
-                }
-                else if (loadedCount > 0)
-                {
-                    state->lastLabel = label;
-                    if (isMixerTrack || isMixerOrMulti)
-                    {
-                        state->anyReplaced = true;
-                        ++state->loadedMixerTracks;
-                    }
-                    else
-                    {
-                        ++state->loadedEffects;
-                    }
-                }
-                for (const auto& m : skippedOrMissing)
-                    state->notes.add(m);
-                safe->refreshViews();
-                (*step)();
-            });
+        (*step)();
     };
 
-    (*step)();
+    if (proc.getLoadedNodes().empty())
+    {
+        juce::var stagedCandidate;
+        juce::String candidateLabel;
+        juce::StringArray extraNotes;
+        juce::Array<juce::var> combinedNodes;
+
+        for (const auto& item : state->items)
+        {
+            if (item.error.isNotEmpty())
+                continue;
+            if (!item.isFst && item.patchVar.isObject())
+            {
+                stagedCandidate = item.patchVar;
+                candidateLabel = item.displayName;
+                if (auto* o = item.patchVar.getDynamicObject())
+                {
+                    if (o->getProperty("name").toString().isNotEmpty())
+                        candidateLabel = o->getProperty("name").toString();
+                    if (auto* arr = o->getProperty("nodes").getArray())
+                        combinedNodes = *arr;
+                }
+                break;
+            }
+            if (item.isFst && item.fst.valid && !item.fst.plugins.empty())
+            {
+                const auto v = flstudio::parsedFstToPatchVar(item.fst, &proc.getKnownList());
+                if (auto* o = v.getDynamicObject())
+                {
+                    if (candidateLabel.isEmpty())
+                        candidateLabel = o->getProperty("name").toString();
+                    else
+                        candidateLabel = juce::String(state->items.size()) + " FL Presets";
+                    if (auto* arr = o->getProperty("nodes").getArray())
+                    {
+                        for (auto n : *arr)
+                        {
+                            if (auto* no = n.getDynamicObject())
+                            {
+                                no->setProperty("uid", 100 + combinedNodes.size());
+                                no->setProperty("order", combinedNodes.size());
+                            }
+                            combinedNodes.add(n);
+                        }
+                    }
+                }
+                for (const auto& s : item.fst.skipped)
+                    extraNotes.add(s);
+            }
+        }
+
+        if (!combinedNodes.isEmpty())
+        {
+            if (!stagedCandidate.isObject())
+            {
+                juce::DynamicObject::Ptr root = new juce::DynamicObject();
+                root->setProperty("app", "PatchLink");
+                root->setProperty("chainFormat", chainformat::kFormatVersion);
+                root->setProperty("name", candidateLabel.isNotEmpty() ? candidateLabel : "FL Chain");
+                root->setProperty("nodes", combinedNodes);
+                root->setProperty("connections", juce::Array<juce::var>());
+                stagedCandidate = juce::var(root.get());
+            }
+            showEmptyDropModal(stagedCandidate,
+                               candidateLabel.isNotEmpty() ? candidateLabel : "Dropped chain",
+                               extraNotes,
+                               std::move(runBatch));
+            return;
+        }
+    }
+
+    runBatch();
 }

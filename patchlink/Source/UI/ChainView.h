@@ -17,6 +17,8 @@ public:
     std::function<void(juce::AudioProcessorGraph::NodeID)> onRemove;
     std::function<void(juce::AudioProcessorGraph::NodeID)> onOpen;
     std::function<void(juce::AudioProcessorGraph::NodeID, int)> onReorder;
+    std::function<void(int)> onDragSlot;
+    std::function<void(int)> onExportSlot;
     std::function<void()> onAdd;
     std::function<void()> onClear;
 

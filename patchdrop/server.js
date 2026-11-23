@@ -5,6 +5,7 @@
 //   POST /api/publish {title,author,description,patch,isPublic,category,tags} -> {code}
 //   GET  /api/p/:code -> {title,author,description,patch,createdAt,downloads}
 //   GET  /api/p/:code/download -> fichier .patchlink
+//   GET  /api/p/:code/fst -> fichier .fst FL Studio
 //   GET  /api/list?q=&category=&tag=&sort=&limit= -> {presets,total,allTotal,categories,categoryLabels,popularTags}
 'use strict';
 const http = require('http');
@@ -19,6 +20,9 @@ const PUBLIC = path.join(ROOT, 'public');
 const DATA = path.join(ROOT, 'data');
 const PATCHES = path.join(DATA, 'patches');
 const DB_FILE = path.join(DATA, 'db.json');
+const TUID_FILE = path.join(ROOT, 'vst3_tuids.json');
+let TUID_DB = { byUniqueId: {}, byName: {} };
+try { TUID_DB = JSON.parse(fs.readFileSync(TUID_FILE, 'utf8')); } catch {}
 // Quand Apache proxy /patchdrop/ -> /, le serveur doit générer des URLs relatives.
 // BASE_PATH sert uniquement au site (liens absolus). Laisse '' en local.
 const BASE_PATH = (process.env.BASE_PATH || '').replace(/\/+$/, '');
@@ -176,6 +180,213 @@ function pluginNames(patch) {
   } catch { return []; }
 }
 
+const JUCE_B64 = '.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+';
+function juceDecodeBlock(str) {
+  const dot = String(str || '').indexOf('.');
+  if (dot <= 0) return Buffer.alloc(0);
+  const size = parseInt(str.slice(0, dot), 10);
+  if (!Number.isFinite(size) || size <= 0) return Buffer.alloc(0);
+  const data = Buffer.alloc(size);
+  const src = str.slice(dot + 1);
+  let pos = 0;
+  for (let i = 0; i < src.length; i++) {
+    const val = JUCE_B64.indexOf(src[i]);
+    if (val < 0) continue;
+    let bitStart = pos, numBits = 6, bits = val, byte = bitStart >> 3, off = bitStart & 7, mask = 0x3f;
+    while (numBits > 0 && byte < size) {
+      const take = Math.min(numBits, 8 - off);
+      const tempMask = (mask << off) | (~((0xffffffff >>> off) << off));
+      const tempBits = (bits & ((1 << take) - 1)) << off;
+      data[byte] = ((data[byte] & tempMask) | tempBits) & 0xff;
+      byte++;
+      numBits -= take;
+      bits >>= take;
+      mask >>= take;
+      off = 0;
+    }
+    pos += 6;
+  }
+  return data;
+}
+
+function extractRawVst3Chunks(stateBase64) {
+  if (!stateBase64) return { comp: Buffer.alloc(0), cont: Buffer.alloc(0) };
+  try {
+    const raw = Buffer.from(stateBase64, 'base64');
+    if (raw.length <= 9 || raw.readUInt32LE(0) !== 0x21324356) return { comp: Buffer.alloc(0), cont: Buffer.alloc(0) };
+    const xmlLen = raw.readUInt32LE(4);
+    const xml = raw.slice(8, 8 + Math.min(raw.length - 8, xmlLen)).toString('utf8');
+    const compM = xml.match(/<IComponent>([^<]*)<\/IComponent>/);
+    const contM = xml.match(/<IEditController>([^<]*)<\/IEditController>/);
+    return {
+      comp: compM ? juceDecodeBlock(compM[1].trim()) : Buffer.alloc(0),
+      cont: contM ? juceDecodeBlock(contM[1].trim()) : Buffer.alloc(0),
+    };
+  } catch { return { comp: Buffer.alloc(0), cont: Buffer.alloc(0) }; }
+}
+
+function resolveTuidEntry(node) {
+  const ids = (node && node.ids) || {};
+  const name = ids.name || (node && node.name) || '';
+  let flPlugin = ids.flPluginName || name;
+  let vendor = ids.manufacturer || (node && node.manufacturer) || '';
+  let filePath = ids.fileOrId || (node && node.fileOrId) || '';
+  let tuid = Buffer.alloc(16);
+
+  const rawTuidHex = String(ids.tuidHex || '').replace(/[^0-9a-fA-F]/g, '');
+  if (rawTuidHex.length === 32) {
+    tuid = Buffer.from(rawTuidHex, 'hex');
+  } else {
+    let uidHex = '';
+    if (typeof ids.uniqueId === 'number' && ids.uniqueId !== 0) uidHex = (ids.uniqueId >>> 0).toString(16).padStart(8, '0');
+    else if (typeof ids.identifier === 'string' && ids.identifier.includes('-')) {
+      const tail = ids.identifier.split('-').pop().toLowerCase();
+      if (/^[0-9a-f]{1,8}$/.test(tail)) uidHex = tail.padStart(8, '0');
+    }
+    let rec = uidHex && TUID_DB.byUniqueId ? TUID_DB.byUniqueId[uidHex] : null;
+    if (!rec && name && TUID_DB.byName) {
+      const nk = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const u = TUID_DB.byName[nk];
+      if (u && TUID_DB.byUniqueId) rec = TUID_DB.byUniqueId[u];
+    }
+    if (rec) {
+      if (rec.tuid && rec.tuid.length === 32) tuid = Buffer.from(rec.tuid, 'hex');
+      if (!ids.flPluginName && rec.flPlugin) flPlugin = rec.flPlugin;
+      if (!vendor && rec.vendor) vendor = rec.vendor;
+      if (!filePath && rec.file) filePath = rec.file;
+    }
+  }
+  if (!filePath && name) filePath = `C:\\Program Files\\Common Files\\VST3\\${name}.vst3`;
+  return { name, flPlugin, vendor, filePath, tuid, bypass: Boolean(node && node.bypass), stateBase64: (node && node.stateBase64) || '' };
+}
+
+function writeVarInt(chunks, len) {
+  const bytes = [];
+  let v = len >>> 0;
+  do {
+    let b = v & 0x7f;
+    v >>>= 7;
+    if (v) b |= 0x80;
+    bytes.push(b);
+  } while (v);
+  chunks.push(Buffer.from(bytes));
+}
+function writeFlVar(chunks, ev, buf) {
+  chunks.push(Buffer.from([ev]));
+  writeVarInt(chunks, buf.length);
+  if (buf.length) chunks.push(buf);
+}
+function writeFlUtf16(chunks, ev, str) {
+  writeFlVar(chunks, ev, Buffer.from(String(str || '') + '\0', 'utf16le'));
+}
+function appendSub(parts, id, buf) {
+  const h = Buffer.alloc(12);
+  h.writeUInt32LE(id >>> 0, 0);
+  h.writeBigInt64LE(BigInt(buf.length), 4);
+  parts.push(h);
+  if (buf.length) parts.push(buf);
+}
+function buildWrapperSub53(stateBase64) {
+  const { comp, cont } = extractRawVst3Chunks(stateBase64);
+  if (!comp.length && !cont.length) return Buffer.alloc(0);
+  const parts = [];
+  const ver = Buffer.alloc(4); ver.writeUInt32LE(1, 0); parts.push(ver);
+  const cid1 = Buffer.alloc(64); cid1.writeUInt32LE(1, 0);
+  appendSub(parts, 1, cid1);
+  appendSub(parts, 3, comp);
+  appendSub(parts, 2, cont);
+  return Buffer.concat(parts);
+}
+function buildWrapperChunk(info, mixerStyle) {
+  const parts = [];
+  const ver = Buffer.alloc(4); ver.writeUInt32LE(10, 0); parts.push(ver);
+  if (mixerStyle) appendSub(parts, 1, Buffer.from('ffffffffffffffff0c0000000000000000000000', 'hex'));
+  appendSub(parts, 2, Buffer.from('00ffffffffffffffff087d5000000000000100000000000000', 'hex'));
+  if (mixerStyle) {
+    appendSub(parts, 30, Buffer.from('02000000010000000000000000000000', 'hex'));
+    appendSub(parts, 31, Buffer.from('000000000100000000000000000000000100000000000000', 'hex'));
+    appendSub(parts, 32, Buffer.from('000000000100000000000000', 'hex'));
+  }
+  appendSub(parts, 50, Buffer.from('07000000000000000000000000000000', 'hex'));
+  appendSub(parts, 52, info.tuid);
+  if (info.flPlugin) appendSub(parts, 54, Buffer.from(info.flPlugin, 'utf8'));
+  if (info.filePath) appendSub(parts, 55, Buffer.from(info.filePath, 'utf8'));
+  if (info.vendor) appendSub(parts, 56, Buffer.from(info.vendor, 'utf8'));
+  const s53 = buildWrapperSub53(info.stateBase64);
+  if (s53.length) appendSub(parts, 53, s53);
+  return Buffer.concat(parts);
+}
+function finalizeFl(hdType, hdTracks, hdPpq, dtChunks) {
+  const dt = Buffer.concat(dtChunks);
+  const hdr = Buffer.alloc(22);
+  hdr.write('FLhd', 0, 'ascii');
+  hdr.writeUInt32LE(6, 4);
+  hdr.writeUInt16LE(hdType, 8);
+  hdr.writeUInt16LE(hdTracks, 10);
+  hdr.writeUInt16LE(hdPpq, 12);
+  hdr.write('FLdt', 14, 'ascii');
+  hdr.writeUInt32LE(dt.length, 18);
+  return Buffer.concat([hdr, dt]);
+}
+function buildFlStudioFstBuffer(doc) {
+  const patch = (doc && doc.patch) || {};
+  const rawNodes = Array.isArray(patch.nodes) ? patch.nodes.slice() : [];
+  rawNodes.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const vstNodes = rawNodes.filter((n) => {
+    const fmt = (n && n.ids && n.ids.format) || (n && n.format) || 'VST3';
+    return String(fmt).toUpperCase() === 'VST3';
+  });
+  if (!vstNodes.length) return null;
+
+  if (vstNodes.length === 1) {
+    const info = resolveTuidEntry(vstNodes[0]);
+    const chunks = [];
+    writeFlVar(chunks, 199, Buffer.from('20.8.4.2576\0', 'ascii'));
+    chunks.push(Buffer.from([28, 3]));
+    writeFlUtf16(chunks, 201, 'Fruity Wrapper');
+    const d4 = Buffer.alloc(52);
+    d4.writeUInt32LE(info.bypass ? 0 : 2, 8);
+    writeFlVar(chunks, 212, d4);
+    writeFlUtf16(chunks, 203, info.name || info.flPlugin);
+    writeFlVar(chunks, 213, buildWrapperChunk(info, false));
+    return finalizeFl(0x0030, 0x0002, 0x0030, chunks);
+  }
+
+  const trackName = (doc && doc.title) || patch.name || 'PatchLink';
+  const chunks = [];
+  writeFlVar(chunks, 199, Buffer.from('20.8.4.2576\0', 'ascii'));
+  const evHead = Buffer.alloc(14);
+  evHead[0] = 159; evHead.writeUInt32LE(0x0a10, 1);
+  evHead[5] = 28; evHead[6] = 1; evHead[7] = 37; evHead[8] = 1;
+  evHead[9] = 149; evHead.writeUInt32LE(0x00c04184, 10);
+  chunks.push(evHead);
+  writeFlUtf16(chunks, 204, trackName);
+  writeFlVar(chunks, 236, Buffer.from('000000004c00000000000000', 'hex'));
+
+  for (let slot = 0; slot < 10; slot++) {
+    if (slot < vstNodes.length) {
+      const info = resolveTuidEntry(vstNodes[slot]);
+      writeFlUtf16(chunks, 201, 'Fruity Wrapper');
+      const d4 = Buffer.alloc(52);
+      d4.writeUInt32LE(11, 0);
+      d4.writeUInt32LE(slot, 4);
+      d4.writeUInt32LE(info.bypass ? 0 : 2, 8);
+      d4.writeUInt32LE(320, 16);
+      writeFlVar(chunks, 212, d4);
+      writeFlUtf16(chunks, 203, info.name || info.flPlugin);
+      const meta = Buffer.alloc(10);
+      meta[0] = 155; meta.writeUInt32LE(0, 1);
+      meta[5] = 128; meta.writeUInt32LE(0x00565148, 6);
+      chunks.push(meta);
+      writeFlVar(chunks, 213, buildWrapperChunk(info, true));
+    }
+    const endSlot = Buffer.alloc(3);
+    endSlot[0] = 98; endSlot.writeUInt16LE(slot, 1);
+    chunks.push(endSlot);
+  }
+  return finalizeFl(0x0040, 0x0006, 0x0060, chunks);
+}
+
 const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'application/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.json': 'application/json; charset=utf-8' };
 function serveStatic(req, res, pathname) {
   let rel = decodeURIComponent(pathname);
@@ -239,6 +450,25 @@ async function handleApi(req, res, pathname) {
     doc.downloads = (doc.downloads || 0) + 1;
     fs.writeFileSync(f, JSON.stringify(doc, null, 2));
     return send(res, 200, JSON.stringify(doc.patch, null, 2), { 'Content-Type': 'application/json; charset=utf-8', 'Content-Disposition': `attachment; filename="patchdrop-${code}.patchlink"` });
+  }
+
+  const fstM = pathname.match(/^\/api\/p\/([A-Za-z0-9]+)\/fst$/);
+  if (fstM && (method === 'GET' || method === 'HEAD')) {
+    const code = fstM[1].toUpperCase();
+    if (!CODE_RE.test(code)) return send(res, 400, { error: 'Code invalide.' });
+    const f = path.join(PATCHES, code + '.json');
+    if (!fs.existsSync(f)) return send(res, 404, { error: 'Code introuvable.' });
+    const doc = JSON.parse(fs.readFileSync(f, 'utf8'));
+    const fstBuf = buildFlStudioFstBuffer(doc);
+    if (!fstBuf) return send(res, 400, { error: 'Aucun plugin VST3 exportable en .fst dans ce preset.' });
+    res.writeHead(200, {
+      'Content-Type': 'application/octet-stream',
+      'Content-Length': String(fstBuf.length),
+      'Content-Disposition': `attachment; filename="patchdrop-${code}.fst"`,
+      'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff',
+    });
+    return res.end(method === 'HEAD' ? undefined : fstBuf);
   }
 
   if (pathname === '/api/list' && method === 'GET') {

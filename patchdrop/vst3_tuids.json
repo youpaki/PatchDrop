@@ -1,0 +1,3193 @@
+{
+  "byUniqueId": {
+    "64d69c5c": {
+      "tuid": "41545356627461356d706c6974756265",
+      "flPlugin": "AmpliTube 5",
+      "vendor": "IK Multimedia"
+    },
+    "0a026f84": {
+      "tuid": "01efcdab8291ebfa4e4453504154474a",
+      "flPlugin": "Archetype Gojira",
+      "vendor": "Neural DSP",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Neural DSP\\Archetype Gojira.vst3"
+    },
+    "bfe085c2": {
+      "tuid": "535453564154614d7564696f74726163",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "bff70bc2": {
+      "tuid": "53545356415461537564696f74726163",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "77854cb3": {
+      "tuid": "41545356654b617975746f2d6b657900",
+      "flPlugin": "Auto-Key",
+      "vendor": "Antares",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Antares\\Auto-Key.vst3"
+    },
+    "3a3eac18": {
+      "tuid": "415453566154616375746f2d74756e65",
+      "flPlugin": "Auto-Tune Access",
+      "vendor": "Antares",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Antares\\Auto-Tune Access.vst3"
+    },
+    "527aa78d": {
+      "tuid": "3fb3c20003e25744ba45e1bed447b693",
+      "flPlugin": "Auto-Tune Artist",
+      "vendor": "Antares",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Antares\\Auto-Tune Artist.vst3"
+    },
+    "16677ef8": {
+      "tuid": "415453566150416e75746f2d54756e65",
+      "flPlugin": "Auto-Tune EFX",
+      "vendor": "Antares",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Antares\\Auto-Tune EFX.vst3"
+    },
+    "7f9981f8": {
+      "tuid": "415453563854413175746f2d54756e65",
+      "flPlugin": "Auto-Tune",
+      "vendor": "Antares",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Antares\\Auto-Tune.vst3"
+    },
+    "db52ce39": {
+      "tuid": "01efcdab8291ebfa4477766542736674",
+      "flPlugin": "BodeShifter",
+      "vendor": "Dreamwave",
+      "file": "C:\\Program Files\\Common Files\\VST3\\BodeShifter.vst3\\Contents\\x86_64-win\\BodeShifter.vst3"
+    },
+    "44952fdd": {
+      "tuid": "666675424772696c7463682e52766448",
+      "flPlugin": "Buffr Glitch",
+      "vendor": "Robbert van der Helm",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Buffr Glitch.vst3\\Contents\\x86_64-win\\Buffr Glitch.vst3"
+    },
+    "65e94c5e": {
+      "tuid": "43545356504d634d3120636f6d70206d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "65ffd264": {
+      "tuid": "43545356504d63533120636f6d702073",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "dca65958": {
+      "tuid": "435453564d4f634d3120636f6d702d67",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "dcbcdf58": {
+      "tuid": "435453564d4f63533120636f6d702d67",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "191c5964": {
+      "tuid": "435453564331634d3120636f6d702d73",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "1932df64": {
+      "tuid": "43545356433163533120636f6d702d73",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "6fe49828": {
+      "tuid": "475453565441634d312067617465206d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "6ffb1e2e": {
+      "tuid": "47545356544163533120676174652073",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "bfaad650": {
+      "tuid": "445453565145634d34206d6f6e6f0000",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "b6c57c5a": {
+      "tuid": "4454535651456353342073746572656f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "9028332f": {
+      "tuid": "43545356544e6353656e746572207374",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "473a9783": {
+      "tuid": "01efcdab8291ebfa586e746843726d61",
+      "flPlugin": "Chroma",
+      "vendor": "Xynth Audio",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Chroma.vst3"
+    },
+    "794d04fe": {
+      "tuid": "736972435070756c67696e527664482e",
+      "flPlugin": "Crisp",
+      "vendor": "Robbert van der Helm",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Crisp.vst3\\Contents\\x86_64-win\\Crisp.vst3"
+    },
+    "578d6d1c": {
+      "tuid": "736f72436f73657672527664482e2e2e",
+      "flPlugin": "Crossover",
+      "vendor": "Robbert van der Helm",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Crossover.vst3\\Contents\\x86_64-win\\Crossover.vst3"
+    },
+    "9a3fa0ac": {
+      "tuid": "435453566479634c796d617469637320",
+      "flPlugin": "Cymatics Diablo Lite",
+      "vendor": "Cymatics"
+    },
+    "fff9b4fa": {
+      "tuid": "445453564153644d656573736572206d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "00103b00": {
+      "tuid": "44545356415364536565737365722073",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "7dbd5445": {
+      "tuid": "01efcdab8291ebfa4162726e44696769",
+      "flPlugin": "Digitalis",
+      "vendor": "Aberrant DSP",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Digitalis.vst3"
+    },
+    "f20d03fc": {
+      "tuid": "706f6944657350726c7567527664482e",
+      "flPlugin": "Diopser",
+      "vendor": "Robbert van der Helm",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Diopser.vst3\\Contents\\x86_64-win\\Diopser.vst3"
+    },
+    "9e3757ce": {
+      "tuid": "01efcdab8291ebfa4270723044317274",
+      "flPlugin": "DirtyFilter",
+      "vendor": "Bedroom Producers Blog"
+    },
+    "f477a221": {
+      "tuid": "44545356415064586f70706c6572206d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "f464dd27": {
+      "tuid": "44545356415064536f70706c65722073",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "b0caa4e1": {
+      "tuid": "57545356324464586f75626c65723220",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "b0a159e1": {
+      "tuid": "575453563244644d6f75626c65723220",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "b0b7dfe1": {
+      "tuid": "57545356324464536f75626c65723220",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "b84ca6e1": {
+      "tuid": "57545356344464586f75626c65723420",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "b8235be1": {
+      "tuid": "575453563444644d6f75626c65723420",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "b839e1e1": {
+      "tuid": "57545356344464536f75626c65723420",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "af662ba0": {
+      "tuid": "01efcdab8291ebfa4361626238333038",
+      "flPlugin": "Driftmaker",
+      "vendor": "Puremagnetik",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Driftmaker\\Driftmaker.vst3"
+    },
+    "becdfe57": {
+      "tuid": "45545356444b654d6b72616d65722064",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "bee48457": {
+      "tuid": "45545356444b65536b72616d65722064",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "222015cb": {
+      "tuid": "435453564c46654d6d6f2d6632206d6f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "2236a1d0": {
+      "tuid": "435453564c4665536d6f2d6632207374",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "85b053dd": {
+      "tuid": "535453564749654d6d6f2d67656e6572",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "85c6d9dd": {
+      "tuid": "53545356474965536d6f2d67656e6572",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "150ca2d6": {
+      "tuid": "4d5453563451654d6d6f2d7134206d6f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "15232edb": {
+      "tuid": "4d545356345165536d6f2d7134207374",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "64d25062": {
+      "tuid": "45545356474e65586e69676d61206d6f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "64bf9167": {
+      "tuid": "45545356474e65536e69676d61207374",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "2d3f434b": {
+      "tuid": "f2a24ccd9800ac4900439bb9001cb96a",
+      "flPlugin": "Fresh Air",
+      "vendor": "Slate Digital",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Slate Digital\\Fresh Air.vst3"
+    },
+    "10330df1": {
+      "tuid": "475453563241674d747220616d702032",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "75b7592c": {
+      "tuid": "475453564d416758747220616d70206d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "758e0e2c": {
+      "tuid": "475453564d41674d747220616d70206d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "75a49432": {
+      "tuid": "475453564d416753747220616d702073",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "995ba85d": {
+      "tuid": "475453563243675874722073746f6d70",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "99325d5d": {
+      "tuid": "475453563243674d74722073746f6d70",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "9948e35d": {
+      "tuid": "475453563243675374722073746f6d70",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "a0dda85d": {
+      "tuid": "475453563443675874722073746f6d70",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "a0b45d5d": {
+      "tuid": "475453563443674d74722073746f6d70",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "a0cae35d": {
+      "tuid": "475453563443675374722073746f6d70",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "0277a85d": {
+      "tuid": "475453564e43675874722073746f6d70",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "024e5d5d": {
+      "tuid": "475453564e43674d74722073746f6d70",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "0264e35d": {
+      "tuid": "475453564e43675374722073746f6d70",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "4cb6a72c": {
+      "tuid": "475453564d566758747220746f6f6c20",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "4ca3e22c": {
+      "tuid": "475453564d566753747220746f6f6c20",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "e8f83e51": {
+      "tuid": "54545356334e674d74722074756e6572",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "9a9f7ed6": {
+      "tuid": "475453564d52674d7720746f6e656365",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "9ab604d6": {
+      "tuid": "475453564d5267537720746f6e656365",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "fb691fe7": {
+      "tuid": "43545356414c684d2d636f6d70206d6f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "fb7fabec": {
+      "tuid": "43545356414c68532d636f6d70207374",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "6e4e2da1": {
+      "tuid": "48545356444268582d64656c6179206d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "6e24e2a1": {
+      "tuid": "485453564442684d2d64656c6179206d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "6e3b68a7": {
+      "tuid": "48545356444268532d64656c61792073",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "405b0955": {
+      "tuid": "4354535645306958722d6c206d6f6e6f",
+      "flPlugin": "WaveShell2-VST3 12.0_x64",
+      "vendor": "Waves"
+    },
+    "4031be55": {
+      "tuid": "435453564530694d722d6c206d6f6e6f",
+      "flPlugin": "WaveShell2-VST3 12.0_x64",
+      "vendor": "Waves"
+    },
+    "383f3c4f": {
+      "tuid": "4354535645306953722d6c2065666669",
+      "flPlugin": "WaveShell2-VST3 12.0_x64",
+      "vendor": "Waves"
+    },
+    "3d0f4252": {
+      "tuid": "4354535646306953722d6c2066756c6c",
+      "flPlugin": "WaveShell2-VST3 12.0_x64",
+      "vendor": "Waves"
+    },
+    "e342cd2a": {
+      "tuid": "01efcdab8291ebfa447776654a636565",
+      "flPlugin": "Juicee",
+      "vendor": "Dreamwave",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Juicee.vst3\\Contents\\x86_64-win\\Juicee.vst3"
+    },
+    "191aefbc": {
+      "tuid": "4c54535643316c4d31206c696d697465",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "193175bc": {
+      "tuid": "4c54535643316c5331206c696d697465",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "56929f2c": {
+      "tuid": "4c5453564d496c31312b20756c747261",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "1faa9b11": {
+      "tuid": "4c5453564d326c4d32206d6f6e6f0000",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "16c5411b": {
+      "tuid": "4c5453564d326c53322073746572656f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "08f30538": {
+      "tuid": "4c54535650336c4d33206d756c74696d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "09098b38": {
+      "tuid": "4c54535650336c5333206d756c74696d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "ef28f421": {
+      "tuid": "4c54535647336c4d3320756c7472616d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "ef3f7a21": {
+      "tuid": "4c54535647336c533320756c7472616d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "be81ab5a": {
+      "tuid": "5254535650336c4d332d6c6c206d756c",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "be98315a": {
+      "tuid": "5254535650336c53332d6c6c206d756c",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "9cc0a262": {
+      "tuid": "5254535647336c4d332d6c6c20756c74",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "9cd72862": {
+      "tuid": "5254535647336c53332d6c6c20756c74",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "b60315be": {
+      "tuid": "4c54535641516c4d696e65712062726f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "b6199bbe": {
+      "tuid": "4c54535641516c53696e65712062726f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "f99f12c6": {
+      "tuid": "4c54535653516c4d696e6571206c6f77",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "f9b598c6": {
+      "tuid": "4c54535653516c53696e6571206c6f77",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "fb0308ec": {
+      "tuid": "4c54535635436c4d696e6d62206d6f6e",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "fb1f93e3": {
+      "tuid": "4c54535635436c53696e6d6220737465",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "ec1a029e": {
+      "tuid": "4c545356414f6c426f61697220352e30",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "ebecf69f": {
+      "tuid": "4c545356414f6c366f61697220352e31",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "ec7b8edc": {
+      "tuid": "4c545356414f6c4d6f616972206d6f6e",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "ec9819d3": {
+      "tuid": "4c545356414f6c536f61697220737465",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "30a77aa9": {
+      "tuid": "64756f4c656e73735761722e52766448",
+      "flPlugin": "Loudness War Winner",
+      "vendor": "Robbert van der Helm",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Loudness War Winner.vst3\\Contents\\x86_64-win\\Loudness War Winner.vst3"
+    },
+    "210b082b": {
+      "tuid": "646c654d70616f724d6167634d616763",
+      "flPlugin": "MAGC",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MAGC.vst3"
+    },
+    "1d0bc9cb": {
+      "tuid": "646c654d70616f724d416d704d416d70",
+      "flPlugin": "MAmp",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MAmp.vst3"
+    },
+    "1d0ac80b": {
+      "tuid": "646c654d70616f724d4165624d416562",
+      "flPlugin": "MAnalyzer",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MAnalyzer.vst3"
+    },
+    "1d0647eb": {
+      "tuid": "646c654d70616f724d4141614d414161",
+      "flPlugin": "MAutoAlign",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MAutoAlign.vst3"
+    },
+    "216d43eb": {
+      "tuid": "646c654d70616f724d6479414d647941",
+      "flPlugin": "MAutoDynamicEq",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MAutoDynamicEq.vst3"
+    },
+    "1d0acb8b": {
+      "tuid": "646c654d70616f724d41657e4d41657e",
+      "flPlugin": "MAutoEqualizer",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MAutoEqualizer.vst3"
+    },
+    "1d0de20b": {
+      "tuid": "646c654d70616f724d417e324d417e32",
+      "flPlugin": "MAutoEqualizerLP",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MAutoEqualizerLP.vst3"
+    },
+    "210cc64b": {
+      "tuid": "646c654d70616f724d6175544d617554",
+      "flPlugin": "MAutoPitch",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Pitch Shift\\MAutoPitch.vst3"
+    },
+    "210c888b": {
+      "tuid": "646c654d70616f724d6173664d617366",
+      "flPlugin": "MAutoStereoFix",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MAutoStereoFix.vst3"
+    },
+    "1d0cca8b": {
+      "tuid": "646c654d70616f724d4175764d417576",
+      "flPlugin": "MAutoVolume",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MAutoVolume.vst3"
+    },
+    "1d0ac1cb": {
+      "tuid": "646c654d70616f724d4165304d416530",
+      "flPlugin": "MAutopan",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MAutopan.vst3"
+    },
+    "63e5024b": {
+      "tuid": "646c654d70616f726778373467783734",
+      "flPlugin": "MAutopanMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MAutopanMB.vst3"
+    },
+    "1d2a43cb": {
+      "tuid": "646c654d70616f724d4261404d426140",
+      "flPlugin": "MBandPass",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MBandPass.vst3"
+    },
+    "1d2a4a2b": {
+      "tuid": "646c654d70616f724d4261734d426173",
+      "flPlugin": "MBassador",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MBassador.vst3"
+    },
+    "1d2b448b": {
+      "tuid": "646c654d70616f724d4269464d426946",
+      "flPlugin": "MBitFun",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MBitFun.vst3"
+    },
+    "2126648b": {
+      "tuid": "646c654d70616f724d6242464d624246",
+      "flPlugin": "MBitFunMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MBitFunMB.vst3"
+    },
+    "1d4684ab": {
+      "tuid": "646c654d70616f724d4343474d434347",
+      "flPlugin": "MCCGenerator",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MCCGenerator.vst3"
+    },
+    "1d4a480b": {
+      "tuid": "646c654d70616f724d4361624d436162",
+      "flPlugin": "MCabinet",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MCabinet.vst3"
+    },
+    "1d4a456b": {
+      "tuid": "646c654d70616f724d43614d4d43614d",
+      "flPlugin": "MCabinetMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MCabinetMB.vst3"
+    },
+    "1d4b256b": {
+      "tuid": "646c654d70616f724d43684d4d43684d",
+      "flPlugin": "MChannelMatrix",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MChannelMatrix.vst3"
+    },
+    "1d4b2a0b": {
+      "tuid": "646c654d70616f724d4368724d436872",
+      "flPlugin": "MCharacter",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MCharacter.vst3"
+    },
+    "1d4b268b": {
+      "tuid": "646c654d70616f724d4368564d436856",
+      "flPlugin": "MCharmVerb",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MCharmVerb.vst3"
+    },
+    "1e8a88cb": {
+      "tuid": "646c654d70616f724d4d63684d4d6368",
+      "flPlugin": "MChorusMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MChorusMB.vst3"
+    },
+    "1d4c096b": {
+      "tuid": "646c654d70616f724d436f6d4d436f6d",
+      "flPlugin": "MComb",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MComb.vst3"
+    },
+    "1e8689ab": {
+      "tuid": "646c654d70616f724d4d436f4d4d436f",
+      "flPlugin": "MCombMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MCombMB.vst3"
+    },
+    "1d4bc9cb": {
+      "tuid": "646c654d70616f724d436d704d436d70",
+      "flPlugin": "MCompare",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MCompare.vst3"
+    },
+    "1d0ac1eb": {
+      "tuid": "646c654d70616f724d4165314d416531",
+      "flPlugin": "MCompressor",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MCompressor.vst3"
+    },
+    "1d4acb0b": {
+      "tuid": "646c654d70616f724d43657a4d43657a",
+      "flPlugin": "MConvolutionEZ",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MConvolutionEZ.vst3"
+    },
+    "1e8685ab": {
+      "tuid": "646c654d70616f724d4d434f4d4d434f",
+      "flPlugin": "MConvolutionMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MConvolutionMB.vst3"
+    },
+    "63e5026b": {
+      "tuid": "646c654d70616f726778373567783735",
+      "flPlugin": "MDelayMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Delay\\MDelayMB.vst3"
+    },
+    "216b4a2b": {
+      "tuid": "646c654d70616f724d6469734d646973",
+      "flPlugin": "MDistortionMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MDistortionMB.vst3"
+    },
+    "1d6c064b": {
+      "tuid": "646c654d70616f724d446f544d446f54",
+      "flPlugin": "MDoubleTracker",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MDoubleTracker.vst3"
+    },
+    "1d6c056b": {
+      "tuid": "646c654d70616f724d446f4d4d446f4d",
+      "flPlugin": "MDoubleTrackerMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MDoubleTrackerMB.vst3"
+    },
+    "1d66c98b": {
+      "tuid": "646c654d70616f724d44456e4d44456e",
+      "flPlugin": "MDrumEnhancer",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MDrumEnhancer.vst3"
+    },
+    "1d6c654b": {
+      "tuid": "646c654d70616f724d44724c4d44724c",
+      "flPlugin": "MDrumLeveler",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MDrumLeveler.vst3"
+    },
+    "1d6c660b": {
+      "tuid": "646c654d70616f724d4472524d447252",
+      "flPlugin": "MDrumReplacer",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MDrumReplacer.vst3"
+    },
+    "216d45eb": {
+      "tuid": "646c654d70616f724d6479514d647951",
+      "flPlugin": "MDynamicEq",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MDynamicEq.vst3"
+    },
+    "1d0ac04b": {
+      "tuid": "646c654d70616f724d4165244d416524",
+      "flPlugin": "MDynamics",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MDynamics.vst3"
+    },
+    "1d0ac0cb": {
+      "tuid": "646c654d70616f724d4165284d416528",
+      "flPlugin": "MDynamicsMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MDynamicsMB.vst3"
+    },
+    "1d0ac7cb": {
+      "tuid": "646c654d70616f724d4165604d416560",
+      "flPlugin": "MDynamicsMBLarge",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MDynamicsMBLarge.vst3"
+    },
+    "1d0ac22b": {
+      "tuid": "646c654d70616f724d4165334d416533",
+      "flPlugin": "MEqualizer",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MEqualizer.vst3"
+    },
+    "1d0ac90b": {
+      "tuid": "646c654d70616f724d41656a4d41656a",
+      "flPlugin": "MEqualizerLP",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MEqualizerLP.vst3"
+    },
+    "1d0ac88b": {
+      "tuid": "646c654d70616f724d4165664d416566",
+      "flPlugin": "MFilter",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MFilter.vst3"
+    },
+    "1d06c08b": {
+      "tuid": "646c654d70616f724d4145264d414526",
+      "flPlugin": "MFlanger",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MFlanger.vst3"
+    },
+    "1e86648b": {
+      "tuid": "646c654d70616f724d4d42464d4d4246",
+      "flPlugin": "MFlangerMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MFlangerMB.vst3"
+    },
+    "1da6486b": {
+      "tuid": "646c654d70616f724d4641654d464165",
+      "flPlugin": "MFreeformAnalogEq",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MFreeformAnalogEq.vst3"
+    },
+    "1d0ac5eb": {
+      "tuid": "646c654d70616f724d4165514d416551",
+      "flPlugin": "MFreeformEqualizer",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MFreeformEqualizer.vst3"
+    },
+    "1d0ae9cb": {
+      "tuid": "646c654d70616f724d4166704d416670",
+      "flPlugin": "MFreeformPhase",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MFreeformPhase.vst3"
+    },
+    "1d0ac48b": {
+      "tuid": "646c654d70616f724d4165464d416546",
+      "flPlugin": "MFreqShifter",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MFreqShifter.vst3"
+    },
+    "1d07c48b": {
+      "tuid": "646c654d70616f724d414d464d414d46",
+      "flPlugin": "MFreqShifterMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MFreqShifterMB.vst3"
+    },
+    "1e870a0b": {
+      "tuid": "646c654d70616f724d4d47724d4d4772",
+      "flPlugin": "MGranularMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Time\\MGranularMB.vst3"
+    },
+    "1dc64a0b": {
+      "tuid": "646c654d70616f724d4741724d474172",
+      "flPlugin": "MGuitarArchitect",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MGuitarArchitect.vst3"
+    },
+    "228c68cb": {
+      "tuid": "646c654d70616f724d6d72684d6d7268",
+      "flPlugin": "MHarmonizerMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Pitch Shift\\MHarmonizerMB.vst3"
+    },
+    "1d0ac0eb": {
+      "tuid": "646c654d70616f724d4165294d416529",
+      "flPlugin": "MLimiterMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MLimiterMB.vst3"
+    },
+    "1d0aaaeb": {
+      "tuid": "646c654d70616f724d4164794d416479",
+      "flPlugin": "MLimiterX",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MLimiterX.vst3"
+    },
+    "1e6a498b": {
+      "tuid": "646c654d70616f724d4c616e4d4c616e",
+      "flPlugin": "MLoudnessAnalyzer",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MLoudnessAnalyzer.vst3"
+    },
+    "1e8aca4b": {
+      "tuid": "646c654d70616f724d4d65744d4d6574",
+      "flPlugin": "MMetronome",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MMetronome.vst3"
+    },
+    "1e8c042b": {
+      "tuid": "646c654d70616f724d4d6f434d4d6f43",
+      "flPlugin": "MModernCompressor",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MModernCompressor.vst3"
+    },
+    "1e8c0a0b": {
+      "tuid": "646c654d70616f724d4d6f724d4d6f72",
+      "flPlugin": "MMorph",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MMorph.vst3"
+    },
+    "1e8c040b": {
+      "tuid": "646c654d70616f724d4d6f424d4d6f42",
+      "flPlugin": "MMorphB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MMorphB.vst3"
+    },
+    "1e86498b": {
+      "tuid": "646c654d70616f724d4d416e4d4d416e",
+      "flPlugin": "MMultiAnalyzer",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MMultiAnalyzer.vst3"
+    },
+    "1eac08eb": {
+      "tuid": "646c654d70616f724d4e6f694d4e6f69",
+      "flPlugin": "MNoiseGenerator",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MNoiseGenerator.vst3"
+    },
+    "1eac0a4b": {
+      "tuid": "646c654d70616f724d4e6f744d4e6f74",
+      "flPlugin": "MNotepad",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MNotepad.vst3"
+    },
+    "1ecc812b": {
+      "tuid": "646c654d70616f724d4f732b4d4f732b",
+      "flPlugin": "MOscillator",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MOscillator.vst3"
+    },
+    "1ecc862b": {
+      "tuid": "646c654d70616f724d4f73534d4f7353",
+      "flPlugin": "MOscilloscope",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MOscilloscope.vst3"
+    },
+    "1d0ac26b": {
+      "tuid": "646c654d70616f724d4165354d416535",
+      "flPlugin": "MPhaser",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MPhaser.vst3"
+    },
+    "9b04c2ab": {
+      "tuid": "646c654d70616f723131353731313537",
+      "flPlugin": "MPhaserMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MPhaserMB.vst3"
+    },
+    "1eeb27eb": {
+      "tuid": "646c654d70616f724d5068614d506861",
+      "flPlugin": "MPhatik",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MPhatik.vst3"
+    },
+    "1eec062b": {
+      "tuid": "646c654d70616f724d506f534d506f53",
+      "flPlugin": "MPolySaturator",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MPolySaturator.vst3"
+    },
+    "1f2a4a4b": {
+      "tuid": "646c654d70616f724d5261744d526174",
+      "flPlugin": "MRatio",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MRatio.vst3"
+    },
+    "1f2bc80b": {
+      "tuid": "646c654d70616f724d526d624d526d62",
+      "flPlugin": "MRatioMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MRatioMB.vst3"
+    },
+    "1f2ac82b": {
+      "tuid": "646c654d70616f724d5265634d526563",
+      "flPlugin": "MRecorder",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MRecorder.vst3"
+    },
+    "1d0aca0b": {
+      "tuid": "646c654d70616f724d4165724d416572",
+      "flPlugin": "MReverb",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MReverb.vst3"
+    },
+    "fb6aa2ab": {
+      "tuid": "646c654d70616f723434643734346437",
+      "flPlugin": "MReverbMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MReverbMB.vst3"
+    },
+    "1f2b2aeb": {
+      "tuid": "646c654d70616f724d5268794d526879",
+      "flPlugin": "MRhythmizer",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Time\\MRhythmizer.vst3"
+    },
+    "1f2b1feb": {
+      "tuid": "646c654d70616f724d5268214d526821",
+      "flPlugin": "MRhythmizerMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Time\\MRhythmizerMB.vst3"
+    },
+    "1d0ac28b": {
+      "tuid": "646c654d70616f724d4165364d416536",
+      "flPlugin": "MRingModulator",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MRingModulator.vst3"
+    },
+    "228c696b": {
+      "tuid": "646c654d70616f724d6d726d4d6d726d",
+      "flPlugin": "MRingModulatorMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MRingModulatorMB.vst3"
+    },
+    "1f2c0a4b": {
+      "tuid": "646c654d70616f724d526f744d526f74",
+      "flPlugin": "MRotary",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MRotary.vst3"
+    },
+    "1d0ac24b": {
+      "tuid": "646c654d70616f724d4165344d416534",
+      "flPlugin": "MSaturator",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MSaturator.vst3"
+    },
+    "1e86654b": {
+      "tuid": "646c654d70616f724d4d424c4d4d424c",
+      "flPlugin": "MSaturatorMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MSaturatorMB.vst3"
+    },
+    "1f4c284b": {
+      "tuid": "646c654d70616f724d5370644d537064",
+      "flPlugin": "MSpectralDelay",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Delay\\MSpectralDelay.vst3"
+    },
+    "1d02a2eb": {
+      "tuid": "646c654d70616f724d4124394d412439",
+      "flPlugin": "MSpectralDynamics",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MSpectralDynamics.vst3"
+    },
+    "1d02a9eb": {
+      "tuid": "646c654d70616f724d4124714d412471",
+      "flPlugin": "MSpectralDynamicsMini",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MSpectralDynamicsMini.vst3"
+    },
+    "1f4c25cb": {
+      "tuid": "646c654d70616f724d5370504d537050",
+      "flPlugin": "MSpectralPan",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MSpectralPan.vst3"
+    },
+    "1d0ac7eb": {
+      "tuid": "646c654d70616f724d4165614d416561",
+      "flPlugin": "MStereoExpander",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MStereoExpander.vst3"
+    },
+    "1f4ca4ab": {
+      "tuid": "646c654d70616f724d5374474d537447",
+      "flPlugin": "MStereoGenerator",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MStereoGenerator.vst3"
+    },
+    "1d02a04b": {
+      "tuid": "646c654d70616f724d4124244d412424",
+      "flPlugin": "MStereoProcessor",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MStereoProcessor.vst3"
+    },
+    "1f48882b": {
+      "tuid": "646c654d70616f724d5353634d535363",
+      "flPlugin": "MStereoScope",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MStereoScope.vst3"
+    },
+    "1f4ca62b": {
+      "tuid": "646c654d70616f724d5374534d537453",
+      "flPlugin": "MStereoSpread",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MStereoSpread.vst3"
+    },
+    "1f4cc54b": {
+      "tuid": "646c654d70616f724d53754c4d53754c",
+      "flPlugin": "MSuperLooper",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MSuperLooper.vst3"
+    },
+    "1f4cc2ab": {
+      "tuid": "646c654d70616f724d5375374d537537",
+      "flPlugin": "MSuperLooper16in16out",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MSuperLooper16in16out.vst3"
+    },
+    "1f4cc28b": {
+      "tuid": "646c654d70616f724d5375364d537536",
+      "flPlugin": "MSuperLooper16out",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MSuperLooper16out.vst3"
+    },
+    "1da8aa0b": {
+      "tuid": "646c654d70616f724d4654724d465472",
+      "flPlugin": "MTransformer",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Pitch Shift\\MTransformer.vst3"
+    },
+    "1f6c67eb": {
+      "tuid": "646c654d70616f724d5472614d547261",
+      "flPlugin": "MTransient",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MTransient.vst3"
+    },
+    "1e8caa0b": {
+      "tuid": "646c654d70616f724d4d74724d4d7472",
+      "flPlugin": "MTransientMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MTransientMB.vst3"
+    },
+    "1d0ac2ab": {
+      "tuid": "646c654d70616f724d4165374d416537",
+      "flPlugin": "MTremolo",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MTremolo.vst3"
+    },
+    "228ca96b": {
+      "tuid": "646c654d70616f724d6d746d4d6d746d",
+      "flPlugin": "MTremoloMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MTremoloMB.vst3"
+    },
+    "1f6cc98b": {
+      "tuid": "646c654d70616f724d54756e4d54756e",
+      "flPlugin": "MTuner",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MTuner.vst3"
+    },
+    "1f6cc3eb": {
+      "tuid": "646c654d70616f724d5475414d547541",
+      "flPlugin": "MTurboAmp",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MTurboAmp.vst3"
+    },
+    "1f6cc42b": {
+      "tuid": "646c654d70616f724d5475434d547543",
+      "flPlugin": "MTurboComp",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MTurboComp.vst3"
+    },
+    "1f66896b": {
+      "tuid": "646c654d70616f724d54436d4d54436d",
+      "flPlugin": "MTurboCompMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MTurboCompMB.vst3"
+    },
+    "1f6cc44b": {
+      "tuid": "646c654d70616f724d5475444d547544",
+      "flPlugin": "MTurboDelay",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Delay\\MTurboDelay.vst3"
+    },
+    "1f66a96b": {
+      "tuid": "646c654d70616f724d54446d4d54446d",
+      "flPlugin": "MTurboDelayMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Delay\\MTurboDelayMB.vst3"
+    },
+    "1f6cc46b": {
+      "tuid": "646c654d70616f724d5475454d547545",
+      "flPlugin": "MTurboEQ",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MTurboEQ.vst3"
+    },
+    "1f6cc48b": {
+      "tuid": "646c654d70616f724d5475464d547546",
+      "flPlugin": "MTurboFilter",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MTurboFilter.vst3"
+    },
+    "2368686b": {
+      "tuid": "646c654d70616f724d7452654d745265",
+      "flPlugin": "MTurboReverb",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MTurboReverb.vst3"
+    },
+    "2368696b": {
+      "tuid": "646c654d70616f724d74526d4d74526d",
+      "flPlugin": "MTurboReverbMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MTurboReverbMB.vst3"
+    },
+    "1d0bcacb": {
+      "tuid": "646c654d70616f724d416d784d416d78",
+      "flPlugin": "MUltraMaximizer",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MUltraMaximizer.vst3"
+    },
+    "1f8be8eb": {
+      "tuid": "646c654d70616f724d556e694d556e69",
+      "flPlugin": "MUnison",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MUnison.vst3"
+    },
+    "238ca8eb": {
+      "tuid": "646c654d70616f724d7574694d757469",
+      "flPlugin": "MUtility",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MUtility.vst3"
+    },
+    "1d742ef3": {
+      "tuid": "4d54535632566d4d7632206d6f6e6f00",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "2281b912": {
+      "tuid": "4d54535632566d537632207374657265",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "1d0ac2cb": {
+      "tuid": "646c654d70616f724d4165384d416538",
+      "flPlugin": "MVibrato",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MVibrato.vst3"
+    },
+    "2288e8eb": {
+      "tuid": "646c654d70616f724d6d56694d6d5669",
+      "flPlugin": "MVibratoMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MVibratoMB.vst3"
+    },
+    "1fa869ab": {
+      "tuid": "646c654d70616f724d56526f4d56526f",
+      "flPlugin": "MVintageRotary",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MVintageRotary.vst3"
+    },
+    "1fac082b": {
+      "tuid": "646c654d70616f724d566f634d566f63",
+      "flPlugin": "MVocoder",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MVocoder.vst3"
+    },
+    "1fca448b": {
+      "tuid": "646c654d70616f724d5761464d576146",
+      "flPlugin": "MWaveFolder",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MWaveFolder.vst3"
+    },
+    "2289088b": {
+      "tuid": "646c654d70616f724d6d57664d6d5766",
+      "flPlugin": "MWaveFolderMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MWaveFolderMB.vst3"
+    },
+    "1d0ac2eb": {
+      "tuid": "646c654d70616f724d4165394d416539",
+      "flPlugin": "MWaveShaper",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MWaveShaper.vst3"
+    },
+    "22890a2b": {
+      "tuid": "646c654d70616f724d6d57734d6d5773",
+      "flPlugin": "MWaveShaperMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MWaveShaperMB.vst3"
+    },
+    "1fcc080b": {
+      "tuid": "646c654d70616f724d576f624d576f62",
+      "flPlugin": "MWobbler",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MWobbler.vst3"
+    },
+    "1e8909ab": {
+      "tuid": "646c654d70616f724d4d576f4d4d576f",
+      "flPlugin": "MWobblerMB",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MWobblerMB.vst3"
+    },
+    "1fe926cb": {
+      "tuid": "646c654d70616f724d5858584d585858",
+      "flPlugin": "MXXX",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MXXX.vst3"
+    },
+    "1fe921eb": {
+      "tuid": "646c654d70616f724d5858314d585831",
+      "flPlugin": "MXXX1",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MXXX1.vst3"
+    },
+    "1fe4e28b": {
+      "tuid": "646c654d70616f724d5836364d583636",
+      "flPlugin": "MXXX6in6out",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MXXX6in6out.vst3"
+    },
+    "1fe9228b": {
+      "tuid": "646c654d70616f724d5858364d585836",
+      "flPlugin": "MXXX6out",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MXXX6out.vst3"
+    },
+    "4b0dd9be": {
+      "tuid": "4d54535642586d4d6178786261737320",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "4b245fbe": {
+      "tuid": "4d54535642586d536178786261737320",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "fc8f0cfb": {
+      "tuid": "495453564c566d4d617878766f6c756d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "fca592fb": {
+      "tuid": "495453564c566d53617878766f6c756d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "9ea34efc": {
+      "tuid": "4d545356706c6d67656c6f64796e6520",
+      "flPlugin": "Melodyne",
+      "vendor": "Celemony",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Celemony\\Melodyne\\Melodyne.vst3"
+    },
+    "804617b9": {
+      "tuid": "5354535654466d5865746166696c7465",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "801cccb9": {
+      "tuid": "5354535654466d4d65746166696c7465",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "803352b9": {
+      "tuid": "5354535654466d5365746166696c7465",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "f2af28e8": {
+      "tuid": "465453564e4c6d58657461666c616e67",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "f285dde8": {
+      "tuid": "465453564e4c6d4d657461666c616e67",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "f29c63e8": {
+      "tuid": "465453564e4c6d53657461666c616e67",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "3583941d": {
+      "tuid": "34fc1a754315bc4caa73672a109be0ff",
+      "flPlugin": "FabFilter Micro",
+      "vendor": "FabFilter",
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Micro.vst3"
+    },
+    "467cab51": {
+      "tuid": "4d545356444f6d586f6e646f6d6f6420",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "46536051": {
+      "tuid": "4d545356444f6d4d6f6e646f6d6f6420",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "4669e651": {
+      "tuid": "4d545356444f6d536f6e646f6d6f6420",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "84463721": {
+      "tuid": "5654535657436d586f7270686f646572",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "841cec21": {
+      "tuid": "5654535657436d4d6f7270686f646572",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "84337221": {
+      "tuid": "5654535657436d536f7270686f646572",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "67aac232": {
+      "tuid": "0de7aef2de004e4f4d75736574507356",
+      "flPlugin": "MusePlugin",
+      "vendor": "Muse",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MusePlugin.vst3"
+    },
+    "628ea156": {
+      "tuid": "0de7aef2de004e4f4d7573656f34527a",
+      "flPlugin": "MuseRecordingPlugin",
+      "vendor": "Muse",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MuseRecordingPlugin.vst3"
+    },
+    "706361dd": {
+      "tuid": "a46c3f54eec01f4889ea57c17dc26443",
+      "flPlugin": "Plugins.VST.NDI.Input",
+      "vendor": "NDI"
+    },
+    "e69bcc14": {
+      "tuid": "d00f265dff7253419a487413b7576704",
+      "flPlugin": "Plugins.VST.NDI.Output",
+      "vendor": "NDI"
+    },
+    "a83befb9": {
+      "tuid": "53545356534d6e4d6c73206275737320",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "a85275b9": {
+      "tuid": "53545356534d6e536c73206275737320",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "e519eb26": {
+      "tuid": "5354535643536e4d6c73206368616e6e",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "e5307126": {
+      "tuid": "5354535643536e536c73206368616e6e",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "07c12157": {
+      "tuid": "5854535654666f547474000000000000",
+      "flPlugin": "OTT",
+      "vendor": "Xfer Records"
+    },
+    "2430e5b6": {
+      "tuid": "4f545356444b6f4d6e656b6e6f622064",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "24476bb6": {
+      "tuid": "4f545356444b6f536e656b6e6f622064",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "33b442d5": {
+      "tuid": "5254535646536f4d6e656b6e6f622066",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "33cac8d5": {
+      "tuid": "5254535646536f536e656b6e6f622066",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "a1dfb73e": {
+      "tuid": "5354535631506f4d6e656b6e6f622070",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "a1f63d3e": {
+      "tuid": "5354535631506f536e656b6e6f622070",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "fbccb574": {
+      "tuid": "5a545356596e4f397a6f6e6520392044",
+      "flPlugin": "Ozone 9 Dynamic EQ",
+      "vendor": "iZotope, Inc.",
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Dynamic EQ.vst3"
+    },
+    "acf7b574": {
+      "tuid": "5a545356446e4f397a6f6e6520392044",
+      "flPlugin": "Ozone 9 Dynamics",
+      "vendor": "iZotope, Inc.",
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Dynamics.vst3"
+    },
+    "2515d175": {
+      "tuid": "5a545356394f4f557a6f6e6520392045",
+      "flPlugin": "Ozone 9 Equalizer",
+      "vendor": "iZotope, Inc.",
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Equalizer.vst3"
+    },
+    "25211475": {
+      "tuid": "5a545356394f4f587a6f6e6520392045",
+      "flPlugin": "Ozone 9 Exciter",
+      "vendor": "iZotope, Inc.",
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Exciter.vst3"
+    },
+    "bfbcb579": {
+      "tuid": "5a545356496e4f397a6f6e6520392049",
+      "flPlugin": "Ozone 9 Imager",
+      "vendor": "iZotope, Inc.",
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Imager.vst3"
+    },
+    "24f4087c": {
+      "tuid": "5a545356394f4f4c7a6f6e652039204c",
+      "flPlugin": "Ozone 9 Low End Focus",
+      "vendor": "iZotope, Inc.",
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Low End Focus.vst3"
+    },
+    "250a8e7d": {
+      "tuid": "5a545356394f4f527a6f6e652039204d",
+      "flPlugin": "Ozone 9 Master Rebalance",
+      "vendor": "iZotope, Inc.",
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Master Rebalance.vst3"
+    },
+    "24e5047d": {
+      "tuid": "5a545356394f4f487a6f6e652039204d",
+      "flPlugin": "Ozone 9 Match EQ",
+      "vendor": "iZotope, Inc.",
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Match EQ.vst3"
+    },
+    "24f7c97d": {
+      "tuid": "5a545356394f4f4d7a6f6e652039204d",
+      "flPlugin": "Ozone 9 Maximizer",
+      "vendor": "iZotope, Inc.",
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Maximizer.vst3"
+    },
+    "250e4f83": {
+      "tuid": "5a545356394f4f537a6f6e6520392053",
+      "flPlugin": "Ozone 9 Spectral Shaper",
+      "vendor": "iZotope, Inc.",
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Spectral Shaper.vst3"
+    },
+    "24d23f86": {
+      "tuid": "5a545356394f4f437a6f6e6520392056",
+      "flPlugin": "Ozone 9 Vintage Compressor",
+      "vendor": "iZotope, Inc.",
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Vintage Compressor.vst3"
+    },
+    "2506cd86": {
+      "tuid": "5a545356394f4f517a6f6e6520392056",
+      "flPlugin": "Ozone 9 Vintage EQ",
+      "vendor": "iZotope, Inc.",
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Vintage EQ.vst3"
+    },
+    "25199286": {
+      "tuid": "5a545356394f4f567a6f6e6520392056",
+      "flPlugin": "Ozone 9 Vintage Limiter",
+      "vendor": "iZotope, Inc.",
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Vintage Limiter.vst3"
+    },
+    "25121086": {
+      "tuid": "5a545356394f4f547a6f6e6520392056",
+      "flPlugin": "Ozone 9 Vintage Tape",
+      "vendor": "iZotope, Inc.",
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Vintage Tape.vst3"
+    },
+    "d6429530": {
+      "tuid": "5a5453564f6e4f397a6f6e6520390000",
+      "flPlugin": "Ozone 9",
+      "vendor": "iZotope, Inc.",
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9.vst3"
+    },
+    "ff9bc805": {
+      "tuid": "5754535645417053617a2d20616e616c",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "0489460a": {
+      "tuid": "575453564541704d617a2d2066726571",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "f59bcc0a": {
+      "tuid": "5754535641417053617a2d2066726571",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "1c8c54fe": {
+      "tuid": "575453565556704d617a2d206d657465",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "1ca2dafe": {
+      "tuid": "5754535655567053617a2d206d657465",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "37e7da02": {
+      "tuid": "5754535650417053617a2d20706f7369",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "df1dc928": {
+      "tuid": "01efcdab8291ebfa4c657665506c6163",
+      "flPlugin": "PLACE",
+      "vendor": "leve",
+      "file": "C:\\Program Files\\Common Files\\VST3\\PLACE.vst3\\PLACE.vst3\\Contents\\x86_64-win\\PLACE.vst3"
+    },
+    "fd5ab969": {
+      "tuid": "505453565353704d7332322073706c69",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "fd713f69": {
+      "tuid": "50545356535370537332322073706c69",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "c8ccbf65": {
+      "tuid": "505453564553704d7332322073707265",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "c8e34565": {
+      "tuid": "50545356455370537332322073707265",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "97ffbf65": {
+      "tuid": "505453563853704d7332322073707265",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "98164565": {
+      "tuid": "50545356385370537332322073707265",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "1522bd6c": {
+      "tuid": "505453565853704d733232207873706c",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "1539436c": {
+      "tuid": "5054535658537053733232207873706c",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "bf1dd630": {
+      "tuid": "01efcdab8291ebfa6c657665506c6e6b",
+      "flPlugin": "PatchLink",
+      "vendor": "leve",
+      "file": "C:\\Program Files\\Common Files\\VST3\\PatchLink.vst3\\Contents\\x86_64-win\\PatchLink.vst3"
+    },
+    "3df37f66": {
+      "tuid": "01efcdab8291ebfa4f7574705052544c",
+      "flPlugin": "Portal",
+      "vendor": "Output",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Output\\Portal.vst3"
+    },
+    "763029ad": {
+      "tuid": "e315f479e7c80748ad5da3cf7024f618",
+      "flPlugin": "FabFilter Pro-C 2",
+      "vendor": "FabFilter",
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-C 2.vst3"
+    },
+    "cba24108": {
+      "tuid": "d024e359e88ee111b8578101bbe59b18",
+      "flPlugin": "FabFilter Pro-DS",
+      "vendor": "FabFilter",
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-DS.vst3"
+    },
+    "5a6e43a2": {
+      "tuid": "f7cc1d9d8a916f43a3cdd7115d8b193b",
+      "flPlugin": "FabFilter Pro-G",
+      "vendor": "FabFilter",
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-G.vst3"
+    },
+    "45398b95": {
+      "tuid": "722fd9af049ab747b5e8d1d568dea985",
+      "flPlugin": "FabFilter Pro-L 2",
+      "vendor": "FabFilter",
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-L 2.vst3"
+    },
+    "49321b1b": {
+      "tuid": "4281b6c398c7f24682b73cabdf139076",
+      "flPlugin": "FabFilter Pro-MB",
+      "vendor": "FabFilter",
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-MB.vst3"
+    },
+    "ba5f7ab2": {
+      "tuid": "71dbc4724d7a9a45b97e51745d84b39d",
+      "flPlugin": "FabFilter Pro-Q 3",
+      "vendor": "FabFilter",
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-Q 3.vst3"
+    },
+    "78c01fa6": {
+      "tuid": "30b56e03592ae211a28170076288709b",
+      "flPlugin": "FabFilter Pro-R",
+      "vendor": "FabFilter",
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-R.vst3"
+    },
+    "ca0fb3e8": {
+      "tuid": "6562755074725379696d2e2e52766448",
+      "flPlugin": "Puberty Simulator",
+      "vendor": "Robbert van der Helm",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Puberty Simulator.vst3\\Contents\\x86_64-win\\Puberty Simulator.vst3"
+    },
+    "4e6ae291": {
+      "tuid": "505453564131704d7569677465632065",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "4e816891": {
+      "tuid": "50545356413170537569677465632065",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "3d5ee299": {
+      "tuid": "50545356354d704d756967746563206d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "3d756899": {
+      "tuid": "50545356354d7053756967746563206d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "0c16daf3": {
+      "tuid": "535453565451714d2d63617074757265",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "82a4dddc": {
+      "tuid": "535453563151714d2d636c6f6e65206d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "82bb63e2": {
+      "tuid": "53545356315171532d636c6f6e652073",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "f68b7f3d": {
+      "tuid": "455453563151714d31206d6f6e6f0000",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "eda62547": {
+      "tuid": "4554535631517153312073746572656f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "35819aff": {
+      "tuid": "455453564151714d3130206d6f6e6f00",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "3a8f251e": {
+      "tuid": "45545356415171533130207374657265",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "194c7f3d": {
+      "tuid": "455453563251714d32206d6f6e6f0000",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "10672547": {
+      "tuid": "4554535632517153322073746572656f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "3c0d7f3d": {
+      "tuid": "455453563351714d33206d6f6e6f0000",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "33282547": {
+      "tuid": "4554535633517153332073746572656f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "5ece7f3d": {
+      "tuid": "455453563451714d34206d6f6e6f0000",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "55e92547": {
+      "tuid": "4554535634517153342073746572656f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "a4507f3d": {
+      "tuid": "455453563651714d36206d6f6e6f0000",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "9b6b2547": {
+      "tuid": "4554535636517153362073746572656f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "e9d27f3d": {
+      "tuid": "455453563851714d38206d6f6e6f0000",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "e0ed2547": {
+      "tuid": "4554535638517153382073746572656f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "9c4095bb": {
+      "tuid": "52545356424e724d62617373206d6f6e",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "9c5d20b2": {
+      "tuid": "52545356424e72536261737320737465",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "4dcaaed2": {
+      "tuid": "52545356544e72586368616e6e656c20",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "4da163d2": {
+      "tuid": "52545356544e724d6368616e6e656c20",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "4db7e9d2": {
+      "tuid": "52545356544e72536368616e6e656c20",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "16ac3c80": {
+      "tuid": "555453564352724d636f6d7072657373",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "16c2c280": {
+      "tuid": "5554535643527253636f6d7072657373",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "e383e66d": {
+      "tuid": "525453565344724d6465657373657220",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "e39a6c6d": {
+      "tuid": "52545356534472536465657373657220",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "021680dc": {
+      "tuid": "525453563251724d65712032206d6f6e",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "02330bd3": {
+      "tuid": "52545356325172536571203220737465",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "0998811a": {
+      "tuid": "525453563451724d65712034206d6f6e",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "09b50c11": {
+      "tuid": "52545356345172536571203420737465",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "111a8158": {
+      "tuid": "525453563651724d65712036206d6f6e",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "11370c4f": {
+      "tuid": "52545356365172536571203620737465",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "1be9bfac": {
+      "tuid": "525453564652725876657262206d6f6e",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "1bdcffa3": {
+      "tuid": "52545356465272537665726220737465",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "2c06dfd4": {
+      "tuid": "4d5453565658724d766f78206d6f6e6f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "32225cd7": {
+      "tuid": "4d54535656587253766f782073746572",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "d36d5885": {
+      "tuid": "525453565841724d656e61697373616e",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "d383de85": {
+      "tuid": "5254535658417253656e61697373616e",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "c1f50d4a": {
+      "tuid": "4e545356485373533120696d61676572",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "bd0b11a7": {
+      "tuid": "4d5453565853735331206d73206d6174",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "3cf143a9": {
+      "tuid": "4e54535644497353312073687566666c",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "0660b9c0": {
+      "tuid": "656661537974694c6d7472527664482e",
+      "flPlugin": "Safety Limiter",
+      "vendor": "Robbert van der Helm",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Safety Limiter.vst3\\Contents\\x86_64-win\\Safety Limiter.vst3"
+    },
+    "14d40b87": {
+      "tuid": "505453565352734d617068697261206d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "14ea918d": {
+      "tuid": "50545356535273536170686972612073",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "5a67e07f": {
+      "tuid": "3375068da0d81d49baa36c064c6abbfb",
+      "flPlugin": "FabFilter Saturn 2",
+      "vendor": "FabFilter",
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Saturn 2.vst3"
+    },
+    "ba7a48d1": {
+      "tuid": "01efcdab8291ebfa4361626c43474c33",
+      "flPlugin": "ShaperBox 3",
+      "vendor": "Cableguys",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Cableguys\\ShaperBox 3.vst3"
+    },
+    "f15fcaf9": {
+      "tuid": "535453564249734d6962696c616e6365",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "f17650f9": {
+      "tuid": "53545356424973536962696c616e6365",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "16e9caf9": {
+      "tuid": "535453564c49734d6962696c616e6365",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "170050f9": {
+      "tuid": "535453564c4973536962696c616e6365",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "0d2072a0": {
+      "tuid": "70f41733e855e447896b59c21b843fae",
+      "flPlugin": "FabFilter Simplon",
+      "vendor": "FabFilter",
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Simplon.vst3"
+    },
+    "eac19648": {
+      "tuid": "545453565053734d6d61636b20617474",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "ead81c48": {
+      "tuid": "54545356505373536d61636b20617474",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "ec4ccc2c": {
+      "tuid": "01efcdab8291ebfa44777665536d6467",
+      "flPlugin": "Smudge",
+      "vendor": "Dreamwave",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Smudge.vst3\\Contents\\x86_64-win\\Smudge.vst3"
+    },
+    "62f6d35d": {
+      "tuid": "74666f5361567563756d2e527664482e",
+      "flPlugin": "Soft Vacuum",
+      "vendor": "Robbert van der Helm",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Soft Vacuum.vst3\\Contents\\x86_64-win\\Soft Vacuum.vst3"
+    },
+    "b728e66e": {
+      "tuid": "01efcdab8291ebfa536f6e6f4e427573",
+      "flPlugin": "SonoBus",
+      "vendor": "Sonosaurus"
+    },
+    "85b7df61": {
+      "tuid": "545453565253734d6f756e6473686966",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "85ce6561": {
+      "tuid": "54545356525373536f756e6473686966",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "32b27129": {
+      "tuid": "535453564270736c70616365626c656e",
+      "flPlugin": "SpaceBlender",
+      "vendor": "Soundtoys"
+    },
+    "d6e5e556": {
+      "tuid": "636570537274436c6f6d707252766448",
+      "flPlugin": "Spectral Compressor",
+      "vendor": "Robbert van der Helm",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Spectral Compressor.vst3\\Contents\\x86_64-win\\Spectral Compressor.vst3"
+    },
+    "58a650a4": {
+      "tuid": "535453564d42734d75626d6172696e65",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "58bcd6a4": {
+      "tuid": "535453564d42735375626d6172696e65",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "891aed34": {
+      "tuid": "4d545356325473587570657274617020",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "88f1a234": {
+      "tuid": "4d5453563254734d7570657274617020",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "89082834": {
+      "tuid": "4d545356325473537570657274617020",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "981eed34": {
+      "tuid": "4d545356365473587570657274617020",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "97f5a234": {
+      "tuid": "4d5453563654734d7570657274617020",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "980c2834": {
+      "tuid": "4d545356365473537570657274617020",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "ed4ddc26": {
+      "tuid": "01efcdab8291ebfa44777665546e7461",
+      "flPlugin": "Tarantula",
+      "vendor": "Dreamwave",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Tarantula.vst3\\Contents\\x86_64-win\\Tarantula.vst3"
+    },
+    "96546ef3": {
+      "tuid": "f267eed252c52d40902115931afdae6b",
+      "flPlugin": "FabFilter Timeless 3",
+      "vendor": "FabFilter",
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Timeless 3.vst3"
+    },
+    "4d8f303a": {
+      "tuid": "5a5453564d4254326f6e616c2042616c",
+      "flPlugin": "Tonal Balance Control 2",
+      "vendor": "iZotope, Inc.",
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Tonal Balance Control 2.vst3"
+    },
+    "3965e902": {
+      "tuid": "545453563458744d72616e7378206d75",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "397c6f02": {
+      "tuid": "545453563458745372616e7378206d75",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "bcc8f2f6": {
+      "tuid": "545453565758744d72616e7378207769",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "bcdf78f6": {
+      "tuid": "545453565758745372616e7378207769",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "0525120a": {
+      "tuid": "545453564d5674587275657665726220",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "1b81c70a": {
+      "tuid": "545453565356744d7275657665726220",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "a7394d0a": {
+      "tuid": "54545356345674537275657665726220",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "f682a06b": {
+      "tuid": "01efcdab8291ebfa5541447855334459",
+      "flPlugin": "uaudio_ua_1176",
+      "vendor": "Universal Audio (UADx)",
+      "file": "C:\\Program Files\\Common Files\\VST3\\uaudio_ua_1176.vst3\\Contents\\x86_64-win\\uaudio_ua_1176.vst3"
+    },
+    "f682a05c": {
+      "tuid": "01efcdab8291ebfa554144785533444a",
+      "flPlugin": "uaudio_teletronix_la-2a_tc",
+      "vendor": "Universal Audio (UADx)",
+      "file": "C:\\Program Files\\Common Files\\VST3\\uaudio_teletronix_la-2a_tc.vst3\\Contents\\x86_64-win\\uaudio_teletronix_la-2a_tc.vst3"
+    },
+    "66644424": {
+      "tuid": "53545356334875586c74726170697463",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "663af924": {
+      "tuid": "535453563348754d6c74726170697463",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "71a74424": {
+      "tuid": "53545356364875586c74726170697463",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "717df924": {
+      "tuid": "535453563648754d6c74726170697463",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "e2454424": {
+      "tuid": "53545356544875586c74726170697463",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "e21bf924": {
+      "tuid": "535453565448754d6c74726170697463",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "c8b118e6": {
+      "tuid": "4e5453564356764d636f6d70206d6f6e",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "c8cda3dd": {
+      "tuid": "4e54535643567653636f6d7020737465",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "b7780837": {
+      "tuid": "4e5453565145764d657133206d6f6e6f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "bd93853a": {
+      "tuid": "4e545356514576536571332073746572",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "b77bca2f": {
+      "tuid": "565453565145764d657134206d6f6e6f",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "bd974732": {
+      "tuid": "56545356514576536571342073746572",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "a5a5bd3b": {
+      "tuid": "565453564d55764d75206d6574657220",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "a5bc433b": {
+      "tuid": "565453564d55765375206d6574657220",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "6fd8f880": {
+      "tuid": "565453564d54764d6974616d696e206d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "6fef7e86": {
+      "tuid": "565453564d5476536974616d696e2073",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "ae347b62": {
+      "tuid": "4833925df7adb5439f86ec29572b103e",
+      "flPlugin": "FabFilter Volcano 2",
+      "vendor": "FabFilter",
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Volcano 2.vst3"
+    },
+    "bfa4bea5": {
+      "tuid": "575453564d4c77356c6d206d65746572",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "bfa87fa5": {
+      "tuid": "575453564d4c77366c6d206d65746572",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "bffed6a5": {
+      "tuid": "575453564d4c774d6c6d206d65746572",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "c0155ca5": {
+      "tuid": "575453564d4c77536c6d206d65746572",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "0de4ccb0": {
+      "tuid": "575453564c5777356c6d20706c757320",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "0de88db0": {
+      "tuid": "575453564c5777366c6d20706c757320",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "0e3ee4b0": {
+      "tuid": "575453564c57774d6c6d20706c757320",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "0e556ab0": {
+      "tuid": "575453564c5777536c6d20706c757320",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "a55be53e": {
+      "tuid": "545453564c4e774d617665732074756e",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "a5726b3e": {
+      "tuid": "545453564c4e7753617665732074756e",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "cc8d8335": {
+      "tuid": "50545356577677726964657200000000",
+      "flPlugin": "Wider",
+      "vendor": "Polyverse Music"
+    },
+    "4f083d44": {
+      "tuid": "585453564c43784d2d636c69636b206d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "4f1ec34a": {
+      "tuid": "585453564c4378532d636c69636b2073",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "658f4244": {
+      "tuid": "585453565243784d2d637261636b6c65",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "65a5c844": {
+      "tuid": "58545356524378532d637261636b6c65",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "d567a3c1": {
+      "tuid": "585453564d48784d2d68756d206d6f6e",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "d5842eb8": {
+      "tuid": "585453564d4878532d68756d20737465",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "c59e9a44": {
+      "tuid": "58545356534e784d2d6e6f697365206d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "c5b5204a": {
+      "tuid": "58545356534e78532d6e6f6973652073",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "8eadedc1": {
+      "tuid": "0de7aef2de004e4f6774755975726259",
+      "flPlugin": "Youlean Loudness Meter 2",
+      "vendor": "Youlean"
+    },
+    "c59e2d67": {
+      "tuid": "57545356534e7a4d2d6e6f697365206d",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "c5b4b36d": {
+      "tuid": "57545356534e7a532d6e6f6973652073",
+      "flPlugin": "WaveShell1-VST3 12.7_x64",
+      "vendor": "Waves"
+    },
+    "3f2478d9": {
+      "tuid": "01efcdab8291ebfa4f656b5353746842",
+      "flPlugin": "soothe2_x64",
+      "vendor": "oeksound",
+      "file": "C:\\Program Files\\Common Files\\VST3\\oeksound\\soothe2_x64.vst3"
+    }
+  },
+  "byName": {
+    "amplitube5": "64d69c5c",
+    "ikmultimediaamplitube5": "64d69c5c",
+    "archetypegojira": "0a026f84",
+    "neuraldsparchetypegojira": "0a026f84",
+    "audiotrackmono": "bfe085c2",
+    "waveshell1vst3127x64": "bfe085c2",
+    "wavesaudiotrackmono": "bfe085c2",
+    "audiotrackstereo": "bff70bc2",
+    "wavesaudiotrackstereo": "bff70bc2",
+    "autokey": "77854cb3",
+    "antaresautokey": "77854cb3",
+    "autotuneaccess": "3a3eac18",
+    "antaresautotuneaccess": "3a3eac18",
+    "autotuneartist": "527aa78d",
+    "antaresautotuneartist": "527aa78d",
+    "autotuneefx": "16677ef8",
+    "antaresautotuneefx": "16677ef8",
+    "autotunepro": "7f9981f8",
+    "autotune": "7f9981f8",
+    "antaresautotunepro": "7f9981f8",
+    "bodeshifter": "db52ce39",
+    "dreamwavebodeshifter": "db52ce39",
+    "buffrglitch": "44952fdd",
+    "robbertvanderhelmbuffrglitch": "44952fdd",
+    "c1compmono": "65e94c5e",
+    "wavesc1compmono": "65e94c5e",
+    "c1compstereo": "65ffd264",
+    "wavesc1compstereo": "65ffd264",
+    "c1compgatemono": "dca65958",
+    "wavesc1compgatemono": "dca65958",
+    "c1compgatestereo": "dcbcdf58",
+    "wavesc1compgatestereo": "dcbcdf58",
+    "c1compscmono": "191c5964",
+    "wavesc1compscmono": "191c5964",
+    "c1compscstereo": "1932df64",
+    "wavesc1compscstereo": "1932df64",
+    "c1gatemono": "6fe49828",
+    "wavesc1gatemono": "6fe49828",
+    "c1gatestereo": "6ffb1e2e",
+    "wavesc1gatestereo": "6ffb1e2e",
+    "c4mono": "bfaad650",
+    "wavesc4mono": "bfaad650",
+    "c4stereo": "b6c57c5a",
+    "wavesc4stereo": "b6c57c5a",
+    "centerstereo": "9028332f",
+    "wavescenterstereo": "9028332f",
+    "chroma": "473a9783",
+    "xynthaudiochroma": "473a9783",
+    "crisp": "794d04fe",
+    "robbertvanderhelmcrisp": "794d04fe",
+    "crossover": "578d6d1c",
+    "robbertvanderhelmcrossover": "578d6d1c",
+    "cymaticsdiablolite": "9a3fa0ac",
+    "cymaticscymaticsdiablolite": "9a3fa0ac",
+    "deessermono": "fff9b4fa",
+    "wavesdeessermono": "fff9b4fa",
+    "deesserstereo": "00103b00",
+    "wavesdeesserstereo": "00103b00",
+    "digitalis": "7dbd5445",
+    "aberrantdspdigitalis": "7dbd5445",
+    "diopser": "f20d03fc",
+    "robbertvanderhelmdiopser": "f20d03fc",
+    "dirtyfilter": "9e3757ce",
+    "bedroomproducersblogdirtyfilter": "9e3757ce",
+    "dopplermonostereo": "f477a221",
+    "wavesdopplermonostereo": "f477a221",
+    "dopplerstereo": "f464dd27",
+    "wavesdopplerstereo": "f464dd27",
+    "doubler2monostereo": "b0caa4e1",
+    "wavesdoubler2monostereo": "b0caa4e1",
+    "doubler2mono": "b0a159e1",
+    "wavesdoubler2mono": "b0a159e1",
+    "doubler2stereo": "b0b7dfe1",
+    "wavesdoubler2stereo": "b0b7dfe1",
+    "doubler4monostereo": "b84ca6e1",
+    "wavesdoubler4monostereo": "b84ca6e1",
+    "doubler4mono": "b8235be1",
+    "wavesdoubler4mono": "b8235be1",
+    "doubler4stereo": "b839e1e1",
+    "wavesdoubler4stereo": "b839e1e1",
+    "driftmaker": "af662ba0",
+    "puremagnetikdriftmaker": "af662ba0",
+    "ekramerdrmono": "becdfe57",
+    "wavesekramerdrmono": "becdfe57",
+    "ekramerdrstereo": "bee48457",
+    "wavesekramerdrstereo": "bee48457",
+    "emof2mono": "222015cb",
+    "wavesemof2mono": "222015cb",
+    "emof2stereo": "2236a1d0",
+    "wavesemof2stereo": "2236a1d0",
+    "emogeneratormono": "85b053dd",
+    "wavesemogeneratormono": "85b053dd",
+    "emogeneratorstereo": "85c6d9dd",
+    "wavesemogeneratorstereo": "85c6d9dd",
+    "emoq4mono": "150ca2d6",
+    "wavesemoq4mono": "150ca2d6",
+    "emoq4stereo": "15232edb",
+    "wavesemoq4stereo": "15232edb",
+    "enigmamonostereo": "64d25062",
+    "wavesenigmamonostereo": "64d25062",
+    "enigmastereo": "64bf9167",
+    "wavesenigmastereo": "64bf9167",
+    "freshair": "2d3f434b",
+    "slatedigitalfreshair": "2d3f434b",
+    "gtramp2cabmono": "10330df1",
+    "wavesgtramp2cabmono": "10330df1",
+    "gtrampmonostereo": "75b7592c",
+    "wavesgtrampmonostereo": "75b7592c",
+    "gtrampmono": "758e0e2c",
+    "wavesgtrampmono": "758e0e2c",
+    "gtrampstereo": "75a49432",
+    "wavesgtrampstereo": "75a49432",
+    "gtrstomp2monostereo": "995ba85d",
+    "wavesgtrstomp2monostereo": "995ba85d",
+    "gtrstomp2mono": "99325d5d",
+    "wavesgtrstomp2mono": "99325d5d",
+    "gtrstomp2stereo": "9948e35d",
+    "wavesgtrstomp2stereo": "9948e35d",
+    "gtrstomp4monostereo": "a0dda85d",
+    "wavesgtrstomp4monostereo": "a0dda85d",
+    "gtrstomp4mono": "a0b45d5d",
+    "wavesgtrstomp4mono": "a0b45d5d",
+    "gtrstomp4stereo": "a0cae35d",
+    "wavesgtrstomp4stereo": "a0cae35d",
+    "gtrstomp6monostereo": "0277a85d",
+    "wavesgtrstomp6monostereo": "0277a85d",
+    "gtrstomp6mono": "024e5d5d",
+    "wavesgtrstomp6mono": "024e5d5d",
+    "gtrstomp6stereo": "0264e35d",
+    "wavesgtrstomp6stereo": "0264e35d",
+    "gtrtoolrackmonostereo": "4cb6a72c",
+    "wavesgtrtoolrackmonostereo": "4cb6a72c",
+    "gtrtoolrackstereo": "4ca3e22c",
+    "wavesgtrtoolrackstereo": "4ca3e22c",
+    "gtrtunermono": "e8f83e51",
+    "wavesgtrtunermono": "e8f83e51",
+    "gwtonecentricmono": "9a9f7ed6",
+    "wavesgwtonecentricmono": "9a9f7ed6",
+    "gwtonecentricstereo": "9ab604d6",
+    "wavesgwtonecentricstereo": "9ab604d6",
+    "hcompmono": "fb691fe7",
+    "waveshcompmono": "fb691fe7",
+    "hcompstereo": "fb7fabec",
+    "waveshcompstereo": "fb7fabec",
+    "hdelaymonostereo": "6e4e2da1",
+    "waveshdelaymonostereo": "6e4e2da1",
+    "hdelaymono": "6e24e2a1",
+    "waveshdelaymono": "6e24e2a1",
+    "hdelaystereo": "6e3b68a7",
+    "waveshdelaystereo": "6e3b68a7",
+    "irlmonostereo": "405b0955",
+    "waveshell2vst3120x64": "405b0955",
+    "wavesirlmonostereo": "405b0955",
+    "irlmono": "4031be55",
+    "wavesirlmono": "4031be55",
+    "irlefficientstereo": "383f3c4f",
+    "wavesirlefficientstereo": "383f3c4f",
+    "irlfullstereo": "3d0f4252",
+    "wavesirlfullstereo": "3d0f4252",
+    "juicee": "e342cd2a",
+    "dreamwavejuicee": "e342cd2a",
+    "l1limitermono": "191aefbc",
+    "wavesl1limitermono": "191aefbc",
+    "l1limiterstereo": "193175bc",
+    "wavesl1limiterstereo": "193175bc",
+    "l1ultramaximizerstereo": "56929f2c",
+    "wavesl1ultramaximizerstereo": "56929f2c",
+    "l2mono": "1faa9b11",
+    "wavesl2mono": "1faa9b11",
+    "l2stereo": "16c5411b",
+    "wavesl2stereo": "16c5411b",
+    "l3multimaximizermono": "08f30538",
+    "wavesl3multimaximizermono": "08f30538",
+    "l3multimaximizerstereo": "09098b38",
+    "wavesl3multimaximizerstereo": "09098b38",
+    "l3ultramaximizermono": "ef28f421",
+    "wavesl3ultramaximizermono": "ef28f421",
+    "l3ultramaximizerstereo": "ef3f7a21",
+    "wavesl3ultramaximizerstereo": "ef3f7a21",
+    "l3llmultimono": "be81ab5a",
+    "wavesl3llmultimono": "be81ab5a",
+    "l3llmultistereo": "be98315a",
+    "wavesl3llmultistereo": "be98315a",
+    "l3llultramono": "9cc0a262",
+    "wavesl3llultramono": "9cc0a262",
+    "l3llultrastereo": "9cd72862",
+    "wavesl3llultrastereo": "9cd72862",
+    "lineqbroadbandmono": "b60315be",
+    "waveslineqbroadbandmono": "b60315be",
+    "lineqbroadbandstereo": "b6199bbe",
+    "waveslineqbroadbandstereo": "b6199bbe",
+    "lineqlowbandmono": "f99f12c6",
+    "waveslineqlowbandmono": "f99f12c6",
+    "lineqlowbandstereo": "f9b598c6",
+    "waveslineqlowbandstereo": "f9b598c6",
+    "linmbmono": "fb0308ec",
+    "waveslinmbmono": "fb0308ec",
+    "linmbstereo": "fb1f93e3",
+    "waveslinmbstereo": "fb1f93e3",
+    "loair5051": "ec1a029e",
+    "wavesloair5051": "ec1a029e",
+    "loair51": "ebecf69f",
+    "wavesloair51": "ebecf69f",
+    "loairmono": "ec7b8edc",
+    "wavesloairmono": "ec7b8edc",
+    "loairstereo": "ec9819d3",
+    "wavesloairstereo": "ec9819d3",
+    "loudnesswarwinner": "30a77aa9",
+    "robbertvanderhelmloudnesswarwinner": "30a77aa9",
+    "magc": "210b082b",
+    "meldaproductionmagc": "210b082b",
+    "mamp": "1d0bc9cb",
+    "meldaproductionmamp": "1d0bc9cb",
+    "manalyzer": "1d0ac80b",
+    "meldaproductionmanalyzer": "1d0ac80b",
+    "mautoalign": "1d0647eb",
+    "meldaproductionmautoalign": "1d0647eb",
+    "mautodynamiceq": "216d43eb",
+    "meldaproductionmautodynamiceq": "216d43eb",
+    "mautoequalizer": "1d0acb8b",
+    "meldaproductionmautoequalizer": "1d0acb8b",
+    "mautoequalizerlp": "1d0de20b",
+    "meldaproductionmautoequalizerlp": "1d0de20b",
+    "mautopitch": "210cc64b",
+    "meldaproductionmautopitch": "210cc64b",
+    "mautostereofix": "210c888b",
+    "meldaproductionmautostereofix": "210c888b",
+    "mautovolume": "1d0cca8b",
+    "meldaproductionmautovolume": "1d0cca8b",
+    "mautopan": "1d0ac1cb",
+    "meldaproductionmautopan": "1d0ac1cb",
+    "mautopanmb": "63e5024b",
+    "meldaproductionmautopanmb": "63e5024b",
+    "mbandpass": "1d2a43cb",
+    "meldaproductionmbandpass": "1d2a43cb",
+    "mbassador": "1d2a4a2b",
+    "meldaproductionmbassador": "1d2a4a2b",
+    "mbitfun": "1d2b448b",
+    "meldaproductionmbitfun": "1d2b448b",
+    "mbitfunmb": "2126648b",
+    "meldaproductionmbitfunmb": "2126648b",
+    "mccgenerator": "1d4684ab",
+    "meldaproductionmccgenerator": "1d4684ab",
+    "mcabinet": "1d4a480b",
+    "meldaproductionmcabinet": "1d4a480b",
+    "mcabinetmb": "1d4a456b",
+    "meldaproductionmcabinetmb": "1d4a456b",
+    "mchannelmatrix": "1d4b256b",
+    "meldaproductionmchannelmatrix": "1d4b256b",
+    "mcharacter": "1d4b2a0b",
+    "meldaproductionmcharacter": "1d4b2a0b",
+    "mcharmverb": "1d4b268b",
+    "meldaproductionmcharmverb": "1d4b268b",
+    "mchorusmb": "1e8a88cb",
+    "meldaproductionmchorusmb": "1e8a88cb",
+    "mcomb": "1d4c096b",
+    "meldaproductionmcomb": "1d4c096b",
+    "mcombmb": "1e8689ab",
+    "meldaproductionmcombmb": "1e8689ab",
+    "mcompare": "1d4bc9cb",
+    "meldaproductionmcompare": "1d4bc9cb",
+    "mcompressor": "1d0ac1eb",
+    "meldaproductionmcompressor": "1d0ac1eb",
+    "mconvolutionez": "1d4acb0b",
+    "meldaproductionmconvolutionez": "1d4acb0b",
+    "mconvolutionmb": "1e8685ab",
+    "meldaproductionmconvolutionmb": "1e8685ab",
+    "mdelaymb": "63e5026b",
+    "meldaproductionmdelaymb": "63e5026b",
+    "mdistortionmb": "216b4a2b",
+    "meldaproductionmdistortionmb": "216b4a2b",
+    "mdoubletracker": "1d6c064b",
+    "meldaproductionmdoubletracker": "1d6c064b",
+    "mdoubletrackermb": "1d6c056b",
+    "meldaproductionmdoubletrackermb": "1d6c056b",
+    "mdrumenhancer": "1d66c98b",
+    "meldaproductionmdrumenhancer": "1d66c98b",
+    "mdrumleveler": "1d6c654b",
+    "meldaproductionmdrumleveler": "1d6c654b",
+    "mdrumreplacer": "1d6c660b",
+    "meldaproductionmdrumreplacer": "1d6c660b",
+    "mdynamiceq": "216d45eb",
+    "meldaproductionmdynamiceq": "216d45eb",
+    "mdynamics": "1d0ac04b",
+    "meldaproductionmdynamics": "1d0ac04b",
+    "mdynamicsmb": "1d0ac0cb",
+    "meldaproductionmdynamicsmb": "1d0ac0cb",
+    "mdynamicsmblarge": "1d0ac7cb",
+    "meldaproductionmdynamicsmblarge": "1d0ac7cb",
+    "mequalizer": "1d0ac22b",
+    "meldaproductionmequalizer": "1d0ac22b",
+    "mequalizerlp": "1d0ac90b",
+    "meldaproductionmequalizerlp": "1d0ac90b",
+    "mfilter": "1d0ac88b",
+    "meldaproductionmfilter": "1d0ac88b",
+    "mflanger": "1d06c08b",
+    "meldaproductionmflanger": "1d06c08b",
+    "mflangermb": "1e86648b",
+    "meldaproductionmflangermb": "1e86648b",
+    "mfreeformanalogeq": "1da6486b",
+    "meldaproductionmfreeformanalogeq": "1da6486b",
+    "mfreeformequalizer": "1d0ac5eb",
+    "meldaproductionmfreeformequalizer": "1d0ac5eb",
+    "mfreeformphase": "1d0ae9cb",
+    "meldaproductionmfreeformphase": "1d0ae9cb",
+    "mfreqshifter": "1d0ac48b",
+    "meldaproductionmfreqshifter": "1d0ac48b",
+    "mfreqshiftermb": "1d07c48b",
+    "meldaproductionmfreqshiftermb": "1d07c48b",
+    "mgranularmb": "1e870a0b",
+    "meldaproductionmgranularmb": "1e870a0b",
+    "mguitararchitect": "1dc64a0b",
+    "meldaproductionmguitararchitect": "1dc64a0b",
+    "mharmonizermb": "228c68cb",
+    "meldaproductionmharmonizermb": "228c68cb",
+    "mlimitermb": "1d0ac0eb",
+    "meldaproductionmlimitermb": "1d0ac0eb",
+    "mlimiterx": "1d0aaaeb",
+    "meldaproductionmlimiterx": "1d0aaaeb",
+    "mloudnessanalyzer": "1e6a498b",
+    "meldaproductionmloudnessanalyzer": "1e6a498b",
+    "mmetronome": "1e8aca4b",
+    "meldaproductionmmetronome": "1e8aca4b",
+    "mmoderncompressor": "1e8c042b",
+    "meldaproductionmmoderncompressor": "1e8c042b",
+    "mmorph": "1e8c0a0b",
+    "meldaproductionmmorph": "1e8c0a0b",
+    "mmorphb": "1e8c040b",
+    "meldaproductionmmorphb": "1e8c040b",
+    "mmultianalyzer": "1e86498b",
+    "meldaproductionmmultianalyzer": "1e86498b",
+    "mnoisegenerator": "1eac08eb",
+    "meldaproductionmnoisegenerator": "1eac08eb",
+    "mnotepad": "1eac0a4b",
+    "meldaproductionmnotepad": "1eac0a4b",
+    "moscillator": "1ecc812b",
+    "meldaproductionmoscillator": "1ecc812b",
+    "moscilloscope": "1ecc862b",
+    "meldaproductionmoscilloscope": "1ecc862b",
+    "mphaser": "1d0ac26b",
+    "meldaproductionmphaser": "1d0ac26b",
+    "mphasermb": "9b04c2ab",
+    "meldaproductionmphasermb": "9b04c2ab",
+    "mphatik": "1eeb27eb",
+    "meldaproductionmphatik": "1eeb27eb",
+    "mpolysaturator": "1eec062b",
+    "meldaproductionmpolysaturator": "1eec062b",
+    "mratio": "1f2a4a4b",
+    "meldaproductionmratio": "1f2a4a4b",
+    "mratiomb": "1f2bc80b",
+    "meldaproductionmratiomb": "1f2bc80b",
+    "mrecorder": "1f2ac82b",
+    "meldaproductionmrecorder": "1f2ac82b",
+    "mreverb": "1d0aca0b",
+    "meldaproductionmreverb": "1d0aca0b",
+    "mreverbmb": "fb6aa2ab",
+    "meldaproductionmreverbmb": "fb6aa2ab",
+    "mrhythmizer": "1f2b2aeb",
+    "meldaproductionmrhythmizer": "1f2b2aeb",
+    "mrhythmizermb": "1f2b1feb",
+    "meldaproductionmrhythmizermb": "1f2b1feb",
+    "mringmodulator": "1d0ac28b",
+    "meldaproductionmringmodulator": "1d0ac28b",
+    "mringmodulatormb": "228c696b",
+    "meldaproductionmringmodulatormb": "228c696b",
+    "mrotary": "1f2c0a4b",
+    "meldaproductionmrotary": "1f2c0a4b",
+    "msaturator": "1d0ac24b",
+    "meldaproductionmsaturator": "1d0ac24b",
+    "msaturatormb": "1e86654b",
+    "meldaproductionmsaturatormb": "1e86654b",
+    "mspectraldelay": "1f4c284b",
+    "meldaproductionmspectraldelay": "1f4c284b",
+    "mspectraldynamics": "1d02a2eb",
+    "meldaproductionmspectraldynamics": "1d02a2eb",
+    "mspectraldynamicsmini": "1d02a9eb",
+    "meldaproductionmspectraldynamicsmini": "1d02a9eb",
+    "mspectralpan": "1f4c25cb",
+    "meldaproductionmspectralpan": "1f4c25cb",
+    "mstereoexpander": "1d0ac7eb",
+    "meldaproductionmstereoexpander": "1d0ac7eb",
+    "mstereogenerator": "1f4ca4ab",
+    "meldaproductionmstereogenerator": "1f4ca4ab",
+    "mstereoprocessor": "1d02a04b",
+    "meldaproductionmstereoprocessor": "1d02a04b",
+    "mstereoscope": "1f48882b",
+    "meldaproductionmstereoscope": "1f48882b",
+    "mstereospread": "1f4ca62b",
+    "meldaproductionmstereospread": "1f4ca62b",
+    "msuperlooper": "1f4cc54b",
+    "meldaproductionmsuperlooper": "1f4cc54b",
+    "msuperlooper16in16out": "1f4cc2ab",
+    "meldaproductionmsuperlooper16in16out": "1f4cc2ab",
+    "msuperlooper16out": "1f4cc28b",
+    "meldaproductionmsuperlooper16out": "1f4cc28b",
+    "mtransformer": "1da8aa0b",
+    "meldaproductionmtransformer": "1da8aa0b",
+    "mtransient": "1f6c67eb",
+    "meldaproductionmtransient": "1f6c67eb",
+    "mtransientmb": "1e8caa0b",
+    "meldaproductionmtransientmb": "1e8caa0b",
+    "mtremolo": "1d0ac2ab",
+    "meldaproductionmtremolo": "1d0ac2ab",
+    "mtremolomb": "228ca96b",
+    "meldaproductionmtremolomb": "228ca96b",
+    "mtuner": "1f6cc98b",
+    "meldaproductionmtuner": "1f6cc98b",
+    "mturboamp": "1f6cc3eb",
+    "meldaproductionmturboamp": "1f6cc3eb",
+    "mturbocomp": "1f6cc42b",
+    "meldaproductionmturbocomp": "1f6cc42b",
+    "mturbocompmb": "1f66896b",
+    "meldaproductionmturbocompmb": "1f66896b",
+    "mturbodelay": "1f6cc44b",
+    "meldaproductionmturbodelay": "1f6cc44b",
+    "mturbodelaymb": "1f66a96b",
+    "meldaproductionmturbodelaymb": "1f66a96b",
+    "mturboeq": "1f6cc46b",
+    "meldaproductionmturboeq": "1f6cc46b",
+    "mturbofilter": "1f6cc48b",
+    "meldaproductionmturbofilter": "1f6cc48b",
+    "mturboreverb": "2368686b",
+    "meldaproductionmturboreverb": "2368686b",
+    "mturboreverbmb": "2368696b",
+    "meldaproductionmturboreverbmb": "2368696b",
+    "multramaximizer": "1d0bcacb",
+    "meldaproductionmultramaximizer": "1d0bcacb",
+    "munison": "1f8be8eb",
+    "meldaproductionmunison": "1f8be8eb",
+    "mutility": "238ca8eb",
+    "meldaproductionmutility": "238ca8eb",
+    "mv2mono": "1d742ef3",
+    "wavesmv2mono": "1d742ef3",
+    "mv2stereo": "2281b912",
+    "wavesmv2stereo": "2281b912",
+    "mvibrato": "1d0ac2cb",
+    "meldaproductionmvibrato": "1d0ac2cb",
+    "mvibratomb": "2288e8eb",
+    "meldaproductionmvibratomb": "2288e8eb",
+    "mvintagerotary": "1fa869ab",
+    "meldaproductionmvintagerotary": "1fa869ab",
+    "mvocoder": "1fac082b",
+    "meldaproductionmvocoder": "1fac082b",
+    "mwavefolder": "1fca448b",
+    "meldaproductionmwavefolder": "1fca448b",
+    "mwavefoldermb": "2289088b",
+    "meldaproductionmwavefoldermb": "2289088b",
+    "mwaveshaper": "1d0ac2eb",
+    "meldaproductionmwaveshaper": "1d0ac2eb",
+    "mwaveshapermb": "22890a2b",
+    "meldaproductionmwaveshapermb": "22890a2b",
+    "mwobbler": "1fcc080b",
+    "meldaproductionmwobbler": "1fcc080b",
+    "mwobblermb": "1e8909ab",
+    "meldaproductionmwobblermb": "1e8909ab",
+    "mxxx": "1fe926cb",
+    "meldaproductionmxxx": "1fe926cb",
+    "mxxx1": "1fe921eb",
+    "meldaproductionmxxx1": "1fe921eb",
+    "mxxx6in6out": "1fe4e28b",
+    "meldaproductionmxxx6in6out": "1fe4e28b",
+    "mxxx6out": "1fe9228b",
+    "meldaproductionmxxx6out": "1fe9228b",
+    "maxxbassmono": "4b0dd9be",
+    "wavesmaxxbassmono": "4b0dd9be",
+    "maxxbassstereo": "4b245fbe",
+    "wavesmaxxbassstereo": "4b245fbe",
+    "maxxvolumemono": "fc8f0cfb",
+    "wavesmaxxvolumemono": "fc8f0cfb",
+    "maxxvolumestereo": "fca592fb",
+    "wavesmaxxvolumestereo": "fca592fb",
+    "melodyne": "9ea34efc",
+    "celemonymelodyne": "9ea34efc",
+    "metafiltermonostereo": "804617b9",
+    "wavesmetafiltermonostereo": "804617b9",
+    "metafiltermono": "801cccb9",
+    "wavesmetafiltermono": "801cccb9",
+    "metafilterstereo": "803352b9",
+    "wavesmetafilterstereo": "803352b9",
+    "metaflangermonostereo": "f2af28e8",
+    "wavesmetaflangermonostereo": "f2af28e8",
+    "metaflangermono": "f285dde8",
+    "wavesmetaflangermono": "f285dde8",
+    "metaflangerstereo": "f29c63e8",
+    "wavesmetaflangerstereo": "f29c63e8",
+    "micro": "3583941d",
+    "fabfiltermicro": "3583941d",
+    "mondomodmonostereo": "467cab51",
+    "wavesmondomodmonostereo": "467cab51",
+    "mondomodmono": "46536051",
+    "wavesmondomodmono": "46536051",
+    "mondomodstereo": "4669e651",
+    "wavesmondomodstereo": "4669e651",
+    "morphodermonostereo": "84463721",
+    "wavesmorphodermonostereo": "84463721",
+    "morphodermono": "841cec21",
+    "wavesmorphodermono": "841cec21",
+    "morphoderstereo": "84337221",
+    "wavesmorphoderstereo": "84337221",
+    "museplugin": "67aac232",
+    "musemuseplugin": "67aac232",
+    "muserecordingplugin": "628ea156",
+    "musemuserecordingplugin": "628ea156",
+    "ndiinput": "706361dd",
+    "pluginsvstndiinput": "706361dd",
+    "ndindiinput": "706361dd",
+    "ndioutput": "e69bcc14",
+    "pluginsvstndioutput": "e69bcc14",
+    "ndindioutput": "e69bcc14",
+    "nlsbussmono": "a83befb9",
+    "wavesnlsbussmono": "a83befb9",
+    "nlsbussstereo": "a85275b9",
+    "wavesnlsbussstereo": "a85275b9",
+    "nlschannelmono": "e519eb26",
+    "wavesnlschannelmono": "e519eb26",
+    "nlschannelstereo": "e5307126",
+    "wavesnlschannelstereo": "e5307126",
+    "ott": "07c12157",
+    "xferrecordsott": "07c12157",
+    "oneknobdrivermono": "2430e5b6",
+    "wavesoneknobdrivermono": "2430e5b6",
+    "oneknobdriverstereo": "24476bb6",
+    "wavesoneknobdriverstereo": "24476bb6",
+    "oneknobfiltermono": "33b442d5",
+    "wavesoneknobfiltermono": "33b442d5",
+    "oneknobfilterstereo": "33cac8d5",
+    "wavesoneknobfilterstereo": "33cac8d5",
+    "oneknobpumpermono": "a1dfb73e",
+    "wavesoneknobpumpermono": "a1dfb73e",
+    "oneknobpumperstereo": "a1f63d3e",
+    "wavesoneknobpumperstereo": "a1f63d3e",
+    "ozone9dynamiceq": "fbccb574",
+    "izotopeincozone9dynamiceq": "fbccb574",
+    "ozone9dynamics": "acf7b574",
+    "izotopeincozone9dynamics": "acf7b574",
+    "ozone9equalizer": "2515d175",
+    "izotopeincozone9equalizer": "2515d175",
+    "ozone9exciter": "25211475",
+    "izotopeincozone9exciter": "25211475",
+    "ozone9imager": "bfbcb579",
+    "izotopeincozone9imager": "bfbcb579",
+    "ozone9lowendfocus": "24f4087c",
+    "izotopeincozone9lowendfocus": "24f4087c",
+    "ozone9masterrebalance": "250a8e7d",
+    "izotopeincozone9masterrebalance": "250a8e7d",
+    "ozone9matcheq": "24e5047d",
+    "izotopeincozone9matcheq": "24e5047d",
+    "ozone9maximizer": "24f7c97d",
+    "izotopeincozone9maximizer": "24f7c97d",
+    "ozone9spectralshaper": "250e4f83",
+    "izotopeincozone9spectralshaper": "250e4f83",
+    "ozone9vintagecompressor": "24d23f86",
+    "izotopeincozone9vintagecompressor": "24d23f86",
+    "ozone9vintageeq": "2506cd86",
+    "izotopeincozone9vintageeq": "2506cd86",
+    "ozone9vintagelimiter": "25199286",
+    "izotopeincozone9vintagelimiter": "25199286",
+    "ozone9vintagetape": "25121086",
+    "izotopeincozone9vintagetape": "25121086",
+    "ozone9": "d6429530",
+    "izotopeincozone9": "d6429530",
+    "pazanalyzerstereo": "ff9bc805",
+    "wavespazanalyzerstereo": "ff9bc805",
+    "pazfrequencymono": "0489460a",
+    "wavespazfrequencymono": "0489460a",
+    "pazfrequencystereo": "f59bcc0a",
+    "wavespazfrequencystereo": "f59bcc0a",
+    "pazmetersmono": "1c8c54fe",
+    "wavespazmetersmono": "1c8c54fe",
+    "pazmetersstereo": "1ca2dafe",
+    "wavespazmetersstereo": "1ca2dafe",
+    "pazpositionstereo": "37e7da02",
+    "wavespazpositionstereo": "37e7da02",
+    "place": "df1dc928",
+    "leveplace": "df1dc928",
+    "place2": "df1dc928",
+    "leveplace2": "df1dc928",
+    "ps22splitmonostereo": "fd5ab969",
+    "wavesps22splitmonostereo": "fd5ab969",
+    "ps22splitstereo": "fd713f69",
+    "wavesps22splitstereo": "fd713f69",
+    "ps22spreadmonostereo": "c8ccbf65",
+    "wavesps22spreadmonostereo": "c8ccbf65",
+    "ps22spreadstereo": "c8e34565",
+    "wavesps22spreadstereo": "c8e34565",
+    "ps22spread10monostereo": "97ffbf65",
+    "wavesps22spread10monostereo": "97ffbf65",
+    "ps22spread10stereo": "98164565",
+    "wavesps22spread10stereo": "98164565",
+    "ps22xsplitmonostereo": "1522bd6c",
+    "wavesps22xsplitmonostereo": "1522bd6c",
+    "ps22xsplitstereo": "1539436c",
+    "wavesps22xsplitstereo": "1539436c",
+    "patchlink": "bf1dd630",
+    "levepatchlink": "bf1dd630",
+    "ndipluginsvstndiinput": "706361dd",
+    "ndipluginsvstndioutput": "e69bcc14",
+    "portal": "3df37f66",
+    "outputportal": "3df37f66",
+    "proc2": "763029ad",
+    "fabfilterproc2": "763029ad",
+    "prods": "cba24108",
+    "fabfilterprods": "cba24108",
+    "prog": "5a6e43a2",
+    "fabfilterprog": "5a6e43a2",
+    "prol2": "45398b95",
+    "fabfilterprol2": "45398b95",
+    "promb": "49321b1b",
+    "fabfilterpromb": "49321b1b",
+    "proq3": "ba5f7ab2",
+    "fabfilterproq3": "ba5f7ab2",
+    "pror": "78c01fa6",
+    "fabfilterpror": "78c01fa6",
+    "pubertysimulator": "ca0fb3e8",
+    "robbertvanderhelmpubertysimulator": "ca0fb3e8",
+    "puigteceqp1amono": "4e6ae291",
+    "wavespuigteceqp1amono": "4e6ae291",
+    "puigteceqp1astereo": "4e816891",
+    "wavespuigteceqp1astereo": "4e816891",
+    "puigtecmeq5mono": "3d5ee299",
+    "wavespuigtecmeq5mono": "3d5ee299",
+    "puigtecmeq5stereo": "3d756899",
+    "wavespuigtecmeq5stereo": "3d756899",
+    "qcapturemono": "0c16daf3",
+    "wavesqcapturemono": "0c16daf3",
+    "qclonemono": "82a4dddc",
+    "wavesqclonemono": "82a4dddc",
+    "qclonestereo": "82bb63e2",
+    "wavesqclonestereo": "82bb63e2",
+    "q1mono": "f68b7f3d",
+    "wavesq1mono": "f68b7f3d",
+    "q1stereo": "eda62547",
+    "wavesq1stereo": "eda62547",
+    "q10mono": "35819aff",
+    "wavesq10mono": "35819aff",
+    "q10stereo": "3a8f251e",
+    "wavesq10stereo": "3a8f251e",
+    "q2mono": "194c7f3d",
+    "wavesq2mono": "194c7f3d",
+    "q2stereo": "10672547",
+    "wavesq2stereo": "10672547",
+    "q3mono": "3c0d7f3d",
+    "wavesq3mono": "3c0d7f3d",
+    "q3stereo": "33282547",
+    "wavesq3stereo": "33282547",
+    "q4mono": "5ece7f3d",
+    "wavesq4mono": "5ece7f3d",
+    "q4stereo": "55e92547",
+    "wavesq4stereo": "55e92547",
+    "q6mono": "a4507f3d",
+    "wavesq6mono": "a4507f3d",
+    "q6stereo": "9b6b2547",
+    "wavesq6stereo": "9b6b2547",
+    "q8mono": "e9d27f3d",
+    "wavesq8mono": "e9d27f3d",
+    "q8stereo": "e0ed2547",
+    "wavesq8stereo": "e0ed2547",
+    "rbassmono": "9c4095bb",
+    "wavesrbassmono": "9c4095bb",
+    "rbassstereo": "9c5d20b2",
+    "wavesrbassstereo": "9c5d20b2",
+    "rchannelmonostereo": "4dcaaed2",
+    "wavesrchannelmonostereo": "4dcaaed2",
+    "rchannelmono": "4da163d2",
+    "wavesrchannelmono": "4da163d2",
+    "rchannelstereo": "4db7e9d2",
+    "wavesrchannelstereo": "4db7e9d2",
+    "rcompressormono": "16ac3c80",
+    "wavesrcompressormono": "16ac3c80",
+    "rcompressorstereo": "16c2c280",
+    "wavesrcompressorstereo": "16c2c280",
+    "rdeessermono": "e383e66d",
+    "wavesrdeessermono": "e383e66d",
+    "rdeesserstereo": "e39a6c6d",
+    "wavesrdeesserstereo": "e39a6c6d",
+    "req2mono": "021680dc",
+    "wavesreq2mono": "021680dc",
+    "req2stereo": "02330bd3",
+    "wavesreq2stereo": "02330bd3",
+    "req4mono": "0998811a",
+    "wavesreq4mono": "0998811a",
+    "req4stereo": "09b50c11",
+    "wavesreq4stereo": "09b50c11",
+    "req6mono": "111a8158",
+    "wavesreq6mono": "111a8158",
+    "req6stereo": "11370c4f",
+    "wavesreq6stereo": "11370c4f",
+    "rverbmonostereo": "1be9bfac",
+    "wavesrverbmonostereo": "1be9bfac",
+    "rverbstereo": "1bdcffa3",
+    "wavesrverbstereo": "1bdcffa3",
+    "rvoxmono": "2c06dfd4",
+    "wavesrvoxmono": "2c06dfd4",
+    "rvoxstereo": "32225cd7",
+    "wavesrvoxstereo": "32225cd7",
+    "renaissanceaxxmono": "d36d5885",
+    "wavesrenaissanceaxxmono": "d36d5885",
+    "renaissanceaxxstereo": "d383de85",
+    "wavesrenaissanceaxxstereo": "d383de85",
+    "s1imagerstereo": "c1f50d4a",
+    "wavess1imagerstereo": "c1f50d4a",
+    "s1msmatrixstereo": "bd0b11a7",
+    "wavess1msmatrixstereo": "bd0b11a7",
+    "s1shufflerstereo": "3cf143a9",
+    "wavess1shufflerstereo": "3cf143a9",
+    "safetylimiter": "0660b9c0",
+    "robbertvanderhelmsafetylimiter": "0660b9c0",
+    "saphiramono": "14d40b87",
+    "wavessaphiramono": "14d40b87",
+    "saphirastereo": "14ea918d",
+    "wavessaphirastereo": "14ea918d",
+    "saturn2": "5a67e07f",
+    "fabfiltersaturn2": "5a67e07f",
+    "shaperbox3": "ba7a48d1",
+    "cableguysshaperbox3": "ba7a48d1",
+    "sibilancemono": "f15fcaf9",
+    "wavessibilancemono": "f15fcaf9",
+    "sibilancestereo": "f17650f9",
+    "wavessibilancestereo": "f17650f9",
+    "sibilancelivemono": "16e9caf9",
+    "wavessibilancelivemono": "16e9caf9",
+    "sibilancelivestereo": "170050f9",
+    "wavessibilancelivestereo": "170050f9",
+    "simplon": "0d2072a0",
+    "fabfiltersimplon": "0d2072a0",
+    "smackattackmono": "eac19648",
+    "wavessmackattackmono": "eac19648",
+    "smackattackstereo": "ead81c48",
+    "wavessmackattackstereo": "ead81c48",
+    "smudge": "ec4ccc2c",
+    "dreamwavesmudge": "ec4ccc2c",
+    "softvacuum": "62f6d35d",
+    "robbertvanderhelmsoftvacuum": "62f6d35d",
+    "sonobus": "b728e66e",
+    "sonosaurussonobus": "b728e66e",
+    "soundshifterpitchmono": "85b7df61",
+    "wavessoundshifterpitchmono": "85b7df61",
+    "soundshifterpitchstereo": "85ce6561",
+    "wavessoundshifterpitchstereo": "85ce6561",
+    "spaceblender": "32b27129",
+    "soundtoysspaceblender": "32b27129",
+    "spectralcompressor": "d6e5e556",
+    "robbertvanderhelmspectralcompressor": "d6e5e556",
+    "submarinemono": "58a650a4",
+    "wavessubmarinemono": "58a650a4",
+    "submarinestereo": "58bcd6a4",
+    "wavessubmarinestereo": "58bcd6a4",
+    "supertap2tapsmonostereo": "891aed34",
+    "wavessupertap2tapsmonostereo": "891aed34",
+    "supertap2tapsmono": "88f1a234",
+    "wavessupertap2tapsmono": "88f1a234",
+    "supertap2tapsstereo": "89082834",
+    "wavessupertap2tapsstereo": "89082834",
+    "supertap6tapsmonostereo": "981eed34",
+    "wavessupertap6tapsmonostereo": "981eed34",
+    "supertap6tapsmono": "97f5a234",
+    "wavessupertap6tapsmono": "97f5a234",
+    "supertap6tapsstereo": "980c2834",
+    "wavessupertap6tapsstereo": "980c2834",
+    "tarantula": "ed4ddc26",
+    "dreamwavetarantula": "ed4ddc26",
+    "timeless3": "96546ef3",
+    "fabfiltertimeless3": "96546ef3",
+    "tonalbalancecontrol2": "4d8f303a",
+    "izotopeinctonalbalancecontrol2": "4d8f303a",
+    "transxmultimono": "3965e902",
+    "wavestransxmultimono": "3965e902",
+    "transxmultistereo": "397c6f02",
+    "wavestransxmultistereo": "397c6f02",
+    "transxwidemono": "bcc8f2f6",
+    "wavestransxwidemono": "bcc8f2f6",
+    "transxwidestereo": "bcdf78f6",
+    "wavestransxwidestereo": "bcdf78f6",
+    "trueverbmonostereo": "0525120a",
+    "wavestrueverbmonostereo": "0525120a",
+    "trueverbmono": "1b81c70a",
+    "wavestrueverbmono": "1b81c70a",
+    "trueverbstereo": "a7394d0a",
+    "wavestrueverbstereo": "a7394d0a",
+    "uadx1176fetcompressor": "f682a06b",
+    "uaudioua1176": "f682a06b",
+    "universalaudiouadxuadx1176fetcompressor": "f682a06b",
+    "uadxla2atubecompressor": "f682a05c",
+    "uaudioteletronixla2atc": "f682a05c",
+    "universalaudiouadxuadxla2atubecompressor": "f682a05c",
+    "ultrapitch3voicesmonostereo": "66644424",
+    "wavesultrapitch3voicesmonostereo": "66644424",
+    "ultrapitch3voicesmono": "663af924",
+    "wavesultrapitch3voicesmono": "663af924",
+    "ultrapitch6voicesmonostereo": "71a74424",
+    "wavesultrapitch6voicesmonostereo": "71a74424",
+    "ultrapitch6voicesmono": "717df924",
+    "wavesultrapitch6voicesmono": "717df924",
+    "ultrapitchshiftmonostereo": "e2454424",
+    "wavesultrapitchshiftmonostereo": "e2454424",
+    "ultrapitchshiftmono": "e21bf924",
+    "wavesultrapitchshiftmono": "e21bf924",
+    "vcompmono": "c8b118e6",
+    "wavesvcompmono": "c8b118e6",
+    "vcompstereo": "c8cda3dd",
+    "wavesvcompstereo": "c8cda3dd",
+    "veq3mono": "b7780837",
+    "wavesveq3mono": "b7780837",
+    "veq3stereo": "bd93853a",
+    "wavesveq3stereo": "bd93853a",
+    "veq4mono": "b77bca2f",
+    "wavesveq4mono": "b77bca2f",
+    "veq4stereo": "bd974732",
+    "wavesveq4stereo": "bd974732",
+    "vumetermono": "a5a5bd3b",
+    "wavesvumetermono": "a5a5bd3b",
+    "vumeterstereo": "a5bc433b",
+    "wavesvumeterstereo": "a5bc433b",
+    "vitaminmono": "6fd8f880",
+    "wavesvitaminmono": "6fd8f880",
+    "vitaminstereo": "6fef7e86",
+    "wavesvitaminstereo": "6fef7e86",
+    "volcano2": "ae347b62",
+    "fabfiltervolcano2": "ae347b62",
+    "wlmmeter50": "bfa4bea5",
+    "waveswlmmeter50": "bfa4bea5",
+    "wlmmeter51": "bfa87fa5",
+    "waveswlmmeter51": "bfa87fa5",
+    "wlmmetermono": "bffed6a5",
+    "waveswlmmetermono": "bffed6a5",
+    "wlmmeterstereo": "c0155ca5",
+    "waveswlmmeterstereo": "c0155ca5",
+    "wlmplus50": "0de4ccb0",
+    "waveswlmplus50": "0de4ccb0",
+    "wlmplus51": "0de88db0",
+    "waveswlmplus51": "0de88db0",
+    "wlmplusmono": "0e3ee4b0",
+    "waveswlmplusmono": "0e3ee4b0",
+    "wlmplusstereo": "0e556ab0",
+    "waveswlmplusstereo": "0e556ab0",
+    "wavestuneltmono": "a55be53e",
+    "waveswavestuneltmono": "a55be53e",
+    "wavestuneltstereo": "a5726b3e",
+    "waveswavestuneltstereo": "a5726b3e",
+    "wider": "cc8d8335",
+    "polyversemusicwider": "cc8d8335",
+    "xclickmono": "4f083d44",
+    "wavesxclickmono": "4f083d44",
+    "xclickstereo": "4f1ec34a",
+    "wavesxclickstereo": "4f1ec34a",
+    "xcracklemono": "658f4244",
+    "wavesxcracklemono": "658f4244",
+    "xcracklestereo": "65a5c844",
+    "wavesxcracklestereo": "65a5c844",
+    "xhummono": "d567a3c1",
+    "wavesxhummono": "d567a3c1",
+    "xhumstereo": "d5842eb8",
+    "wavesxhumstereo": "d5842eb8",
+    "xnoisemono": "c59e9a44",
+    "wavesxnoisemono": "c59e9a44",
+    "xnoisestereo": "c5b5204a",
+    "wavesxnoisestereo": "c5b5204a",
+    "youleanloudnessmeter2": "8eadedc1",
+    "youleanyouleanloudnessmeter2": "8eadedc1",
+    "znoisemono": "c59e2d67",
+    "wavesznoisemono": "c59e2d67",
+    "znoisestereo": "c5b4b36d",
+    "wavesznoisestereo": "c5b4b36d",
+    "soothe2": "3f2478d9",
+    "soothe2x64": "3f2478d9",
+    "oeksoundsoothe2": "3f2478d9"
+  }
+}

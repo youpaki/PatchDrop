@@ -2,6 +2,7 @@
 
 #include <JuceHeader.h>
 #include <map>
+#include "Chain/DawExport.h"
 #include "Core/Theme.h"
 #include "UI/Controls.h"
 #include "UI/ChainView.h"
@@ -12,7 +13,8 @@ class HostedPluginWindow;
 
 class PatchLinkEditor final : public juce::AudioProcessorEditor,
                               private juce::ChangeListener,
-                              public juce::FileDragAndDropTarget
+                              public juce::FileDragAndDropTarget,
+                              public juce::DragAndDropContainer
 {
 public:
     explicit PatchLinkEditor(PatchLinkProcessor&);
@@ -45,6 +47,7 @@ private:
     PlButton shareButton { "Share", Icon::share, PlButton::Style::secondary };
     PlButton importButton { "Import", Icon::importFile, PlButton::Style::ghost };
     PlButton exportButton { "Export", Icon::exportFile, PlButton::Style::ghost };
+    PlButton dragDawButton { "Drag to DAW", Icon::exportFile, PlButton::Style::secondary };
     PlButton addButton { "Add plugin", Icon::plus, PlButton::Style::primary };
     juce::Label patchName, statusLabel, chainInfo, systemInfo;
     ChainView chainView;
@@ -55,6 +58,10 @@ private:
     std::unique_ptr<juce::DialogWindow> scanWindow;
     juce::OwnedArray<HostedPluginWindow> pluginWindows;
     juce::String lastShareCode;
+    dawexport::HostDetection hostDetection;
+    dawexport::TargetFormat selectedExportFormat = dawexport::TargetFormat::autoDetect;
+    juce::var stagedPatchVar;
+    juce::String stagedPatchTitle;
     bool isDraggingFile = false;
     juce::String dragDropHint;
     std::map<juce::String, juce::MemoryBlock> droppedFileCache;
@@ -68,6 +75,18 @@ private:
     void refreshViews();
     void setStatus(const juce::String&);
     void showToast(const juce::String&, bool isError = false);
+
+    dawexport::TargetFormat effectiveExportFormat() const;
+    void updateExportButtonState();
+    juce::var getActiveOrStagedPatchVar();
+    void stagePatch(const juce::var& patchVar, const juce::String& title, const juce::String& toastMsg = {});
+    void clearStagedPatch();
+    void showFormatPickerMenu(const juce::var& customPatch = {}, int singleSlotIndex = -1, bool fromDragAttempt = false);
+    void startExternalDawDrag(const juce::var& customPatch = {}, int singleSlotIndex = -1);
+    void saveDawPresetToDisk(const juce::var& customPatch, dawexport::TargetFormat fmt, int singleSlotIndex = -1);
+    void loadPatchIntoProcessor(const juce::var& patch, const juce::String& label);
+    void showEmptyDropModal(const juce::var& stagedVar, const juce::String& label, const juce::StringArray& notes,
+                            std::function<void()> loadIntoPatchLinkFn);
 
     void openPluginBrowser(int x, int y);
     void openShareDialog(bool publish);
