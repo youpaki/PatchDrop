@@ -1,82 +1,51 @@
-# PatchLink — Chainer VST3 + Standalone type Patcher avec partage de patch
+# PatchLink
 
-## Concept (ton besoin)
-Tu crées une chaîne d'effets avec des plugins tiers chez toi (FL Studio, Windows).
-Tu exportes un fichier `.patchlink`.
-Ton pote l'ouvre dans sa propre instance (Ableton, chez lui) et retrouve la même chaîne,
-les mêmes réglages, avec un rapport "plugins manquants" si besoin.
-Il peut s'enregistrer avec tes effets en monitoring direct.
+A resizable VST3 and Standalone effect chainer by **leve**. Host VST3 effects (and Audio Units on macOS), arrange them in a serial chain or a stereo routing canvas, then share the complete chain and plugin states as a `.patchlink` file or a six-character PatchDrop code.
 
-## Choix techniques imposés par tes réponses
-- **Format cible : VST3 + Standalone** → JUCE 8 fait les deux depuis le même code.
-- **Hébergement : VST3 + AU + CLAP**
-  - Windows : VST3 + CLAP (AU = macOS uniquement, impossible sur Windows)
-  - macOS : VST3 + AU + CLAP
-  - JUCE hoste nativement VST3 et AU. CLAP demande une extension (voir TODO plus bas).
-- **Partage : fichier + détection manquants** → format JSON + états binaires base64.
-- **Routage : nodal complet** → `juce::AudioProcessorGraph` en moteur audio.
+## Interface
 
-## État de ce scaffold
-V1 fonctionnelle minimale :
-- [x] Plugin VST3 + Standalone (CMake + JUCE via FetchContent)
-- [x] Moteur `AudioProcessorGraph` : in -> nodes -> out
-- [x] Scan VST3 / AU, liste, instanciation
-- [x] Sérialisation patch `.patchlink` (JSON) avec état complet de chaque plugin
-- [x] Détection plugins manquants à l'import
-- [x] Editeur nodal minimal (ajouter / supprimer / bypass / câblage auto série)
-- [ ] Vrai éditeur nodal drag-cable type Patcher (V2)
-- [ ] Hosting CLAP (V2, via `clap-helpers` ou `carla`)
-- [ ] Parallèle / split / dry-wet par branche (V2, le graph le permet déjà)
-- [ ] Compensation latence PDC complète (V2)
+- **Chain** — ordered, drag-to-reorder plugin cards with bypass, hosted-editor, and per-plugin actions. Audio runs from top to bottom.
+- **Patcher** — scrollable node canvas with curved stereo cables. Drag from a right-hand port to a left-hand port, right-click nodes or cables for actions, and press Delete to remove the selected plugin.
+- **Plugin library** — instant full-library search by name, developer, format, or category. No fixed result limit.
+- **Scan Manager** — opt-in folder scanning, DAW-aware folder proposals, subfolder controls, live progress, cancellation, failure reporting, and blacklist management.
+- **Sharing** — public or unlisted PatchDrop publishing, dependency manifest, open-by-code, and file import/export. Network work is asynchronous.
 
-## Compiler
+Double-click a chain card or patcher node to open its own editor. Double-click the patch title to rename it. `Ctrl/Cmd+F`, `Ctrl/Cmd+I`, and `Ctrl/Cmd+E` open the browser, import, and export respectively.
 
-### Windows (FL + Ableton)
-1. Installer Visual Studio 2022 (Desktop C++), CMake 3.22+, Git.
-2. ```powershell
-   cd patchlink
-   cmake -B build -DCMAKE_BUILD_TYPE=Release
-   cmake --build build --config Release --parallel
-   ```
-3. Le VST3 est dans `build/PatchLink_artefacts/Release/VST3/PatchLink.vst3`
-   → copier vers `C:\Program Files\Common Files\VST3\`
-4. Le Standalone est dans `build/PatchLink_artefacts/Release/Standalone/`
+## Patch compatibility
 
-### macOS (pour ton pote si Mac)
-```bash
+The writer uses chain format v2 and retains complete opaque plugin-state blobs plus human-readable plugin identifiers. The loader accepts both v1 and v2 files, recalls by plugin identity rather than absolute path, and reports unavailable dependencies without discarding their saved state from the source patch. Unknown JSON properties remain forward-compatible. Explicit chain order and patch title are additive v2 properties.
+
+## Build (Windows)
+
+Requirements: CMake 3.22+, Git, and Visual Studio 2022 C++ Build Tools. JUCE 8.0.6 is fetched at configure time.
+
+```powershell
 cd patchlink
-cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake -B build -G "Visual Studio 17 2022" -A x64
 cmake --build build --config Release --parallel
 ```
-AU + VST3 générés automatiquement.
 
-## Workflow de partage
-1. Toi : `Export Patch` → `Maxime-vox-rap.patchlink` → envoi Discord / Drive.
-2. Lui : `Import Patch` dans son instance → le plugin :
-   - scanne ses plugins installés,
-   - restaure chaque état,
-   - affiche : `✅ FabFilter Pro-R OK | ❌ Valhalla VintageVerb 2.1.0 manquant (a trouvé 2.0.0)`.
-3. Il s'enregistre en laissant le plugin en monitoring sur sa piste voix (Ableton : piste audio IN monitor ON).
+Artifacts:
 
-> Règle d'or : pour un rappel à 100%, vous devez avoir **exactement les mêmes plugins aux mêmes versions**.
-> Sinon on restaure ce qu'on peut + rapport clair. C'est pour ça qu'on embarque
-> `manufacturer, version, format, fileOrIdentifierString` dans le patch.
+- `build/PatchLink_artefacts/Release/VST3/PatchLink.vst3`
+- `build/PatchLink_artefacts/Release/Standalone/PatchLink.exe`
+- `build/ScanTest_artefacts/Release/ScanTest.exe`
 
-## Format `.patchlink` (JSON)
-```json
-{
-  "app": "PatchLink", "version": 1,
-  "nodes": [{
-    "uid": 101, "name": "Pro-R",
-    "format": "VST3", "fileOrId": "FabFilter Pro-R",
-    "manufacturer": "FabFilter", "pluginVersion": "1.0",
-    "stateBase64": "...", "x": 100, "y": 200, "bypass": false
-  }],
-  "connections": [{ "src": 100, "srcCh": 0, "dst": 101, "dstCh": 0 }]
-}
+Headless scanner checks:
+
+```powershell
+.\build\ScanTest_artefacts\Release\ScanTest.exe
+.\build\ScanTest_artefacts\Release\ScanTest.exe --folder "C:\path\to\plugins"
+.\build\ScanTest_artefacts\Release\ScanTest.exe --full
 ```
 
-## Prochaines étapes conseillées
-1. Compile ce scaffold, teste vide FL → Ableton.
-2. Ajoute 1-2 plugins VST3 gratuits (TDR Nova, Valhalla Supermassive) pour tester l'export/import.
-3. Ensuite on attaque : UI nodale complète + CLAP + PDC.
+`COPY_PLUGIN_AFTER_BUILD` is intentionally disabled. Use the Inno Setup installer for deployment to the system VST3 folder.
+
+## macOS
+
+The same CMake project targets VST3 and Standalone and enables JUCE's native Audio Unit hosting. This path has not yet received the same machine-level QA as Windows.
+
+## Scope
+
+PatchLink currently hosts VST3 everywhere and AU on macOS. Stock JUCE does not host CLAP; supporting it would require an additional host library. Advanced per-branch dry/wet processing and full host latency compensation remain future engine work.

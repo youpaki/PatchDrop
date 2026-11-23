@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(PatchLink VERSION 1.2.0)
+project(PatchLink VERSION 1.3.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -35,12 +35,21 @@ target_sources(PatchLink PRIVATE
   Source/Chain/PatchFormat.h
   Source/Chain/ShareClient.h
   Source/Core/ChainFormat.h
-  Source/Core/DesignTokens.h
+  Source/Core/Theme.h
   Source/Core/Fonts.h
-  Source/Core/Hazard.h
   Source/Scan/DawDetector.h
   Source/Scan/PluginScanManager.h
   Source/Scan/PluginScanManager.cpp
+  Source/UI/Controls.h
+  Source/UI/Controls.cpp
+  Source/UI/PluginBrowser.h
+  Source/UI/PluginBrowser.cpp
+  Source/UI/ChainView.h
+  Source/UI/ChainView.cpp
+  Source/UI/PatcherView.h
+  Source/UI/PatcherView.cpp
+  Source/UI/ShareDialog.h
+  Source/UI/ShareDialog.cpp
   Source/UI/ScanDialog.h
   Source/UI/ScanDialog.cpp
 )

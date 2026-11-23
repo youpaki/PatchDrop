@@ -53,7 +53,7 @@ document.getElementById('pubform').addEventListener('submit', async (e) => {
       patch,
     };
     const j = await api('api/publish', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    box.innerHTML = `<div class="ok">Code ready: <b>${j.code}</b><br>Send this code to your friend — they paste it in PatchLink → <i>Open via code</i>.</div>`;
+    box.innerHTML = `<div class="ok">Code ready: <b>${j.code}</b><br>Send this code to your collaborator — they paste it in PatchLink → <i>Open code</i>.</div>`;
     loadList();
   } catch (err) { box.innerHTML = 'Error: ' + err.message; }
 });

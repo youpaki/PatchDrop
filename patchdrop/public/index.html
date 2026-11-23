@@ -7,40 +7,57 @@
 <meta name="description" content="PatchDrop: the PatchLink companion. Share your FL Studio / Ableton effect chain with a short code. VST3 + Standalone.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:ital,wght@0,500;0,700;0,900;1,900&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="grain"></div>
 <header class="nav">
-  <a class="logo" href="#top">◉ PATCH<span>DROP</span></a>
+  <a class="logo" href="#top">
+    <span class="logo-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2.5" y="7.5" width="11" height="9" rx="4.5"></rect>
+        <rect x="10.5" y="7.5" width="11" height="9" rx="4.5"></rect>
+      </svg>
+    </span>
+    <span class="logo-text">PATCHDROP</span>
+    <span class="logo-sub">BY LEVE</span>
+  </a>
   <nav>
-    <a href="#workflow">The code</a>
+    <a href="#workflow">Workflow</a>
     <a href="#download">Download</a>
     <a href="#explorer">Community presets</a>
     <a href="#publish">Publish</a>
   </nav>
-  <a class="btn small" href="#download">VST3 + Standalone</a>
+  <a class="btn small secondary" href="#download">v1.3.0 · VST3 + Standalone</a>
 </header>
 
 <main id="top">
   <section class="hero">
-    <div class="hero-kicker"><span class="dot"></span> PatchLink companion · FL Studio ↔ Ableton</div>
-    <h1>YOUR EFFECT<br><em>CHAIN</em> IN<br>A CODE.</h1>
-    <p class="lede">You dial in your vocal at home. Your friend types <b class="code-inline">K7Q2XA</b> into their Patcher and records with <b>your</b> effects. No more “send me your settings on Discord”.</p>
+    <div class="hero-kicker"><span class="dot"></span> PatchLink companion · FL Studio ↔ Ableton Live</div>
+    <h1>Your effect chain,<br><em>portable</em> in a code.</h1>
+    <p class="lede">Dial in your vocal or mix bus in PatchLink. Your collaborator pastes <b class="code-inline">K7Q2XA</b> into their instance and recalls the exact chain, routing, and plugin settings.</p>
     <div class="hero-cta">
-      <a class="btn big" href="#download">⬇ Download (installer / VST3)</a>
-      <a class="btn ghost big" href="#explorer">Browse presets</a>
+      <a class="btn big" href="#download">Download PatchLink 1.3.0</a>
+      <a class="btn ghost big" href="#explorer">Browse community presets</a>
     </div>
     <div class="badges">
-      <span>VST3 Windows + macOS</span><span>Standalone</span><span>Simple / Patcher mode</span><span>.patchlink file + code</span>
+      <span>VST3 Windows + macOS</span><span>Standalone</span><span>Chain &amp; Patcher modes</span><span>.patchlink + 6-char code</span>
     </div>
     <div class="code-card">
-      <div class="code-card-head"><span></span><span></span><span></span><b>patchdrop — share</b></div>
+      <div class="code-card-head">
+        <span class="pill">Signal roundtrip</span>
+        <b>PatchLink → PatchDrop</b>
+      </div>
       <div class="code-card-body">
-        <div><small>YOU (FL Studio)</small><code>Share → code: <b>K7Q2XA</b></code></div>
+        <div class="flow-row">
+          <small>YOU (FL STUDIO)</small>
+          <code><b>Share</b> → code <b>K7Q2XA</b> <span class="dim">· manifest verified</span></code>
+        </div>
         <div class="arrow">↓</div>
-        <div><small>YOUR FRIEND (Ableton)</small><code>Open via code → <b>K7Q2XA</b> ✓ Pro-R, CLA-76 recalled</code></div>
+        <div class="flow-row">
+          <small>COLLABORATOR (ABLETON)</small>
+          <code><b>Open code</b> → <b>K7Q2XA</b> <span class="ok-txt">✓ Pro-Q, CLA-76, Pro-R recalled</span></code>
+        </div>
       </div>
     </div>
   </section>
@@ -48,85 +65,98 @@
   <section id="workflow" class="section">
     <h2>The workflow in 30 seconds</h2>
     <div class="steps">
-      <div class="step"><b>01</b><h3>You mix</h3><p>Vocal chain in PatchLink (Simple mode or nodal Patcher). Bypass, order, settings — everything is captured.</p></div>
-      <div class="step"><b>02</b><h3>You share</h3><p>Click <i>Share via code</i> → you get <span class="mono">K7Q2XA</span>. Or <i>Export</i> for a <span class="mono">.patchlink</span> file.</p></div>
-      <div class="step"><b>03</b><h3>They record</h3><p>They paste the code into their instance. If a plugin is missing, PatchLink says so clearly instead of crashing.</p></div>
+      <div class="step"><b>01</b><h3>Build your chain</h3><p>Stack effects in serial <b>Chain</b> mode or wire stereo splits in nodal <b>Patcher</b> mode. Plugin order, bypasses, and full states are captured.</p></div>
+      <div class="step"><b>02</b><h3>Share or export</h3><p>Click <i>Share</i> to inspect the dependency manifest and get a six-character code like <span class="mono">K7Q2XA</span>, or <i>Export</i> a <span class="mono">.patchlink</span> file.</p></div>
+      <div class="step"><b>03</b><h3>Recall safely</h3><p>They click <i>Open code</i> inside PatchLink. Unavailable plugins are reported clearly without crashing or dropping their saved settings.</p></div>
     </div>
-    <div class="warn">⚠ Golden rule: same plugins, same versions = 100% recall. Otherwise we restore what we can + a missing-plugin report (name, format, version found).</div>
+    <div class="warn">Same plugins and matching versions yield 100% recall. If anything is missing, PatchLink loads everything available and reports the missing plugin names, formats, and versions.</div>
   </section>
 
   <section id="download" class="section">
     <h2>Download</h2>
-    <p class="sub">The <b>PatchLink</b> plugin (VST3 + Standalone) and this <b>PatchDrop</b> site go together: the plugin creates the codes, the site distributes them.</p>
+    <p class="sub">The <b>PatchLink</b> plugin (VST3 + Standalone) and this <b>PatchDrop</b> service work together: the plugin creates share codes and files, and PatchDrop hosts them.</p>
     <div class="dl-grid">
-      <div class="dl-card">
-        <h3>🪟 Windows</h3>
-        <p>One installer, with options. 64-bit. Tested FL Studio 21+ / Ableton 11+.</p>
-        <a class="btn" href="releases/PatchLink-Setup-1.2.0.exe" data-dl>PatchLink-Setup-1.2.0.exe</a>
+      <div class="dl-card featured">
+        <div class="dl-tag">Windows 64-bit · v1.3.0</div>
+        <h3>Windows Installer</h3>
+        <p>Includes both the VST3 plugin and Standalone app. Tested in FL Studio 21+ and Ableton Live 11+.</p>
+        <a class="btn" href="releases/PatchLink-Setup-1.3.0.exe" data-dl>PatchLink-Setup-1.3.0.exe</a>
         <ol class="how">
-          <li>Run the setup (asks for admin — needed for the VST3 folder)</li>
-          <li>Pick components: <b>VST3 plugin</b> and/or <b>Standalone app</b>, optional desktop icon</li>
-          <li>The installer puts the VST3 in <span class="mono">C:\Program Files\Common Files\VST3\</span> for you</li>
-          <li>Rescan plugins in your DAW, drop PatchLink on a vocal track</li>
+          <li>Run setup (requests admin to write to the shared VST3 folder)</li>
+          <li>Select <b>VST3 plugin</b> and/or <b>Standalone app</b></li>
+          <li>VST3 installs to <span class="mono">C:\Program Files\Common Files\VST3\</span></li>
+          <li>Rescan plugins in your DAW and load PatchLink on any track</li>
         </ol>
       </div>
       <div class="dl-card">
-        <h3>🍎 macOS</h3>
-        <p>VST3 + AU (AU hosting only works on Mac). Ableton + Logic.</p>
-        <a class="btn" href="releases/PatchLink-macOS.zip" data-dl>PatchLink-macOS.zip</a>
+        <div class="dl-tag">macOS · Source / CMake</div>
+        <h3>macOS (VST3 + AU)</h3>
+        <p>Universal CMake project supporting VST3 and Audio Unit hosting in Ableton Live and Logic Pro.</p>
+        <a class="btn secondary" href="releases/PatchLink-macOS.zip" data-dl>PatchLink-macOS.zip</a>
         <ol class="how">
-          <li>Open the <span class="mono">.dmg</span>, drag VST3 + AU</li>
+          <li>Open the archive and install VST3 + AU components</li>
           <li>VST3 → <span class="mono">/Library/Audio/Plug-Ins/VST3</span></li>
-          <li>Rescan, paste your PatchDrop code</li>
+          <li>Rescan in your DAW and click <i>Open code</i></li>
         </ol>
       </div>
       <div class="dl-card alt">
-        <h3>⚙️ Ableton: record with the effects on</h3>
+        <div class="dl-tag">DAW Quick Setup</div>
+        <h3>Ableton Live</h3>
         <ol class="how">
-          <li>Audio track → <span class="mono">Monitor: IN</span></li>
-          <li>PatchLink as insert, <i>Open via code</i></li>
-          <li>Arm the track, rec. Monitoring runs through the chain.</li>
+          <li>Create an Audio track → set <span class="mono">Monitor: IN</span></li>
+          <li>Insert PatchLink and click <i>Open code</i></li>
+          <li>Arm track and record through the active chain</li>
         </ol>
-        <h3 style="margin-top:14px">🎹 FL: route it fast</h3>
+        <h3 style="margin-top:18px">FL Studio</h3>
         <ol class="how">
-          <li>Mixer → effect slot → PatchLink</li>
-          <li><i>Simple</i> mode for a vocal, <i>Patcher</i> mode to split</li>
+          <li>Add PatchLink to any Mixer insert slot</li>
+          <li>Use <i>Chain</i> for vocals or <i>Patcher</i> for parallel routing</li>
         </ol>
       </div>
     </div>
-    <p class="tiny" id="dl-note">Windows setup above is the official build. macOS build drops here when compiled on a Mac. Source + installer script: <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.</p>
+    <p class="tiny" id="dl-note">Windows setup above is the official v1.3.0 release. macOS archive drops here when built on macOS. Source + installer script: <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.</p>
   </section>
 
   <section id="explorer" class="section">
-    <div class="row-head"><h2>Community presets</h2><div class="search"><input id="q" placeholder="search: vocal, 808, wide…"><button id="qbtn" class="btn small">Filter</button></div></div>
-    <p class="sub">Click = code copied. Paste it in PatchLink → <i>Open via code</i>. Or download as <span class="mono">.patchlink</span>.</p>
-    <div id="grid" class="grid"><div class="empty">Loading…</div></div>
+    <div class="row-head">
+      <div>
+        <h2>Community presets</h2>
+        <p class="sub">Click <i>Copy code</i> and paste into PatchLink → <i>Open code</i>, or download the <span class="mono">.patchlink</span> file.</p>
+      </div>
+      <div class="search">
+        <input id="q" placeholder="Search presets: vocal, 808, wide…">
+        <button id="qbtn" class="btn small secondary">Filter</button>
+      </div>
+    </div>
+    <div id="grid" class="grid"><div class="empty">Loading presets…</div></div>
   </section>
 
   <section id="publish" class="section">
-    <h2>Publish without opening the plugin</h2>
-    <p class="sub">Already have a <span class="mono">.patchlink</span> file? Upload it here, get a code, send it to your friend.</p>
+    <h2>Publish from file</h2>
+    <p class="sub">Already exported a <span class="mono">.patchlink</span> file? Upload it here to generate a shareable six-character PatchDrop code.</p>
     <form id="pubform" class="pub">
-      <label>Title<input id="f-title" maxlength="80" placeholder="Rap vocal — warmth + air" required></label>
-      <label>Name<input id="f-author" maxlength="40" placeholder="leo"></label>
-      <label>Description<input id="f-desc" maxlength="500" placeholder="CLA-76 → Pro-Q → Pro-R, for SM7B-recorded vocals"></label>
+      <div class="pub-row">
+        <label>Title<input id="f-title" maxlength="80" placeholder="Rap vocal — warmth + air" required></label>
+        <label>Author<input id="f-author" maxlength="40" placeholder="leve"></label>
+      </div>
+      <label>Description<input id="f-desc" maxlength="500" placeholder="CLA-76 → Pro-Q → Pro-R, tuned for condenser vocals"></label>
       <label>.patchlink file<input id="f-file" type="file" accept=".patchlink,.json,application/json" required></label>
-      <label class="check"><input id="f-public" type="checkbox" checked> Show in the community explorer</label>
-      <button class="btn big" type="submit">Publish → get a code</button>
+      <label class="check"><input id="f-public" type="checkbox" checked> List in the community preset explorer</label>
+      <button class="btn big" type="submit">Publish and get code</button>
       <div id="pubres"></div>
     </form>
   </section>
 
   <section class="section faq">
-    <h2>Compat &amp; questions</h2>
-    <details open><summary>What if my friend doesn't own my plugins?</summary><p>PatchLink compares name + format + version. It restores what it can and shows: <span class="mono">❌ VintageVerb 2.1.0 missing (2.0.0 found)</span>. Zero crashes.</p></details>
-    <details><summary>File or code — what's the difference?</summary><p>None in sound: same JSON. The code goes through <span class="mono">gg.trenas.fr/patchdrop</span> (convenient), the file goes through Discord/Drive (unlimited, private).</p></details>
-    <details><summary>The plugin lists no plugins?</summary><p>Click <span class="mono">Scan</span> inside PatchLink. The Scan Manager pre-checks your system folders <em>plus</em> the folders your DAWs (FL Studio, Ableton, REAPER, Cubase…) actually use — detected automatically. Add your own folders, rescan, done. Crashing plugins get blacklisted automatically instead of breaking the scan.</p></details>
-    <details><summary>Max size?</summary><p>12 MB per patch (plenty: binary states are base64-compressed). Community presets list their plugins so you can check before downloading.</p></details>
+    <h2>Compatibility &amp; FAQ</h2>
+    <details open><summary>What happens if a collaborator doesn't own every plugin?</summary><p>PatchLink resolves each plugin by format, identifier, and name. Available plugins and their exact binary states are recalled; missing ones are listed cleanly in a report without crashing or stripping settings from the patch.</p></details>
+    <details><summary>Is there any audio difference between a share code and a .patchlink file?</summary><p>None — both carry the exact same JSON schema and base64 plugin state blobs. Share codes travel through <span class="mono">gg.trenas.fr/patchdrop</span>, while exported <span class="mono">.patchlink</span> files can be sent anywhere directly.</p></details>
+    <details><summary>My plugin list is empty inside PatchLink</summary><p>Click <b>Library</b> in the top bar to open the Scan Manager. System folders and detected DAW folders (FL Studio, Ableton Live, REAPER, Cubase, Nuendo) are pre-configured automatically. Click <i>Scan selected</i> — any unstable plugin is safely isolated in the blacklist.</p></details>
+    <details><summary>What is the maximum patch size?</summary><p>Up to 12 MB per shared preset, which easily covers complex multi-plugin chains and their binary state data.</p></details>
   </section>
 </main>
 
-<footer>◉ PATCHDROP — companion of <b>PatchLink</b> · codes via <span class="mono">/api</span> · <a href="#top">top ↑</a></footer>
+<footer>PATCHDROP · Companion for <b>PatchLink v1.3.0</b> by leve · <a href="#top">Back to top ↑</a></footer>
 <script src="app.js"></script>
 </body>
 </html>

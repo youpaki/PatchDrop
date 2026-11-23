@@ -1,479 +1,507 @@
 #include "PluginEditor.h"
 #include "PluginProcessor.h"
 #include "Chain/ShareClient.h"
-#include "Core/DesignTokens.h"
+#include "UI/PluginBrowser.h"
+#include "UI/ShareDialog.h"
 #include "UI/ScanDialog.h"
+#include <thread>
 
-// ---------- Vue Simple : liste verticale ----------
-struct PatchLinkEditor::SimpleList : juce::Component
+class HostedPluginWindow final : public juce::DocumentWindow
 {
-    PatchLinkEditor& ed;
-    PatchLinkProcessor& proc;
-    struct Row : juce::Component
+public:
+    HostedPluginWindow(const juce::String& name, juce::AudioProcessorGraph::NodeID id,
+                       juce::AudioProcessor* processor)
+        : juce::DocumentWindow(name, theme::background,
+                               juce::DocumentWindow::closeButton | juce::DocumentWindow::minimiseButton),
+          nodeId(id)
     {
-        juce::Label name;
-        juce::ToggleButton bypass { "BYPASS" };
-        juce::TextButton del { "X" };
-        juce::AudioProcessorGraph::NodeID id;
-        juce::String indexText;
-        PatchLinkProcessor& proc;
-        Row(PatchLinkProcessor& p, PatchLinkProcessor::LoadedNode n, int idx) : proc(p), id(n.id)
-        {
-            indexText = juce::String::formatted("%02d", idx + 1);
-            name.setText(n.desc.name.isNotEmpty() ? n.desc.name : ("Node " + juce::String(n.id.uid)), juce::dontSendNotification);
-            bypass.setToggleState(n.bypass, juce::dontSendNotification);
-            addAndMakeVisible(name); addAndMakeVisible(bypass); addAndMakeVisible(del);
-            bypass.onClick = [this] { proc.setNodeBypass(id, bypass.getToggleState()); };
-            del.onClick = [this] { proc.removeNode(id); };
-        }
-        void paint(juce::Graphics& g) override
-        {
-            g.setColour(design::card);
-            g.fillRoundedRectangle(getLocalBounds().toFloat(), design::corner);
-            g.setColour(design::yellow);
-            g.fillRect(0, 6, 3, getHeight() - 12);
-            g.setColour(design::yellow);
-            g.setFont(PatchFonts::mono(11.0f));
-            g.drawText(indexText, 10, 0, 30, getHeight(), juce::Justification::centredLeft);
-        }
-        void resized() override
-        {
-            auto r = getLocalBounds().reduced(4);
-            del.setBounds(r.removeFromRight(36));
-            bypass.setBounds(r.removeFromRight(70));
-            r.removeFromLeft(38);
-            name.setBounds(r);
-        }
-    };
-    juce::OwnedArray<Row> rows;
-    SimpleList(PatchLinkEditor& e, PatchLinkProcessor& p) : ed(e), proc(p) {}
-    void refresh()
-    {
-        rows.clear();
-        int y = 0, idx = 0;
-        for (auto& n : proc.getLoadedNodes())
-        {
-            auto* r = new Row(proc, n, idx++);
-            r->name.setFont(PatchFonts::ui(13.0f));
-            r->bypass.setColour(juce::ToggleButton::textColourId, design::secondary);
-            addAndMakeVisible(r);
-            r->setBounds(0, y, getWidth(), design::simpleRowH);
-            rows.add(r);
-            y += design::simpleRowH + 2;
-        }
-        setSize(getWidth(), juce::jmax(y, 100));
-        resized();
+        setUsingNativeTitleBar(true);
+        std::unique_ptr<juce::AudioProcessorEditor> content(processor->createEditor());
+        if (content == nullptr) content = std::make_unique<juce::GenericAudioProcessorEditor>(*processor);
+        setResizable(content->isResizable(), false);
+        setContentOwned(content.release(), true);
+        setWantsKeyboardFocus(false);
     }
-    void resized() override
+
+    void closeButtonPressed() override
     {
-        int y = 0;
-        for (auto* r : rows) { r->setBounds(0, y, getWidth(), design::simpleRowH); y += design::simpleRowH + 2; }
+        if (onClosed) onClosed(this);
+        else setVisible(false);
     }
+
+    juce::AudioProcessorGraph::NodeID nodeId;
+    std::function<void(HostedPluginWindow*)> onClosed;
 };
 
-// ---------- Vue Full : canvas nodal minimal ----------
-struct PatchLinkEditor::FullCanvas : juce::Component
+class ScanManagerWindow final : public juce::DialogWindow
 {
-    PatchLinkEditor& ed;
-    PatchLinkProcessor& proc;
-    juce::Array<uint32_t> selected; // uid
-    juce::ComponentDragger dragger;
-    juce::AudioProcessorGraph::NodeID dragId{ 0 };
-    juce::Point<int> dragStart;
-    static constexpr int W = 150, H = 62;
-
-    FullCanvas(PatchLinkEditor& e, PatchLinkProcessor& p) : ed(e), proc(p) {}
-
-    juce::Rectangle<int> boxFor(uint32_t uid)
-    {
-        for (auto& n : proc.getLoadedNodes())
-            if (n.id.uid == uid) return { n.x, n.y, W, H };
-        return {};
-    }
-
-    void paint(juce::Graphics& g) override
-    {
-        g.fillAll(design::bg);
-        Halftone::dots(g, getLocalBounds(), juce::Colour(0x0dffe600), 22, 1.4f);
-
-        // wires: signal yellow
-        g.setColour(design::audio);
-        for (auto& wline : proc.getWires())
-        {
-            auto a = boxFor(wline.src), b = boxFor(wline.dst);
-            if (a.isEmpty() || b.isEmpty()) continue;
-            auto p1 = a.getCentre().toFloat();
-            auto p2 = b.getCentre().toFloat();
-            g.drawLine(p1.x, p1.y, p2.x, p2.y, 2.0f);
-        }
-        // IN / OUT
-        g.setColour(design::secondary);
-        g.setFont(PatchFonts::mono(11.0f));
-        g.drawRoundedRectangle(10, 10, 90, 40, design::corner, 1.5f);
-        g.drawText("IN", 10, 10, 90, 40, juce::Justification::centred);
-        g.drawRoundedRectangle((float)getWidth() - 100, 10, 90, 40, design::corner, 1.5f);
-        g.drawText("OUT", getWidth() - 100, 10, 90, 40, juce::Justification::centred);
-
-        // nodes
-        for (auto& n : proc.getLoadedNodes())
-        {
-            bool sel = selected.contains(n.id.uid);
-            auto r = juce::Rectangle<int>(n.x, n.y, W, H);
-            g.setColour(design::card);
-            g.fillRoundedRectangle(r.toFloat(), design::corner);
-            g.setColour(sel ? design::yellow : design::line);
-            g.drawRoundedRectangle(r.toFloat(), design::corner, sel ? 2.5f : 1.0f);
-            if (sel) { g.setColour(design::yellow); g.fillRect(r.getX(), r.getY(), 5, r.getHeight()); }
-            g.setColour(design::text);
-            g.setFont(PatchFonts::ui(13.0f));
-            juce::String nm = n.desc.name.isNotEmpty() ? n.desc.name : ("Node " + juce::String(n.id.uid));
-            if (n.bypass) nm += " [BYPASSED]";
-            g.drawText(nm, r.reduced(10, 4), juce::Justification::topLeft);
-            g.setFont(PatchFonts::mono(10.0f));
-            g.setColour(design::secondary);
-            g.drawText(n.desc.pluginFormatName + "  // SHIFT+CLICK 2 NODES = WIRE",
-                       r.reduced(10, 4), juce::Justification::bottomLeft);
-        }
-        if (proc.getLoadedNodes().empty())
-        {
-            g.setColour(design::secondary);
-            g.setFont(PatchFonts::ui(14.0f));
-            g.drawText("DOUBLE-CLICK TO ADD A PLUGIN — SHIFT+CLICK 2 NODES TO WIRE",
-                       getLocalBounds(), juce::Justification::centred);
-        }
-    }
-
-    void mouseDown(const juce::MouseEvent& e) override
-    {
-        uint32_t hit = 0;
-        for (auto& n : proc.getLoadedNodes())
-            if (juce::Rectangle<int>(n.x, n.y, W, H).contains(e.position.toInt()))
-                hit = n.id.uid;
-        if (hit != 0)
-        {
-            if (e.mods.isShiftDown() && selected.size() == 1 && !selected.contains(hit))
-            {
-                // relie selected[0] -> hit
-                proc.connectNodes(juce::AudioProcessorGraph::NodeID(selected.getFirst()),
-                                  0, juce::AudioProcessorGraph::NodeID(hit), 0);
-                proc.connectNodes(juce::AudioProcessorGraph::NodeID(selected.getFirst()),
-                                  1, juce::AudioProcessorGraph::NodeID(hit), 1);
-                selected.clear();
-                repaint();
-                return;
-            }
-            if (!e.mods.isCommandDown() && !e.mods.isCtrlDown()) selected.clear();
-            if (!selected.contains(hit)) selected.add(hit);
-            dragId = juce::AudioProcessorGraph::NodeID(hit);
-            dragStart = e.position.toInt();
-            dragger.startDraggingComponent(this, e);
-        }
-        else selected.clear();
-        repaint();
-    }
-    void mouseDrag(const juce::MouseEvent& e) override
-    {
-        if (dragId.uid == 0) return;
-        // déplace le noeud : delta depuis le départ
-        auto delta = e.position.toInt() - dragStart;
-        for (auto& n : proc.getLoadedNodes())
-            if (n.id.uid == dragId.uid)
-                proc.setNodePosition(n.id, n.x + delta.x, n.y + delta.y);
-        dragStart = e.position.toInt();
-        repaint();
-    }
-    void mouseDoubleClick(const juce::MouseEvent& e) override
-    {
-        uint32_t hit = 0;
-        for (auto& n : proc.getLoadedNodes())
-            if (juce::Rectangle<int>(n.x, n.y, W, H).contains(e.position.toInt()))
-                hit = n.id.uid;
-        if (hit == 0) ed.pickAndAddPlugin(e.position.x, e.position.y);
-    }
+public:
+    ScanManagerWindow() : juce::DialogWindow("Plugin Library", theme::background, true, false) {}
+    void closeButtonPressed() override { setVisible(false); }
 };
 
-// ---------- Editeur ----------
-PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& p)
-    : AudioProcessorEditor(p), proc(p)
+PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& processor)
+    : AudioProcessorEditor(processor), proc(processor)
 {
-    setLookAndFeel(&hazardLaf);
-    setSize(860, 600);
+    setLookAndFeel(&lookAndFeel);
+    setSize(1120, 720);
+    setResizeLimits(840, 540, 3200, 2200);
     setResizable(true, true);
+    setWantsKeyboardFocus(true);
 
-    entryTitle.setText("PATCHLINK", juce::dontSendNotification);
-    entryTitle.setFont(PatchFonts::display(52.0f));
-    entryTitle.setColour(juce::Label::textColourId, design::yellow);
-    entrySub.setText("LEVE AUDIO CHAINER — SIMPLE CHAIN OR FULL PATCHER. SAME ENGINE.",
-                     juce::dontSendNotification);
-    entrySub.setFont(PatchFonts::mono(12.0f));
-    entrySimple.setButtonText("SIMPLE MODE\nVERTICAL CHAIN. FAST.");
-    entryFull.setButtonText("PATCHER MODE\nFULL NODAL LIKE FL PATCHER");
-    entryAsk.setButtonText("Always ask on startup");
-    entryAsk.setToggleState(true, juce::dontSendNotification);
-    for (auto* b : { &btnSimple, &btnFull, &btnAdd, &btnImport, &btnExport, &btnScan, &btnShare, &btnOpenCode,
-                     &entrySimple, &entryFull })
-    {
-        b->setColour(juce::TextButton::buttonColourId, design::raised);
-        b->setColour(juce::TextButton::textColourOffId, design::text);
-        b->setColour(juce::TextButton::buttonOnColourId, design::audio);
-    }
-    entryTitle.setColour(juce::Label::textColourId, design::audio);
-    statusLabel.setFont(design::monoFont(12.0f));
-    addAndMakeVisible(entryTitle); addAndMakeVisible(entrySub);
-    addAndMakeVisible(entrySimple); addAndMakeVisible(entryFull); addAndMakeVisible(entryAsk);
+    simpleButton.setTooltip("A serial chain from top to bottom");
+    patcherButton.setTooltip("A free-form stereo routing canvas");
+    simpleButton.onClick = [this] { setMode(Mode::simple); };
+    patcherButton.onClick = [this] { setMode(Mode::patcher); };
+    addButton.setTooltip("Search your plugin library (Ctrl+F)");
+    addButton.onClick = [this] {
+        const auto index = (int)proc.getLoadedNodes().size();
+        openPluginBrowser(282 + (index % 5) * 224, 208 + (index / 5) * 132);
+    };
+    libraryButton.setTooltip("Manage plugin folders, scans, and blacklist");
+    libraryButton.onClick = [this] { openScanDialog(); };
+    shareButton.onClick = [this] { openShareDialog(true); };
+    codeButton.onClick = [this] { openShareDialog(false); };
+    importButton.onClick = [this] { doImport(); };
+    exportButton.onClick = [this] { doExport(); };
+    for (auto* button : { &simpleButton, &patcherButton, &libraryButton, &codeButton, &shareButton,
+                          &importButton, &exportButton, &addButton })
+        addAndMakeVisible(button);
 
-    for (auto* b : { &btnSimple, &btnFull, &btnAdd, &btnImport, &btnExport, &btnScan, &btnShare, &btnOpenCode })
-        addAndMakeVisible(b);
-    statusLabel.setFont(PatchFonts::mono(12.0f));
-    statusLabel.setColour(juce::Label::textColourId, design::yellow);
+    patchName.setText(proc.getPatchName(), juce::dontSendNotification);
+    patchName.setFont(theme::font(17.0f, true));
+    patchName.setEditable(true, true, false);
+    patchName.setTooltip("Double-click to rename this chain");
+    patchName.onTextChange = [this] {
+        if (patchName.getText().trim().isNotEmpty()) proc.setPatchName(patchName.getText());
+    };
+    addAndMakeVisible(patchName);
+
+    statusLabel.setFont(theme::font(11.0f));
+    statusLabel.setColour(juce::Label::textColourId, theme::muted);
+    chainInfo.setFont(theme::mono(10.0f));
+    chainInfo.setColour(juce::Label::textColourId, theme::faint);
+    chainInfo.setJustificationType(juce::Justification::centred);
+    systemInfo.setFont(theme::mono(10.0f));
+    systemInfo.setColour(juce::Label::textColourId, theme::faint);
+    systemInfo.setJustificationType(juce::Justification::centredRight);
     addAndMakeVisible(statusLabel);
+    addAndMakeVisible(chainInfo);
+    addAndMakeVisible(systemInfo);
 
-    simpleView = std::make_unique<juce::Viewport>();
-    simpleList = std::make_unique<SimpleList>(*this, proc);
-    simpleView->setViewedComponent(simpleList.get(), false);
-    addAndMakeVisible(simpleView.get());
+    chainView.onBypass = [this](auto id, bool bypass) { proc.setNodeBypass(id, bypass); };
+    chainView.onRemove = [this](auto id) { closeWindowsForNode(id); proc.removeNode(id); };
+    chainView.onOpen = [this](auto id) { openPluginWindow(id); };
+    chainView.onReorder = [this](auto id, int index) { proc.moveNode(id, index); };
+    chainView.onAdd = [this] { addButton.triggerClick(); };
+    chainView.onClear = [this] { confirmClearChain(); };
+    addAndMakeVisible(chainView);
 
-    fullCanvas = std::make_unique<FullCanvas>(*this, proc);
-    addAndMakeVisible(fullCanvas.get());
-
-    entrySimple.onClick = [this] {
-        askAtStartup = entryAsk.getToggleState();
-        if (!askAtStartup) proc.preferredMode = 1;
-        setMode(Mode::Simple);
+    patcherView.setEndpointIds(proc.getInputNodeId(), proc.getOutputNodeId());
+    patcherView.onAddAt = [this](int x, int y) { openPluginBrowser(x, y); };
+    patcherView.onOpen = [this](auto id) { openPluginWindow(id); };
+    patcherView.onBypass = [this](auto id, bool bypass) { proc.setNodeBypass(id, bypass); };
+    patcherView.onRemove = [this](auto id) { closeWindowsForNode(id); proc.removeNode(id); };
+    patcherView.onMove = [this](auto id, int x, int y) { proc.setNodePosition(id, x, y); };
+    patcherView.onMoveFinished = [this] { proc.sendChangeMessage(); };
+    patcherView.onDisconnectAll = [this](auto id) { proc.disconnectAll(id); };
+    patcherView.onDisconnect = [this](auto src, auto dst) { proc.disconnect(src, dst); };
+    patcherView.onConnect = [this](auto src, auto dst) {
+        const auto left = proc.connectNodes(src, 0, dst, 0);
+        const auto right = proc.connectNodes(src, 1, dst, 1);
+        if (!left || !right) showToast("That connection could not be made. Check for a feedback loop.", true);
     };
-    entryFull.onClick = [this] {
-        askAtStartup = entryAsk.getToggleState();
-        if (!askAtStartup) proc.preferredMode = 2;
-        setMode(Mode::Full);
-    };
-    btnSimple.onClick = [this] { setMode(Mode::Simple); };
-    btnFull.onClick = [this] { setMode(Mode::Full); };
-    btnAdd.onClick = [this] { pickAndAddPlugin(120, 120); };
-    btnImport.onClick = [this] { doImport(); };
-    btnExport.onClick = [this] { doExport(); };
-    btnScan.onClick = [this] { openScanDialog(); };
-    btnShare.onClick = [this] { doShareViaCode(); };
-    btnOpenCode.onClick = [this] { doOpenViaCode(); };
+    addChildComponent(patcherView);
+    addChildComponent(toast);
 
-    // Si l'utilisateur a mémorisé un mode, on saute l'entrée
-    if (proc.preferredMode == 1) setMode(Mode::Simple);
-    else if (proc.preferredMode == 2) setMode(Mode::Full);
-    else setMode(Mode::Entry);
-
-    startTimer(500);
+    proc.addChangeListener(this);
+    proc.getScanManager().addChangeListener(this);
+    setMode(proc.preferredMode == 2 ? Mode::patcher : Mode::simple);
+    setStatus("Ready");
 }
 
-PatchLinkEditor::~PatchLinkEditor() { setLookAndFeel(nullptr); stopTimer(); }
-
-void PatchLinkEditor::setMode(Mode m)
+PatchLinkEditor::~PatchLinkEditor()
 {
-    mode = m;
-    if (m == Mode::Simple) { proc.autoConnectSerial = true; proc.rebuildSerialIfNeeded(); }
-    if (m == Mode::Full) proc.autoConnectSerial = false;
-    refreshAll();
+    proc.getScanManager().removeChangeListener(this);
+    proc.removeChangeListener(this);
+    pluginWindows.clear();
+    scanWindow.reset();
+    overlay.reset();
+    setLookAndFeel(nullptr);
+}
+
+void PatchLinkEditor::setMode(Mode newMode)
+{
+    mode = newMode;
+    simpleButton.setSelected(mode == Mode::simple);
+    patcherButton.setSelected(mode == Mode::patcher);
+    proc.preferredMode = mode == Mode::simple ? 1 : 2;
+    if (mode == Mode::simple)
+    {
+        proc.autoConnectSerial = true;
+        proc.rebuildSerialIfNeeded();
+        chainView.setVisible(true);
+        patcherView.setVisible(false);
+    }
+    else
+    {
+        proc.autoConnectSerial = false;
+        chainView.setVisible(false);
+        patcherView.setVisible(true);
+    }
+    refreshViews();
     resized();
 }
 
-void PatchLinkEditor::refreshAll()
+void PatchLinkEditor::changeListenerCallback(juce::ChangeBroadcaster*)
 {
-    if (simpleList) simpleList->refresh();
-    if (fullCanvas) fullCanvas->repaint();
-    auto n = proc.getLoadedNodes().size();
-    juce::String base = juce::String((int)n) + " plugin(s)  ·  "
-                        + (mode == Mode::Simple ? "Simple (auto-series)" : mode == Mode::Full ? "Patcher (manual)" : "");
-    if (proc.getKnownList().getNumTypes() == 0)
-        base += "  —  No plugins indexed yet: click Scan (your DAW folders are pre-checked)";
-    statusLabel.setText(base, juce::dontSendNotification);
+    refreshViews();
+}
+
+void PatchLinkEditor::refreshViews()
+{
+    const auto nodes = proc.getLoadedNodes();
+    chainView.refresh(nodes);
+    patcherView.refresh(nodes, proc.getWires());
+    if (!patchName.hasKeyboardFocus(true)) patchName.setText(proc.getPatchName(), juce::dontSendNotification);
+    chainInfo.setText(juce::String((int)nodes.size()) + (nodes.size() == 1 ? " plugin" : " plugins")
+                      + "  /  STEREO", juce::dontSendNotification);
+    const auto sampleRate = proc.getSampleRate() > 0 ? proc.getSampleRate() : 44100.0;
+    systemInfo.setText(juce::String(proc.getKnownList().getNumTypes()) + " indexed  /  "
+                       + juce::String(sampleRate / 1000.0, 1) + " kHz", juce::dontSendNotification);
+    if (proc.getScanManager().isScanning()) setStatus("Indexing plugin library...");
+    else if (statusLabel.getText().startsWith("Indexing")) setStatus("Ready");
     repaint();
 }
 
-void PatchLinkEditor::timerCallback() { refreshAll(); }
+void PatchLinkEditor::setStatus(const juce::String& text)
+{
+    statusLabel.setText(text, juce::dontSendNotification);
+}
+
+void PatchLinkEditor::showToast(const juce::String& text, bool isError)
+{
+    toast.setSize(juce::jmin(getWidth() - 40, juce::jmax(280, 44 + juce::roundToInt(theme::font(12.5f).getStringWidthFloat(text)))),
+                  42);
+    resized();
+    toast.toFront(false);
+    toast.show(text, isError);
+}
 
 void PatchLinkEditor::paint(juce::Graphics& g)
 {
-    g.fillAll(design::bg);
-    Halftone::dots(g, getLocalBounds(), juce::Colour(0x14ffffff), 18, 1.5f);
-    // hazard strip up top
-    Halftone::stripes(g, juce::Rectangle<int>(0, 0, getWidth(), 5));
-    if (mode == Mode::Entry)
-    {
-        // giant watermark
-        g.setColour(juce::Colour(0x0ffffe600));
-        g.setFont(PatchFonts::display(120.0f));
-        g.drawText("LEVE", getLocalBounds().removeFromBottom(200), juce::Justification::centredBottom, true);
-    }
+    g.fillAll(theme::background);
+    g.setColour(theme::surface);
+    g.fillRect(0, 0, getWidth(), theme::headerHeight);
+    g.setColour(theme::panel.withAlpha(0.52f));
+    g.fillRect(0, theme::headerHeight, getWidth(), theme::toolbarHeight);
+    g.setColour(theme::lineSoft);
+    g.drawHorizontalLine(theme::headerHeight - 1, 0, (float)getWidth());
+    g.drawHorizontalLine(theme::headerHeight + theme::toolbarHeight, 0, (float)getWidth());
+    g.drawHorizontalLine(getHeight() - theme::footerHeight, 0, (float)getWidth());
+
+    auto logo = juce::Rectangle<float>(22, 18, 30, 30);
+    g.setColour(theme::accent.withAlpha(0.12f));
+    g.fillRoundedRectangle(logo, 7.0f);
+    drawIcon(g, Icon::link, logo.reduced(6), theme::accent, 1.5f);
+    g.setColour(theme::text);
+    g.setFont(theme::font(16.0f, true));
+    g.drawText("PATCHLINK", 62, 16, 112, 22, juce::Justification::centredLeft);
+    g.setColour(theme::faint);
+    g.setFont(theme::mono(8.5f));
+    g.drawText("BY LEVE", 63, 37, 100, 16, juce::Justification::centredLeft);
+
+    g.setColour(theme::accent);
+    g.fillEllipse(23.0f, getHeight() - 20.0f, 5.0f, 5.0f);
 }
 
 void PatchLinkEditor::resized()
 {
-    bool entry = (mode == Mode::Entry);
-    for (auto* c : { (juce::Component*)&entryTitle, (juce::Component*)&entrySub,
-                     (juce::Component*)&entrySimple, (juce::Component*)&entryFull, (juce::Component*)&entryAsk })
-        c->setVisible(entry);
-    for (auto* c : { (juce::Component*)&btnSimple, (juce::Component*)&btnFull, (juce::Component*)&btnAdd,
-                     (juce::Component*)&btnImport, (juce::Component*)&btnExport, (juce::Component*)&btnScan,
-                     (juce::Component*)&btnShare, (juce::Component*)&btnOpenCode,
-                     (juce::Component*)&statusLabel })
-        c->setVisible(!entry);
-    if (simpleView) simpleView->setVisible(!entry && mode == Mode::Simple);
-    if (fullCanvas) fullCanvas->setVisible(!entry && mode == Mode::Full);
-
     auto r = getLocalBounds();
-    if (entry)
-    {
-        entryTitle.setBounds(r.removeFromTop(90).reduced(20, 10));
-        entrySub.setBounds(r.removeFromTop(30).reduced(20, 0));
-        auto mid = r.reduced(40, 20);
-        int hw = mid.getWidth() / 2 - 10;
-        entrySimple.setBounds(mid.removeFromLeft(hw));
-        mid.removeFromLeft(20);
-        entryFull.setBounds(mid);
-        entryAsk.setBounds(getLocalBounds().removeFromBottom(30).reduced(20, 4));
-        return;
-    }
-    auto top = r.removeFromTop(64).reduced(6, 4);
-    btnSimple.setBounds(top.removeFromLeft(80)); top.removeFromLeft(4);
-    btnFull.setBounds(top.removeFromLeft(80)); top.removeFromLeft(12);
-    btnAdd.setBounds(top.removeFromLeft(80)); top.removeFromLeft(4);
-    btnScan.setBounds(top.removeFromLeft(60)); top.removeFromLeft(12);
-    btnImport.setBounds(top.removeFromLeft(70)); top.removeFromLeft(4);
-    btnExport.setBounds(top.removeFromLeft(70)); top.removeFromLeft(4);
-    btnShare.setBounds(top.removeFromLeft(120)); top.removeFromLeft(4);
-    btnOpenCode.setBounds(top.removeFromLeft(120)); top.removeFromLeft(12);
-    statusLabel.setBounds(top);
-    if (mode == Mode::Simple && simpleView)
-        simpleView->setBounds(r.reduced(10));
-    if (mode == Mode::Full && fullCanvas)
-        fullCanvas->setBounds(r.reduced(10));
+    auto header = r.removeFromTop(theme::headerHeight).reduced(20, 13);
+    header.removeFromLeft(170);
+    simpleButton.setBounds(header.removeFromLeft(92));
+    header.removeFromLeft(4);
+    patcherButton.setBounds(header.removeFromLeft(104));
+    header.removeFromLeft(10);
+    shareButton.setBounds(header.removeFromRight(94));
+    header.removeFromRight(8);
+    codeButton.setBounds(header.removeFromRight(108));
+    header.removeFromRight(8);
+    libraryButton.setBounds(header.removeFromRight(98));
+
+    auto toolbar = r.removeFromTop(theme::toolbarHeight).reduced(22, 10);
+    addButton.setBounds(toolbar.removeFromRight(132));
+    toolbar.removeFromRight(6);
+    exportButton.setBounds(toolbar.removeFromRight(88));
+    exportButton.setVisible(toolbar.getWidth() > 230);
+    toolbar.removeFromRight(4);
+    importButton.setBounds(toolbar.removeFromRight(88));
+    importButton.setVisible(toolbar.getWidth() > 180);
+    patchName.setBounds(toolbar.withTrimmedRight(16));
+
+    auto footer = r.removeFromBottom(theme::footerHeight).reduced(36, 0);
+    systemInfo.setBounds(footer.removeFromRight(225));
+    footer.removeFromRight(16);
+    chainInfo.setBounds(footer.removeFromRight(160));
+    statusLabel.setBounds(footer);
+
+    chainView.setBounds(r);
+    patcherView.setBounds(r);
+    if (overlay != nullptr) overlay->setBounds(getLocalBounds());
+    toast.setCentrePosition(getWidth() / 2, getHeight() - theme::footerHeight - 32);
 }
 
-void PatchLinkEditor::pickAndAddPlugin(int x, int y)
+bool PatchLinkEditor::keyPressed(const juce::KeyPress& key)
 {
-    auto types = proc.getKnownList().getTypes();
-    if (types.isEmpty())
+    if (key.getModifiers().isCommandDown())
     {
-        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, "No plugins",
-            "Nothing indexed yet — click Scan first (system + DAW folders are pre-checked).");
-        return;
+        const auto c = key.getTextCharacter();
+        if (c == 'f' || c == 'F') { addButton.triggerClick(); return true; }
+        if (c == 'i' || c == 'I') { doImport(); return true; }
+        if (c == 'e' || c == 'E') { doExport(); return true; }
     }
-    juce::PopupMenu m;
-    std::sort(types.begin(), types.end(),
-              [](auto& a, auto& b) { return a.name < b.name; });
-    int id = 1;
-    std::map<int, juce::PluginDescription> map;
-    for (auto& t : types)
-    {
-        if (id > 500) break; // limite du menu
-        m.addItem(id, t.name + "  (" + t.pluginFormatName + ")");
-        map[id] = t;
-        ++id;
-    }
-    m.showMenuAsync(juce::PopupMenu::Options(), [this, map, x, y](int r) {
-        if (r > 0 && map.count(r))
-        {
-            statusLabel.setText("Loading plugin…", juce::dontSendNotification);
-            proc.addPluginAsync(map.at(r), x, y, [this](const juce::String& err) {
-                if (err.isNotEmpty())
-                    juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "Load", err);
-                refreshAll();
+    return false;
+}
+
+void PatchLinkEditor::dismissOverlay()
+{
+    if (overlay == nullptr) return;
+    auto* doomed = overlay.release();
+    doomed->setVisible(false);
+    juce::MessageManager::callAsync([doomed] { delete doomed; });
+}
+
+void PatchLinkEditor::openPluginBrowser(int x, int y)
+{
+    dismissOverlay();
+    auto* browser = new PluginBrowser(proc.getKnownList().getTypes());
+    overlay.reset(browser);
+    browser->onDismiss = [safe = juce::Component::SafePointer<PatchLinkEditor>(this)] { if (safe) safe->dismissOverlay(); };
+    browser->onScanRequested = [safe = juce::Component::SafePointer<PatchLinkEditor>(this)] {
+        if (safe) { safe->dismissOverlay(); safe->openScanDialog(); }
+    };
+    browser->onPluginChosen = [safe = juce::Component::SafePointer<PatchLinkEditor>(this), x, y](const auto& description) {
+        if (!safe) return;
+        safe->dismissOverlay();
+        safe->setStatus("Loading " + description.name + "...");
+        safe->proc.addPluginAsync(description, x, y, [safe, name = description.name](const juce::String& error) {
+            if (!safe) return;
+            if (error.isNotEmpty())
+            {
+                safe->setStatus("Plugin could not be loaded");
+                safe->showToast(error, true);
+            }
+            else
+            {
+                safe->setStatus(name + " is ready");
+                safe->showToast(name + " added to your chain");
+            }
+            safe->refreshViews();
+        });
+    };
+    browser->setBounds(getLocalBounds());
+    addAndMakeVisible(browser);
+    browser->grabKeyboardFocus();
+}
+
+void PatchLinkEditor::openShareDialog(bool publish)
+{
+    dismissOverlay();
+    auto mode = publish ? ShareDialog::Mode::publish : ShareDialog::Mode::openCode;
+    auto* dialog = new ShareDialog(mode, proc.graphToVar());
+    overlay.reset(dialog);
+    dialog->onDismiss = [safe = juce::Component::SafePointer<PatchLinkEditor>(this)] { if (safe) safe->dismissOverlay(); };
+
+    dialog->onPublish = [safe = juce::Component::SafePointer<PatchLinkEditor>(this),
+                         dialogSafe = juce::Component::SafePointer<ShareDialog>(dialog),
+                         patch = proc.graphToVar(), base = apiBase](const juce::String& title,
+                            const juce::String& author, const juce::String& description, bool isPublic) {
+        if (!safe || !dialogSafe) return;
+        dialogSafe->setBusy(true, "Publishing your chain to PatchDrop...");
+        std::thread([safe, dialogSafe, patch, title, author, description, isPublic, base]() mutable {
+            juce::String error;
+            auto code = ShareClient::publish(patch, title, author, description, base, error, isPublic);
+            juce::MessageManager::callAsync([safe, dialogSafe, code, error]() mutable {
+                if (dialogSafe)
+                {
+                    dialogSafe->setBusy(false);
+                    if (code.isNotEmpty()) dialogSafe->publishSucceeded(code);
+                    else dialogSafe->operationFailed(error.isNotEmpty() ? error : "PatchDrop could not publish this chain.");
+                }
+                else if (safe)
+                {
+                    if (code.isNotEmpty())
+                    {
+                        safe->lastShareCode = code;
+                        juce::SystemClipboard::copyTextToClipboard(code);
+                        safe->showToast("Published as " + code + " - code copied");
+                    }
+                    else safe->showToast(error.isNotEmpty() ? error : "Publishing failed", true);
+                }
             });
-        }
-    });
+        }).detach();
+    };
+
+    dialog->onOpenCode = [safe = juce::Component::SafePointer<PatchLinkEditor>(this),
+                          dialogSafe = juce::Component::SafePointer<ShareDialog>(dialog),
+                          base = apiBase](const juce::String& code) {
+        if (!safe || !dialogSafe) return;
+        dialogSafe->setBusy(true, "Fetching " + code + "...");
+        std::thread([safe, dialogSafe, code, base]() mutable {
+            juce::var patch;
+            juce::String title, error;
+            const auto ok = ShareClient::fetch(code, base, patch, title, error);
+            juce::MessageManager::callAsync([safe, dialogSafe, code, patch, title, error, ok]() mutable {
+                if (!safe) return;
+                if (!ok)
+                {
+                    if (dialogSafe) dialogSafe->operationFailed(error.isNotEmpty() ? error : "Code not found.");
+                    else safe->showToast(error.isNotEmpty() ? error : "Code not found", true);
+                    return;
+                }
+                if (dialogSafe && safe->overlay.get() == dialogSafe.getComponent()) safe->dismissOverlay();
+                safe->pluginWindows.clear();
+                safe->setStatus("Loading " + (title.isNotEmpty() ? title : code) + "...");
+                safe->proc.loadFromVarAsync(patch, [safe, code, title](juce::StringArray missing, juce::String loadError) {
+                    if (!safe) return;
+                    if (loadError.isNotEmpty())
+                    {
+                        safe->setStatus("Could not open " + code);
+                        safe->showToast(loadError, true);
+                        return;
+                    }
+                    safe->setStatus((title.isNotEmpty() ? title : code) + " is ready");
+                    safe->refreshViews();
+                    safe->showMissingPlugins(missing, title.isNotEmpty() ? title : code);
+                });
+            });
+        }).detach();
+    };
+
+    dialog->setBounds(getLocalBounds());
+    addAndMakeVisible(dialog);
+    dialog->grabKeyboardFocus();
 }
 
 void PatchLinkEditor::doImport()
 {
-    auto fc = std::make_shared<juce::FileChooser>("Importer un patch", juce::File(), "*.patchlink");
-    fc->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
-        [this, fc](const juce::FileChooser&) {
-            auto f = fc->getResult();
-            if (f.existsAsFile())
-            {
-                statusLabel.setText("Loading patch…", juce::dontSendNotification);
-                proc.importPatchAsync(f, [this](juce::StringArray missing, juce::String err) {
-                    if (err.isNotEmpty())
-                        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "Import", err);
-                    else
-                        refreshAll();
-                    if (missing.size() > 0)
-                        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, "Missing plugins",
-                            "Not found on your machine:\n- " + missing.joinIntoString("\n- "));
-                });
-            }
+    auto chooser = std::make_shared<juce::FileChooser>("Open a PatchLink chain", juce::File(), "*.patchlink");
+    chooser->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
+        [safe = juce::Component::SafePointer<PatchLinkEditor>(this), chooser](const juce::FileChooser&) mutable {
+            if (!safe) return;
+            const auto file = chooser->getResult();
+            if (!file.existsAsFile()) return;
+            safe->pluginWindows.clear();
+            safe->setStatus("Opening " + file.getFileNameWithoutExtension() + "...");
+            safe->proc.importPatchAsync(file, [safe](juce::StringArray missing, juce::String error) {
+                if (!safe) return;
+                if (error.isNotEmpty())
+                {
+                    safe->setStatus("Import failed");
+                    juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "Cannot open chain", error);
+                    return;
+                }
+                safe->setStatus("Chain imported");
+                safe->refreshViews();
+                safe->showMissingPlugins(missing, "Chain imported");
+            });
         });
 }
 
 void PatchLinkEditor::doExport()
 {
-    auto fc = std::make_shared<juce::FileChooser>("Exporter le patch", juce::File(), "*.patchlink");
-    fc->launchAsync(juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles,
-        [this, fc](const juce::FileChooser&) {
-            auto f = fc->getResult();
-            if (f.getFullPathName().isNotEmpty())
+    auto chooser = std::make_shared<juce::FileChooser>("Save a PatchLink chain", juce::File(), "*.patchlink");
+    chooser->launchAsync(juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles,
+        [safe = juce::Component::SafePointer<PatchLinkEditor>(this), chooser](const juce::FileChooser&) mutable {
+            if (!safe) return;
+            auto file = chooser->getResult();
+            if (file.getFullPathName().isEmpty()) return;
+            if (file.getFileExtension().isEmpty()) file = file.withFileExtension("patchlink");
+            juce::String error;
+            if (!safe->proc.exportPatch(file, error))
             {
-                if (f.getFileExtension().isEmpty()) f = f.withFileExtension("patchlink");
-                juce::String err;
-                if (!proc.exportPatch(f, err))
-                    juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "Export", err);
+                safe->showToast(error, true);
+                return;
             }
+            safe->setStatus("Exported " + file.getFileName());
+            safe->showToast("Chain saved to " + file.getFileName());
         });
+}
+
+void PatchLinkEditor::confirmClearChain()
+{
+    juce::AlertWindow::showOkCancelBox(juce::AlertWindow::WarningIcon, "Clear this chain?",
+        "This removes every hosted plugin and its connections from the current chain.",
+        "Clear chain", "Cancel", this,
+        juce::ModalCallbackFunction::create([safe = juce::Component::SafePointer<PatchLinkEditor>(this)](int result) {
+            if (safe && result != 0)
+            {
+                safe->pluginWindows.clear();
+                safe->proc.clearChain();
+                safe->setStatus("Chain cleared");
+            }
+        }));
 }
 
 void PatchLinkEditor::openScanDialog()
 {
-    scanWindow = std::make_unique<juce::DialogWindow>("Scan Manager", design::canvas, true, true);
-    scanWindow->setContentOwned(new ScanDialog(proc.getScanManager()), true);
-    scanWindow->setResizable(true, true);
-    scanWindow->centreAroundComponent(this, 720, 620);
+    if (scanWindow == nullptr)
+    {
+        auto* window = new ScanManagerWindow();
+        scanWindow.reset(window);
+        window->setLookAndFeel(&lookAndFeel);
+        window->setContentOwned(new ScanDialog(proc.getScanManager()), true);
+        window->setResizable(true, true);
+        window->setResizeLimits(690, 560, 1500, 1100);
+    }
+    scanWindow->centreAroundComponent(this, juce::jmin(900, getWidth() + 40), juce::jmin(720, getHeight() + 40));
     scanWindow->setVisible(true);
+    scanWindow->toFront(true);
+    scanWindow->setLookAndFeel(&lookAndFeel);
 }
 
-void PatchLinkEditor::doShareViaCode()
+void PatchLinkEditor::openPluginWindow(juce::AudioProcessorGraph::NodeID id)
 {
-    statusLabel.setText("Publishing code...", juce::dontSendNotification);
-    juce::String err;
-    juce::String code = ShareClient::publish(proc.graphToVar(), "PatchLink chain", "me", "", apiBase, err);
-    if (code.isEmpty())
+    auto* processor = proc.getNodeProcessor(id);
+    if (processor == nullptr) { showToast("This plugin is no longer in the chain", true); return; }
+    for (auto* window : pluginWindows)
+        if (window->nodeId == id) { window->toFront(true); return; }
+
+    juce::String name = "Plugin";
+    if (auto* instance = dynamic_cast<juce::AudioPluginInstance*>(processor)) name = instance->getPluginDescription().name;
+    auto* window = new HostedPluginWindow(name + " / PatchLink", id, processor);
+    window->onClosed = [safe = juce::Component::SafePointer<PatchLinkEditor>(this)](HostedPluginWindow* closing) {
+        if (safe) safe->closePluginWindow(closing);
+    };
+    pluginWindows.add(window);
+    window->centreAroundComponent(this, window->getWidth(), window->getHeight());
+    window->setVisible(true);
+}
+
+void PatchLinkEditor::closePluginWindow(HostedPluginWindow* window)
+{
+    juce::MessageManager::callAsync([safe = juce::Component::SafePointer<PatchLinkEditor>(this), window] {
+        if (safe) safe->pluginWindows.removeObject(window);
+    });
+}
+
+void PatchLinkEditor::closeWindowsForNode(juce::AudioProcessorGraph::NodeID id)
+{
+    for (int i = pluginWindows.size(); --i >= 0;)
+        if (pluginWindows[i]->nodeId == id)
+            closePluginWindow(pluginWindows[i]);
+}
+
+void PatchLinkEditor::showMissingPlugins(const juce::StringArray& missing, const juce::String& title)
+{
+    if (missing.isEmpty())
     {
-        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "PatchDrop", err);
-        refreshAll();
+        showToast("Everything in this chain was restored");
         return;
     }
-    juce::SystemClipboard::copyTextToClipboard(code);
-    juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, "PatchDrop",
-        "Your code: " + code + "\n(copied — send it to your friend)\nHe clicks Open via code in his instance.");
-    statusLabel.setText("Shared: " + code, juce::dontSendNotification);
-}
-
-void PatchLinkEditor::doOpenViaCode()
-{
-    auto* aw = new juce::AlertWindow("PatchDrop", "Paste your friend's code:", juce::AlertWindow::QuestionIcon);
-    aw->addTextEditor("code", "", "K7Q2XA");
-    aw->addButton("Open", 1);
-    aw->addButton("Cancel", 0);
-    aw->enterModalState(true, juce::ModalCallbackFunction::create([this, aw](int r) {
-        juce::String code;
-        if (r != 0) code = aw->getTextEditor("code")->getText();
-        delete aw;
-        if (r == 0 || code.trim().isEmpty()) return;
-        statusLabel.setText("Fetching code…", juce::dontSendNotification);
-        juce::var patch; juce::String title, err;
-        if (!ShareClient::fetch(code, apiBase, patch, title, err))
-        {
-            juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "PatchDrop", err);
-            return;
-        }
-        statusLabel.setText("Loading patch…", juce::dontSendNotification);
-        proc.loadFromVarAsync(patch, [this, code, title](juce::StringArray missing, juce::String loadErr) {
-            if (loadErr.isNotEmpty())
-            {
-                juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "PatchDrop", "Patch unreadable.");
-                return;
-            }
-            refreshAll();
-            juce::String msg = "Loaded \"" + title + "\" (" + code.toUpperCase().trim() + ").";
-            if (missing.size() > 0) msg += "\nMissing plugins:\n- " + missing.joinIntoString("\n- ");
-            juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, "PatchDrop", msg);
-        });
-    }));
+    juce::String message = "The available plugins and settings were restored.\n\nInstall or scan these missing plugins, then reopen the chain:\n\n- "
+                         + missing.joinIntoString("\n- ")
+                         + "\n\nYour patch file keeps their original settings.";
+    juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, title, message);
 }

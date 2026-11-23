@@ -1,57 +1,68 @@
 #pragma once
+
 #include <JuceHeader.h>
-#include "Core/Hazard.h"
+#include "Core/Theme.h"
+#include "UI/Controls.h"
+#include "UI/ChainView.h"
+#include "UI/PatcherView.h"
 
 class PatchLinkProcessor;
+class HostedPluginWindow;
 
-// Editeur avec écran d'entrée : Mode Simple vs Mode Patcher Full.
-// Commutable à tout moment via la barre du haut. Choix mémorisé.
-class PatchLinkEditor : public juce::AudioProcessorEditor,
-                        public juce::Timer
+class PatchLinkEditor final : public juce::AudioProcessorEditor,
+                              private juce::ChangeListener
 {
 public:
-    explicit PatchLinkEditor(PatchLinkProcessor& p);
+    explicit PatchLinkEditor(PatchLinkProcessor&);
     ~PatchLinkEditor() override;
-    void paint(juce::Graphics& g) override;
+
+    void paint(juce::Graphics&) override;
     void resized() override;
-    void timerCallback() override;
+    bool keyPressed(const juce::KeyPress&) override;
 
 private:
+    enum class Mode { simple = 1, patcher = 2 };
+
     PatchLinkProcessor& proc;
-    HazardLookAndFeel hazardLaf;
+    theme::LookAndFeel lookAndFeel;
+    Mode mode = Mode::simple;
+    const juce::String apiBase { "https://gg.trenas.fr/patchdrop" };
 
-    enum class Mode { Entry = 0, Simple = 1, Full = 2 };
-    Mode mode = Mode::Entry;
-    bool askAtStartup = true;
+    PlButton simpleButton { "Chain", Icon::list, PlButton::Style::ghost };
+    PlButton patcherButton { "Patcher", Icon::grid, PlButton::Style::ghost };
+    PlButton libraryButton { "Library", Icon::library, PlButton::Style::secondary };
+    PlButton codeButton { "Open code", Icon::code, PlButton::Style::secondary };
+    PlButton shareButton { "Share", Icon::share, PlButton::Style::secondary };
+    PlButton importButton { "Import", Icon::importFile, PlButton::Style::ghost };
+    PlButton exportButton { "Export", Icon::exportFile, PlButton::Style::ghost };
+    PlButton addButton { "Add plugin", Icon::plus, PlButton::Style::primary };
+    juce::Label patchName, statusLabel, chainInfo, systemInfo;
+    ChainView chainView;
+    PatcherView patcherView;
+    Toast toast;
 
-    // Barre du haut (visible en Simple/Full)
-    juce::TextButton btnSimple { "Simple" }, btnFull { "Patcher" };
-    juce::TextButton btnAdd { "+ Plugin" }, btnImport { "Import" }, btnExport { "Export" }, btnScan { "Scan" };
-    juce::TextButton btnShare { "Share: get code" }, btnOpenCode { "Open via code" };
-    juce::String apiBase = "https://gg.trenas.fr/patchdrop";
-    juce::Label statusLabel;
-
-    // Ecran d'entrée
-    juce::TextButton entrySimple { "Mode Simple\n(série, rapide)" }, entryFull { "Mode Patcher\n(nodal complet)" };
-    juce::ToggleButton entryAsk { "Toujours demander au démarrage" };
-    juce::Label entryTitle, entrySub;
-
-    // Vue simple : liste verticale
-    struct SimpleList;
-    std::unique_ptr<juce::Viewport> simpleView;
-    std::unique_ptr<SimpleList> simpleList;
-
-    // Vue full : canvas nodal minimal (drag + select + connect)
-    struct FullCanvas;
-    std::unique_ptr<FullCanvas> fullCanvas;
-
-    void setMode(Mode m);
-    void refreshAll();
-    void pickAndAddPlugin(int x, int y);
-    void doImport(), doExport();
-    void openScanDialog();
-    void doShareViaCode(), doOpenViaCode();
+    std::unique_ptr<juce::Component> overlay;
     std::unique_ptr<juce::DialogWindow> scanWindow;
+    juce::OwnedArray<HostedPluginWindow> pluginWindows;
+    juce::String lastShareCode;
+
+    void setMode(Mode);
+    void changeListenerCallback(juce::ChangeBroadcaster*) override;
+    void refreshViews();
+    void setStatus(const juce::String&);
+    void showToast(const juce::String&, bool isError = false);
+
+    void openPluginBrowser(int x, int y);
+    void openShareDialog(bool publish);
+    void dismissOverlay();
+    void doImport();
+    void doExport();
+    void confirmClearChain();
+    void openScanDialog();
+    void openPluginWindow(juce::AudioProcessorGraph::NodeID);
+    void closePluginWindow(HostedPluginWindow*);
+    void closeWindowsForNode(juce::AudioProcessorGraph::NodeID);
+    void showMissingPlugins(const juce::StringArray&, const juce::String& title = "Chain loaded");
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PatchLinkEditor)
 };

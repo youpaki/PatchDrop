@@ -8,7 +8,8 @@
 // - Scanning via PluginScanManager (background, pedal-file crash durability).
 // - Instantiation always async (createPluginInstanceAsync, AUv3-safe) + enableAllBuses.
 // - Patches: .patchlink v1 (migrated) / chain v2, IDs-not-paths, missing-plugin report.
-class PatchLinkProcessor : public juce::AudioProcessor
+class PatchLinkProcessor : public juce::AudioProcessor,
+                           public juce::ChangeBroadcaster
 {
 public:
     PatchLinkProcessor();
@@ -19,6 +20,7 @@ public:
         juce::AudioProcessorGraph::NodeID id;
         juce::PluginDescription desc;
         int x = 0, y = 0;
+        int order = 0;
         bool bypass = false;
     };
 
@@ -54,6 +56,8 @@ public:
     using DoneFn = std::function<void(const juce::String& err)>;
     void addPluginAsync(const juce::PluginDescription& desc, int x, int y, DoneFn done);
     void removeNode(juce::AudioProcessorGraph::NodeID id);
+    void moveNode(juce::AudioProcessorGraph::NodeID id, int newIndex);
+    juce::AudioProcessor* getNodeProcessor(juce::AudioProcessorGraph::NodeID id);
     void setNodeBypass(juce::AudioProcessorGraph::NodeID id, bool b);
     bool getNodeBypass(juce::AudioProcessorGraph::NodeID id);
     void setNodePosition(juce::AudioProcessorGraph::NodeID id, int x, int y);
@@ -63,7 +67,13 @@ public:
     bool connectNodes(juce::AudioProcessorGraph::NodeID src, int srcCh,
                       juce::AudioProcessorGraph::NodeID dst, int dstCh);
     void disconnectAll(juce::AudioProcessorGraph::NodeID id);
+    void disconnect(juce::AudioProcessorGraph::NodeID src, juce::AudioProcessorGraph::NodeID dst);
     std::vector<patchlink::Wire> getWires();
+    juce::AudioProcessorGraph::NodeID getInputNodeId() const { return inputId; }
+    juce::AudioProcessorGraph::NodeID getOutputNodeId() const { return outputId; }
+
+    juce::String getPatchName() const { return patchName; }
+    void setPatchName(const juce::String& name);
 
     // Sharing: files are sync (small JSON), patch recall is async (plugin load).
     bool exportPatch(const juce::File& file, juce::String& err);
@@ -84,7 +94,10 @@ private:
 
     juce::AudioProcessorGraph::NodeID inputId, outputId;
     uint32_t nextUid = 100;
+    int nextOrder = 0;
+    juce::String patchName { "Untitled chain" };
 
+    std::vector<juce::AudioProcessorGraph::NodeID> getOrderedNodeIds() const;
     void rebuildSerialIfNeeded();
     bool autoConnectSerial = true;
     void setAutoConnect(bool b) { autoConnectSerial = b; }

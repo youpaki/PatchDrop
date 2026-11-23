@@ -11,13 +11,13 @@ struct ShareClient
     // Publie le var patch (graphToVar). Retourne le code, ou "" + err rempli.
     static juce::String publish(const juce::var& patchJson, const juce::String& title,
                                      const juce::String& author, const juce::String& desc,
-                                     const juce::String& apiBase, juce::String& err)
+                                     const juce::String& apiBase, juce::String& err, bool isPublic = true)
     {
         juce::DynamicObject::Ptr body = new juce::DynamicObject();
         body->setProperty("title", title);
         body->setProperty("author", author);
         body->setProperty("description", desc);
-        body->setProperty("isPublic", true);
+        body->setProperty("isPublic", isPublic);
         body->setProperty("patch", patchJson);
         juce::String payload = juce::JSON::toString(juce::var(body.get()));
 
@@ -31,12 +31,12 @@ struct ShareClient
                         .withResponseHeaders(&respHeaders)
                         .withStatusCode(&status);
         std::unique_ptr<juce::InputStream> in(url.createInputStream(opts));
-        if (in == nullptr) { err = "Connexion impossible a PatchDrop. Utilise Export fichier."; return {}; }
+        if (in == nullptr) { err = "Could not connect to PatchDrop. You can still use Export to save a file."; return {}; }
         juce::String txt = in->readEntireStreamAsString();
         if (status < 200 || status >= 300) { err = "HTTP " + juce::String(status) + " : " + txt.substring(0, 200); return {}; }
         auto v = juce::JSON::parse(txt);
         juce::String code = v.getProperty("code", "").toString();
-        if (code.isEmpty()) { err = "Reponse inattendue : " + txt.substring(0, 200); return {}; }
+        if (code.isEmpty()) { err = "Unexpected server response: " + txt.substring(0, 200); return {}; }
         return code;
     }
 
@@ -49,9 +49,9 @@ struct ShareClient
         auto opts = juce::URL::InputStreamOptions(juce::URL::ParameterHandling::inAddress)
                         .withConnectionTimeoutMs(15000);
         std::unique_ptr<juce::InputStream> in(url.createInputStream(opts));
-        if (in == nullptr) { err = "Serveur injoignable."; return false; }
+        if (in == nullptr) { err = "Could not connect to PatchDrop."; return false; }
         auto v = juce::JSON::parse(in->readEntireStreamAsString());
-        if (!v.isObject() || v.getProperty("patch", juce::var()).isVoid()) { err = "Code introuvable. Demande a ton pote de re-publier."; return false; }
+        if (!v.isObject() || v.getProperty("patch", juce::var()).isVoid()) { err = "This code was not found. Check it and try again."; return false; }
         patchOut = v.getProperty("patch", juce::var());
         titleOut = v.getProperty("title", "").toString();
         return true;

@@ -8,6 +8,7 @@ patchdrop/node_modules/
 *.component/
 
 # Secrets: deploy/ops scripts contain server credentials - never commit
+AI_HANDOFF.md
 patchlink/tools/inspect_remote.py
 patchlink/tools/inspect2.py
 patchlink/tools/deploy_patchdrop.py

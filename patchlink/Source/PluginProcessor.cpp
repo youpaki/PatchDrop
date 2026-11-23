@@ -47,18 +47,38 @@ bool PatchLinkProcessor::isBusesLayoutSupported(const BusesLayout& l) const
 }
 
 // ---------- hosting ----------
+std::vector<juce::AudioProcessorGraph::NodeID> PatchLinkProcessor::getOrderedNodeIds() const
+{
+    std::vector<juce::AudioProcessorGraph::Node*> nodes;
+    for (auto* n : graph.getNodes())
+        if (n->nodeID != inputId && n->nodeID != outputId)
+            nodes.push_back(n);
+
+    std::sort(nodes.begin(), nodes.end(), [](const auto* a, const auto* b) {
+        const auto ao = (int)a->properties.getWithDefault("order", (int)a->nodeID.uid);
+        const auto bo = (int)b->properties.getWithDefault("order", (int)b->nodeID.uid);
+        return ao == bo ? a->nodeID.uid < b->nodeID.uid : ao < bo;
+    });
+
+    std::vector<juce::AudioProcessorGraph::NodeID> ids;
+    for (auto* n : nodes) ids.push_back(n->nodeID);
+    return ids;
+}
+
 std::vector<PatchLinkProcessor::LoadedNode> PatchLinkProcessor::getLoadedNodes()
 {
     std::vector<LoadedNode> out;
-    for (auto* n : graph.getNodes())
+    for (auto id : getOrderedNodeIds())
     {
-        if (n->nodeID == inputId || n->nodeID == outputId) continue;
+        auto* n = graph.getNodeForId(id);
+        if (n == nullptr) continue;
         LoadedNode ln;
         ln.id = n->nodeID;
         if (auto* inst = dynamic_cast<juce::AudioPluginInstance*>(n->getProcessor()))
             ln.desc = inst->getPluginDescription();
         ln.x = n->properties.getWithDefault("x", 60);
         ln.y = n->properties.getWithDefault("y", 60);
+        ln.order = n->properties.getWithDefault("order", 0);
         ln.bypass = n->isBypassed();
         out.push_back(ln);
     }
@@ -80,9 +100,11 @@ void PatchLinkProcessor::addPluginAsync(const juce::PluginDescription& desc, int
             {
                 node->properties.set("x", x);
                 node->properties.set("y", y);
+                node->properties.set("order", nextOrder++);
                 if (autoConnectSerial) rebuildSerialIfNeeded();
             }
             graph.suspendProcessing(false);
+            sendChangeMessage();
             if (done) done(node == nullptr ? juce::String("addNode failed") : juce::String{});
         });
 }
@@ -93,11 +115,35 @@ void PatchLinkProcessor::removeNode(juce::AudioProcessorGraph::NodeID id)
     graph.removeNode(id);
     if (autoConnectSerial) rebuildSerialIfNeeded();
     graph.suspendProcessing(false);
+    sendChangeMessage();
+}
+
+void PatchLinkProcessor::moveNode(juce::AudioProcessorGraph::NodeID id, int newIndex)
+{
+    auto ids = getOrderedNodeIds();
+    const auto old = std::find(ids.begin(), ids.end(), id);
+    if (old == ids.end()) return;
+    ids.erase(old);
+    ids.insert(ids.begin() + juce::jlimit(0, (int)ids.size(), newIndex), id);
+    for (size_t i = 0; i < ids.size(); ++i)
+        if (auto* n = graph.getNodeForId(ids[i])) n->properties.set("order", (int)i);
+    nextOrder = (int)ids.size();
+    graph.suspendProcessing(true);
+    if (autoConnectSerial) rebuildSerialIfNeeded();
+    graph.suspendProcessing(false);
+    sendChangeMessage();
+}
+
+juce::AudioProcessor* PatchLinkProcessor::getNodeProcessor(juce::AudioProcessorGraph::NodeID id)
+{
+    if (auto* n = graph.getNodeForId(id)) return n->getProcessor();
+    return nullptr;
 }
 
 void PatchLinkProcessor::setNodeBypass(juce::AudioProcessorGraph::NodeID id, bool b)
 {
     if (auto* n = graph.getNodeForId(id)) n->setBypassed(b);
+    sendChangeMessage();
 }
 
 bool PatchLinkProcessor::getNodeBypass(juce::AudioProcessorGraph::NodeID id)
@@ -114,16 +160,19 @@ void PatchLinkProcessor::setNodePosition(juce::AudioProcessorGraph::NodeID id, i
 void PatchLinkProcessor::clearChain()
 {
     graph.suspendProcessing(true);
-    for (auto* n : graph.getNodes())
-        if (n->nodeID != inputId && n->nodeID != outputId)
-            graph.removeNode(n->nodeID);
+    const auto ids = getOrderedNodeIds();
+    for (auto id : ids) graph.removeNode(id);
+    nextOrder = 0;
     graph.suspendProcessing(false);
+    sendChangeMessage();
 }
 
 bool PatchLinkProcessor::connectNodes(juce::AudioProcessorGraph::NodeID src, int srcCh,
                                        juce::AudioProcessorGraph::NodeID dst, int dstCh)
 {
-    return graph.addConnection({ { src, srcCh }, { dst, dstCh } });
+    const auto result = graph.addConnection({ { src, srcCh }, { dst, dstCh } });
+    if (result) sendChangeMessage();
+    return result;
 }
 
 void PatchLinkProcessor::disconnectAll(juce::AudioProcessorGraph::NodeID id)
@@ -135,6 +184,25 @@ void PatchLinkProcessor::disconnectAll(juce::AudioProcessorGraph::NodeID id)
             toRemove.add(c);
     for (auto& c : toRemove) graph.removeConnection(c);
     graph.suspendProcessing(false);
+    sendChangeMessage();
+}
+
+void PatchLinkProcessor::disconnect(juce::AudioProcessorGraph::NodeID src,
+                                    juce::AudioProcessorGraph::NodeID dst)
+{
+    graph.suspendProcessing(true);
+    juce::Array<juce::AudioProcessorGraph::Connection> toRemove;
+    for (auto& c : graph.getConnections())
+        if (c.source.nodeID == src && c.destination.nodeID == dst)
+            toRemove.add(c);
+    for (auto& c : toRemove) graph.removeConnection(c);
+    graph.suspendProcessing(false);
+    sendChangeMessage();
+}
+
+void PatchLinkProcessor::setPatchName(const juce::String& name)
+{
+    patchName = name.trim().isEmpty() ? "Untitled chain" : name.trim();
 }
 
 std::vector<patchlink::Wire> PatchLinkProcessor::getWires()
@@ -154,11 +222,7 @@ void PatchLinkProcessor::rebuildSerialIfNeeded()
     for (auto& c : graph.getConnections())
         graph.removeConnection(c);
 
-    std::vector<juce::AudioProcessorGraph::NodeID> ids;
-    for (auto* n : graph.getNodes())
-        if (n->nodeID != inputId && n->nodeID != outputId)
-            ids.push_back(n->nodeID);
-    std::sort(ids.begin(), ids.end(), [](auto a, auto b) { return a.uid < b.uid; });
+    auto ids = getOrderedNodeIds();
 
     if (ids.empty())
     {
@@ -181,20 +245,24 @@ juce::var PatchLinkProcessor::graphToVar()
     juce::DynamicObject::Ptr root = new juce::DynamicObject();
     root->setProperty("app", "PatchLink");
     root->setProperty("chainFormat", chainformat::kFormatVersion);
+    root->setProperty("name", patchName);
 
     juce::Array<juce::var> jnodes;
-    for (auto* n : graph.getNodes())
+    for (auto id : getOrderedNodeIds())
     {
-        if (n->nodeID == inputId || n->nodeID == outputId) continue;
+        auto* n = graph.getNodeForId(id);
+        if (n == nullptr) continue;
         auto* proc = n->getProcessor();
         juce::PluginDescription desc;
         if (auto* inst = dynamic_cast<juce::AudioPluginInstance*>(proc))
             desc = inst->getPluginDescription();
-        jnodes.add(chainformat::makeNodeVar(desc, patchlink::stateToBase64(proc),
-                                            (int)n->nodeID.uid,
-                                            (int)n->properties.getWithDefault("x", 60),
-                                            (int)n->properties.getWithDefault("y", 60),
-                                            n->isBypassed()));
+        auto nodeVar = chainformat::makeNodeVar(desc, patchlink::stateToBase64(proc),
+                                                (int)n->nodeID.uid,
+                                                (int)n->properties.getWithDefault("x", 60),
+                                                (int)n->properties.getWithDefault("y", 60),
+                                                n->isBypassed());
+        nodeVar.getDynamicObject()->setProperty("order", (int)n->properties.getWithDefault("order", 0));
+        jnodes.add(nodeVar);
     }
     root->setProperty("nodes", jnodes);
 
@@ -235,6 +303,7 @@ struct PatchLoadState
         juce::String stateB64;
         int oldUid = 0, x = 60, y = 60;
         bool bypass = false;
+        int order = 0;
     };
     std::vector<NodeSpec> nodes;
     std::vector<std::tuple<int,int,int,int>> wires; // src, srcCh, dst, dstCh (old uids; 1=in, 2=out)
@@ -248,6 +317,11 @@ void PatchLinkProcessor::loadFromVarAsync(const juce::var& root,
 {
     juce::String err;
     if (!loadFromVarSyncLayout(root, err)) { if (done) done({}, err); return; }
+    if (auto* object = root.getDynamicObject())
+    {
+        const auto name = object->getProperty("name").toString();
+        setPatchName(name.isNotEmpty() ? name : "Untitled chain");
+    }
 
     auto state = std::make_shared<PatchLoadState>();
     if (auto* jnodes = root.getDynamicObject()->getProperty("nodes").getArray())
@@ -287,6 +361,8 @@ void PatchLinkProcessor::loadFromVarAsync(const juce::var& root,
             spec.x = (int)no->getProperty("x");
             spec.y = (int)no->getProperty("y");
             spec.bypass = (bool)no->getProperty("bypass");
+            const auto order = no->getProperty("order");
+            spec.order = order.isVoid() ? (int)state->nodes.size() : (int)order;
             state->nodes.push_back(spec);
         }
     }
@@ -314,6 +390,7 @@ void PatchLinkProcessor::loadFromVarAsync(const juce::var& root,
             }
             if (!hasWires) self->rebuildSerialIfNeeded();
             self->graph.suspendProcessing(false);
+            self->sendChangeMessage();
             if (done) done(state->missing, {});
             return;
         }
@@ -338,6 +415,8 @@ void PatchLinkProcessor::loadFromVarAsync(const juce::var& root,
                 {
                     node->properties.set("x", spec.x);
                     node->properties.set("y", spec.y);
+                    node->properties.set("order", spec.order);
+                    self->nextOrder = juce::jmax(self->nextOrder, spec.order + 1);
                     node->setBypassed(spec.bypass);
                     patchlink::base64ToState(node->getProcessor(), spec.stateB64);
                     state->uidMap[spec.oldUid] = node->nodeID;
@@ -370,7 +449,7 @@ void PatchLinkProcessor::importPatchAsync(const juce::File& file,
 
 void PatchLinkProcessor::getStateInformation(juce::MemoryBlock& dest)
 {
-    juce::MemoryOutputStream mos(dest, true);
+    juce::MemoryOutputStream mos(dest, false);
     mos.writeString(juce::JSON::toString(graphToVar()));
     mos.writeInt(preferredMode);
 }
