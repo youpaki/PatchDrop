@@ -263,9 +263,21 @@ async function api(path, opts) {
   return j;
 }
 
+function attachFstDragData(ev, p) {
+  const absUrl = new URL(`api/p/${p.code}/patchdrop-${p.code}.fst`, window.location.href).href;
+  if (ev.dataTransfer) {
+    ev.dataTransfer.effectAllowed = 'copy';
+    ev.dataTransfer.setData('DownloadURL', `application/octet-stream:patchdrop-${p.code}.fst:${absUrl}`);
+    ev.dataTransfer.setData('text/uri-list', absUrl);
+    ev.dataTransfer.setData('text/plain', absUrl);
+  }
+}
+
 function buildPresetCard(p, { isPreview = false, activeTag = '', onTagSelect = null } = {}) {
   const el = document.createElement('div');
   el.className = 'card';
+  el.draggable = true;
+  el.addEventListener('dragstart', (ev) => attachFstDragData(ev, p));
 
   const head = document.createElement('div');
   head.className = 'card-head';
@@ -351,18 +363,13 @@ function buildPresetCard(p, { isPreview = false, activeTag = '', onTagSelect = n
   const fstLink = document.createElement('a');
   fstLink.className = 'btn-fst';
   fstLink.draggable = true;
-  fstLink.href = `api/p/${p.code}/fst`;
+  fstLink.href = `api/p/${p.code}/patchdrop-${p.code}.fst`;
   fstLink.setAttribute('download', `patchdrop-${p.code}.fst`);
-  fstLink.title = 'Drag directly into FL Studio Mixer (Chrome/Edge) or click to download .fst';
+  fstLink.title = 'Drag onto PatchLink or Desktop, or click to download .fst for FL Studio';
   fstLink.textContent = 'FL .fst';
   fstLink.addEventListener('dragstart', (ev) => {
-    const absUrl = new URL(`api/p/${p.code}/fst`, window.location.href).href;
-    if (ev.dataTransfer) {
-      ev.dataTransfer.effectAllowed = 'copy';
-      ev.dataTransfer.setData('DownloadURL', `application/octet-stream:patchdrop-${p.code}.fst:${absUrl}`);
-      ev.dataTransfer.setData('text/uri-list', absUrl);
-      ev.dataTransfer.setData('text/plain', absUrl);
-    }
+    ev.stopPropagation();
+    attachFstDragData(ev, p);
   });
 
   row.append(copyBtn, dlBtn, fstLink);
@@ -662,7 +669,6 @@ if (pubForm) {
   window.addEventListener('dragover', (e) => {
     if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) {
       e.preventDefault();
-      e.dataTransfer.dropEffect = 'copy';
     }
   });
   window.addEventListener('dragleave', () => {

@@ -452,7 +452,7 @@ async function handleApi(req, res, pathname) {
     return send(res, 200, JSON.stringify(doc.patch, null, 2), { 'Content-Type': 'application/json; charset=utf-8', 'Content-Disposition': `attachment; filename="patchdrop-${code}.patchlink"` });
   }
 
-  const fstM = pathname.match(/^\/api\/p\/([A-Za-z0-9]+)\/fst$/);
+  const fstM = pathname.match(/^\/api\/p\/([A-Za-z0-9]+)\/(?:fst|[^/]+\.fst)$/);
   if (fstM && (method === 'GET' || method === 'HEAD')) {
     const code = fstM[1].toUpperCase();
     if (!CODE_RE.test(code)) return send(res, 400, { error: 'Code invalide.' });

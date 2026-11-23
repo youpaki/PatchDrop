@@ -649,6 +649,43 @@ juce::String describeDraggedFiles(const juce::StringArray& files)
         return "Drop .patchlink file to open chain";
     return "Drop .fst presets or .patchlink files";
 }
+
+juce::String extractPatchCodeFromDraggedText(const juce::String& rawText)
+{
+    const auto trimmed = rawText.trim();
+    if (trimmed.isEmpty())
+        return {};
+
+    const int apiIdx = trimmed.indexOfIgnoreCase("/api/p/");
+    if (apiIdx >= 0)
+    {
+        const auto rest = trimmed.substring(apiIdx + 7);
+        juce::String code;
+        for (int i = 0; i < rest.length() && code.length() < 8; ++i)
+        {
+            const auto c = rest[i];
+            if (juce::CharacterFunctions::isLetterOrDigit(c))
+                code << juce::CharacterFunctions::toUpperCase(c);
+            else
+                break;
+        }
+        if (code.length() >= 4 && code.length() <= 8)
+            return code;
+    }
+
+    if (trimmed.startsWithIgnoreCase("patchdrop:"))
+    {
+        const auto code = trimmed.substring(10).trim().toUpperCase().retainCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZ23456789");
+        if (code.length() >= 4 && code.length() <= 8)
+            return code;
+    }
+
+    const auto clean = trimmed.toUpperCase();
+    if (clean.length() == 6 && clean.containsOnly("ABCDEFGHJKMNPQRSTUVWXYZ23456789"))
+        return clean;
+
+    return {};
+}
 } // namespace
 
 void PatchLinkEditor::paintOverChildren(juce::Graphics& g)
@@ -755,6 +792,89 @@ void PatchLinkEditor::filesDropped(const juce::StringArray& files, int x, int y)
     isDraggingFile = false;
     repaint();
     importFiles(files, x, y);
+}
+
+bool PatchLinkEditor::isInterestedInTextDrag(const juce::String& text)
+{
+    return extractPatchCodeFromDraggedText(text).isNotEmpty();
+}
+
+void PatchLinkEditor::textDragEnter(const juce::String& text, int, int)
+{
+    const auto code = extractPatchCodeFromDraggedText(text);
+    if (code.isEmpty())
+        return;
+    isDraggingFile = true;
+    dragDropHint = "Drop preset " + code + " from PatchDrop browser";
+    repaint();
+}
+
+void PatchLinkEditor::textDragMove(const juce::String& text, int, int)
+{
+    const auto code = extractPatchCodeFromDraggedText(text);
+    if (code.isEmpty())
+        return;
+    const auto nextHint = "Drop preset " + code + " from PatchDrop browser";
+    if (!isDraggingFile || dragDropHint != nextHint)
+    {
+        isDraggingFile = true;
+        dragDropHint = nextHint;
+        repaint();
+    }
+}
+
+void PatchLinkEditor::textDragExit(const juce::String&)
+{
+    if (!isDraggingFile)
+        return;
+    isDraggingFile = false;
+    repaint();
+}
+
+void PatchLinkEditor::textDropped(const juce::String& text, int, int)
+{
+    isDraggingFile = false;
+    repaint();
+
+    const auto code = extractPatchCodeFromDraggedText(text);
+    if (code.isEmpty())
+        return;
+
+    setStatus("Fetching " + code + " from PatchDrop...");
+    auto safe = juce::Component::SafePointer<PatchLinkEditor>(this);
+    const auto base = apiBase;
+    std::thread([safe, code, base]() mutable {
+        juce::var patch;
+        juce::String title, error;
+        const auto ok = ShareClient::fetch(code, base, patch, title, error);
+        juce::MessageManager::callAsync([safe, code, patch, title, error, ok]() mutable {
+            if (!safe)
+                return;
+            if (!ok)
+            {
+                safe->setStatus("Could not fetch " + code);
+                safe->showToast(error.isNotEmpty() ? error : ("Code " + code + " not found"), true);
+                return;
+            }
+
+            const auto label = title.isNotEmpty() ? title : code;
+            if (safe->proc.getLoadedNodes().empty())
+            {
+                auto stagedPatch = patch;
+                if (auto* o = stagedPatch.getDynamicObject())
+                    if (title.isNotEmpty())
+                        o->setProperty("name", title);
+
+                safe->showEmptyDropModal(stagedPatch, label, {}, [safe, patch, label] {
+                    if (safe) safe->loadPatchIntoProcessor(patch, label);
+                });
+            }
+            else
+            {
+                safe->loadPatchIntoProcessor(patch, label);
+            }
+        });
+    }).detach();
 }
 
 dawexport::TargetFormat PatchLinkEditor::effectiveExportFormat() const

@@ -2,7 +2,7 @@
 
 A resizable VST3 and Standalone effect chainer by **leve**. Host VST3 effects (and Audio Units on macOS), arrange them in a 60fps drag-to-reorder serial rack or a pannable stereo node canvas, drop FL Studio `.fst` presets directly onto the window, share/stage in **Zero-Load** mode, and drag complete chains back out into your DAW natively.
 
-## Interface & v1.5.0 Features
+## Interface & v1.5.1 Features
 
 - **Chain** — ordered, smooth 60fps drag-to-reorder plugin cards with bypass, hosted-editor, per-slot single-preset DAW drag/save icons, and per-plugin actions. Audio runs from top to bottom.
 - **Patcher** — clipped-grid stereo routing canvas with left/middle-mouse drag panning, port/cable hover highlights, curved stereo cables, right-click actions, and Delete-key removal.

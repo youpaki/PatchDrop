@@ -23,4 +23,4 @@ See [patchlink/README.md](patchlink/README.md) for the full workflow.
 
 ## Releases
 
-Windows VST3 + Standalone installer (`PatchLink-Setup-1.5.0.exe`) is attached to [GitHub Releases](../../releases) and served on the PatchDrop download page. macOS build: same CMake project (`-G Xcode`), AU + VST3 included.
+Windows VST3 + Standalone installer (`PatchLink-Setup-1.5.1.exe`) is attached to [GitHub Releases](../../releases) and served on the PatchDrop download page. macOS build: same CMake project (`-G Xcode`), AU + VST3 included.

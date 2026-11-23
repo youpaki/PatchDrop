@@ -14,6 +14,7 @@ class HostedPluginWindow;
 class PatchLinkEditor final : public juce::AudioProcessorEditor,
                               private juce::ChangeListener,
                               public juce::FileDragAndDropTarget,
+                              public juce::TextDragAndDropTarget,
                               public juce::DragAndDropContainer
 {
 public:
@@ -30,6 +31,12 @@ public:
     void fileDragMove(const juce::StringArray& files, int x, int y) override;
     void fileDragExit(const juce::StringArray& files) override;
     void filesDropped(const juce::StringArray& files, int x, int y) override;
+
+    bool isInterestedInTextDrag(const juce::String& text) override;
+    void textDragEnter(const juce::String& text, int x, int y) override;
+    void textDragMove(const juce::String& text, int x, int y) override;
+    void textDragExit(const juce::String& text) override;
+    void textDropped(const juce::String& text, int x, int y) override;
 
 private:
     enum class Mode { simple = 1, patcher = 2 };
