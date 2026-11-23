@@ -77,6 +77,15 @@ int runFstTest(const juce::String& fstPath, bool instantiate)
     if (!parsed.valid)
         return 2;
 
+    juce::AudioProcessorGraph testGraph;
+    testGraph.setPlayConfigDetails(2, 2, 48000.0, 512);
+    testGraph.prepareToPlay(48000.0, 512);
+    auto graphIn = testGraph.addNode(std::make_unique<juce::AudioProcessorGraph::AudioGraphIOProcessor>(
+        juce::AudioProcessorGraph::AudioGraphIOProcessor::audioInputNode), juce::AudioProcessorGraph::NodeID(10));
+    auto graphOut = testGraph.addNode(std::make_unique<juce::AudioProcessorGraph::AudioGraphIOProcessor>(
+        juce::AudioProcessorGraph::AudioGraphIOProcessor::audioOutputNode), juce::AudioProcessorGraph::NodeID(20));
+    std::vector<juce::AudioProcessorGraph::NodeID> graphChainIds;
+
     int resolvedCount = 0;
     for (size_t i = 0; i < parsed.plugins.size(); ++i)
     {
@@ -113,14 +122,94 @@ int runFstTest(const juce::String& fstPath, bool instantiate)
                 printf("      INSTANTIATE FAIL: %s\n", err.toRawUTF8());
                 return 3;
             }
+            inst->enableAllBuses();
+            if (auto* bIn = inst->getBus(true, 0)) bIn->enable(true);
+            if (auto* bOut = inst->getBus(false, 0)) bOut->enable(true);
             if (stateBytes.getSize() > 0)
                 inst->setStateInformation(stateBytes.getData(), (int)stateBytes.getSize());
             juce::MemoryBlock verify;
             inst->getStateInformation(verify);
-            printf("      INSTANTIATE OK: applied %d bytes, read back %d bytes\n",
+            printf("      INSTANTIATE OK: in=%d out=%d applied %d bytes, read back %d bytes\n",
+                   inst->getTotalNumInputChannels(), inst->getTotalNumOutputChannels(),
                    (int)stateBytes.getSize(), (int)verify.getSize());
+
+            auto node = testGraph.addNode(std::move(inst), juce::AudioProcessorGraph::NodeID((uint32_t)(100 + i)));
+            if (node != nullptr)
+            {
+                node->setBypassed(e.bypass);
+                if (stateBytes.getSize() > 0)
+                    node->getProcessor()->setStateInformation(stateBytes.getData(), (int)stateBytes.getSize());
+                graphChainIds.push_back(node->nodeID);
+            }
         }
     }
+
+    if (instantiate && !graphChainIds.empty() && graphIn != nullptr && graphOut != nullptr)
+    {
+        auto getOutChans = [&](juce::AudioProcessorGraph::NodeID id) -> int {
+            if (id == graphIn->nodeID) return 2;
+            if (auto* n = testGraph.getNodeForId(id))
+                if (auto* p = n->getProcessor())
+                    return p->getBusCount(false) > 0 ? juce::jmax(1, p->getChannelCountOfBus(false, 0))
+                                                     : juce::jmax(1, p->getTotalNumOutputChannels());
+            return 2;
+        };
+        auto getInChans = [&](juce::AudioProcessorGraph::NodeID id) -> int {
+            if (id == graphOut->nodeID) return 2;
+            if (auto* n = testGraph.getNodeForId(id))
+                if (auto* p = n->getProcessor())
+                    return p->getBusCount(true) > 0 ? juce::jmax(1, p->getChannelCountOfBus(true, 0))
+                                                    : juce::jmax(1, p->getTotalNumInputChannels());
+            return 2;
+        };
+        auto connectPair = [&](juce::AudioProcessorGraph::NodeID src, juce::AudioProcessorGraph::NodeID dst) {
+            const int srcOuts = getOutChans(src);
+            const int dstIns  = getInChans(dst);
+            testGraph.addConnection({ { src, 0 }, { dst, 0 } }, juce::AudioProcessorGraph::UpdateKind::none);
+            if (dstIns >= 2)
+                testGraph.addConnection({ { src, srcOuts >= 2 ? 1 : 0 }, { dst, 1 } }, juce::AudioProcessorGraph::UpdateKind::none);
+        };
+        connectPair(graphIn->nodeID, graphChainIds.front());
+        for (size_t i = 0; i + 1 < graphChainIds.size(); ++i)
+            connectPair(graphChainIds[i], graphChainIds[i + 1]);
+        connectPair(graphChainIds.back(), graphOut->nodeID);
+        testGraph.rebuild();
+
+        juce::AudioBuffer<float> audioBuf(2, 512);
+        juce::MidiBuffer midiBuf;
+        double sumSqL = 0.0, sumSqR = 0.0;
+        double phase = 0.0;
+        const double phaseInc = 2.0 * juce::MathConstants<double>::pi * 440.0 / 48000.0;
+        for (int blk = 0; blk < 30; ++blk)
+        {
+            for (int s = 0; s < 512; ++s)
+            {
+                const float val = 0.25f * static_cast<float>(std::sin(phase));
+                phase += phaseInc;
+                audioBuf.setSample(0, s, val);
+                audioBuf.setSample(1, s, val);
+            }
+            midiBuf.clear();
+            testGraph.processBlock(audioBuf, midiBuf);
+            if (blk >= 10)
+            {
+                for (int s = 0; s < 512; ++s)
+                {
+                    const float l = audioBuf.getSample(0, s);
+                    const float r = audioBuf.getSample(1, s);
+                    sumSqL += static_cast<double>(l) * l;
+                    sumSqR += static_cast<double>(r) * r;
+                }
+            }
+        }
+        const float rmsL = static_cast<float>(std::sqrt(sumSqL / (20.0 * 512.0)));
+        const float rmsR = static_cast<float>(std::sqrt(sumSqR / (20.0 * 512.0)));
+        printf("  GRAPH AUDIO RMS: L=%.4f R=%.4f (connections=%d)\n",
+               rmsL, rmsR, (int)testGraph.getConnections().size());
+        if (rmsL < 0.0001f || rmsR < 0.0001f)
+            return 4;
+    }
+
     return (parsed.plugins.empty() && parsed.skipped.isEmpty()) ? 1 : (resolvedCount == 0 && !parsed.plugins.empty() ? 1 : 0);
 }
 } // namespace

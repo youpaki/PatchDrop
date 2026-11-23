@@ -4,12 +4,18 @@
 #include "Chain/FlStudioFstParser.h"
 
 PatchLinkProcessor::PatchLinkProcessor()
-    : scanManager(formatManager, knownList)
+    : AudioProcessor(BusesProperties()
+                         .withInput ("Input",  juce::AudioChannelSet::stereo(), true)
+                         .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
+      scanManager(formatManager, knownList)
 {
     formatManager.addDefaultFormats();
     scanManager.loadSettings();
     if (scanManager.getSources().empty())
         scanManager.buildDefaultSources(); // standards + detected DAW folders, no silent scan
+
+    setPlayConfigDetails(2, 2, 44100.0, 512);
+    graph.setPlayConfigDetails(2, 2, 44100.0, 512);
 
     inputId  = graph.addNode(std::make_unique<juce::AudioProcessorGraph::AudioGraphIOProcessor>(
         juce::AudioProcessorGraph::AudioGraphIOProcessor::audioInputNode), juce::AudioProcessorGraph::NodeID(10))->nodeID;
@@ -29,8 +35,12 @@ juce::AudioProcessorEditor* PatchLinkProcessor::createEditor()
 
 void PatchLinkProcessor::prepareToPlay(double sr, int bs)
 {
-    graph.setPlayConfigDetails(getMainBusNumInputChannels(), getMainBusNumOutputChannels(), sr, bs);
+    const int ins  = juce::jmax(2, getMainBusNumInputChannels());
+    const int outs = juce::jmax(2, getMainBusNumOutputChannels());
+    graph.setPlayConfigDetails(ins, outs, sr, bs);
     graph.prepareToPlay(sr, bs);
+    if (graph.getConnections().empty())
+        rebuildSerialIfNeeded();
 }
 
 void PatchLinkProcessor::releaseResources() { graph.releaseResources(); }
@@ -43,8 +53,10 @@ void PatchLinkProcessor::processBlock(juce::AudioBuffer<float>& b, juce::MidiBuf
 
 bool PatchLinkProcessor::isBusesLayoutSupported(const BusesLayout& l) const
 {
-    return l.getMainInputChannelSet() == juce::AudioChannelSet::stereo()
-        && l.getMainOutputChannelSet() == juce::AudioChannelSet::stereo();
+    const auto inSet  = l.getMainInputChannelSet();
+    const auto outSet = l.getMainOutputChannelSet();
+    return (inSet == juce::AudioChannelSet::stereo() || inSet == juce::AudioChannelSet::mono())
+        && (outSet == juce::AudioChannelSet::stereo() || outSet == juce::AudioChannelSet::mono());
 }
 
 // ---------- hosting ----------
@@ -86,6 +98,15 @@ std::vector<PatchLinkProcessor::LoadedNode> PatchLinkProcessor::getLoadedNodes()
     return out;
 }
 
+static void configureMainBusesOnly(juce::AudioPluginInstance& inst)
+{
+    inst.enableAllBuses();
+    if (auto* inBus = inst.getBus(true, 0))
+        inBus->enable(true);
+    if (auto* outBus = inst.getBus(false, 0))
+        outBus->enable(true);
+}
+
 void PatchLinkProcessor::addPluginAsync(const juce::PluginDescription& desc, int x, int y, DoneFn done)
 {
     addPluginAsync(desc, x, y, {}, false, std::move(done));
@@ -100,7 +121,9 @@ void PatchLinkProcessor::addPluginAsync(const juce::PluginDescription& desc, int
         getBlockSize() > 0 ? getBlockSize() : 512,
         [this, x, y, stateBase64, bypass, done](std::unique_ptr<juce::AudioPluginInstance> inst, const juce::String& err) {
             if (inst == nullptr) { if (done) done(err.isNotEmpty() ? err : "Could not load plugin"); return; }
-            inst->enableAllBuses();
+            configureMainBusesOnly(*inst);
+            if (stateBase64.isNotEmpty())
+                patchlink::base64ToState(inst.get(), stateBase64);
             graph.suspendProcessing(true);
             auto node = graph.addNode(std::move(inst), juce::AudioProcessorGraph::NodeID(nextUid++));
             if (node != nullptr)
@@ -230,23 +253,59 @@ std::vector<patchlink::Wire> PatchLinkProcessor::getWires()
 void PatchLinkProcessor::rebuildSerialIfNeeded()
 {
     for (auto& c : graph.getConnections())
-        graph.removeConnection(c);
+        graph.removeConnection(c, juce::AudioProcessorGraph::UpdateKind::none);
 
-    auto ids = getOrderedNodeIds();
+    auto allIds = getOrderedNodeIds();
+    std::vector<juce::AudioProcessorGraph::NodeID> ids;
+    for (auto id : allIds)
+    {
+        if (auto* n = graph.getNodeForId(id))
+        {
+            auto* p = n->getProcessor();
+            if (p != nullptr && p->getTotalNumInputChannels() > 0 && p->getTotalNumOutputChannels() > 0)
+                ids.push_back(id);
+        }
+    }
 
     if (ids.empty())
     {
-        graph.addConnection({ { inputId, 0 }, { outputId, 0 } });
-        graph.addConnection({ { inputId, 1 }, { outputId, 1 } });
+        graph.addConnection({ { inputId, 0 }, { outputId, 0 } }, juce::AudioProcessorGraph::UpdateKind::none);
+        graph.addConnection({ { inputId, 1 }, { outputId, 1 } }, juce::AudioProcessorGraph::UpdateKind::none);
+        graph.rebuild();
         return;
     }
-    for (int ch = 0; ch < 2; ++ch)
-    {
-        graph.addConnection({ { inputId, ch }, { ids.front(), ch } });
-        for (size_t i = 0; i + 1 < ids.size(); ++i)
-            graph.addConnection({ { ids[i], ch }, { ids[i + 1], ch } });
-        graph.addConnection({ { ids.back(), ch }, { outputId, ch } });
-    }
+
+    auto getOutChans = [&](juce::AudioProcessorGraph::NodeID id) -> int {
+        if (id == inputId) return 2;
+        if (auto* n = graph.getNodeForId(id))
+            if (auto* p = n->getProcessor())
+                return p->getBusCount(false) > 0 ? juce::jmax(1, p->getChannelCountOfBus(false, 0))
+                                                 : juce::jmax(1, p->getTotalNumOutputChannels());
+        return 2;
+    };
+
+    auto getInChans = [&](juce::AudioProcessorGraph::NodeID id) -> int {
+        if (id == outputId) return 2;
+        if (auto* n = graph.getNodeForId(id))
+            if (auto* p = n->getProcessor())
+                return p->getBusCount(true) > 0 ? juce::jmax(1, p->getChannelCountOfBus(true, 0))
+                                                : juce::jmax(1, p->getTotalNumInputChannels());
+        return 2;
+    };
+
+    auto connectPair = [&](juce::AudioProcessorGraph::NodeID src, juce::AudioProcessorGraph::NodeID dst) {
+        const int srcOuts = getOutChans(src);
+        const int dstIns  = getInChans(dst);
+        graph.addConnection({ { src, 0 }, { dst, 0 } }, juce::AudioProcessorGraph::UpdateKind::none);
+        if (dstIns >= 2)
+            graph.addConnection({ { src, srcOuts >= 2 ? 1 : 0 }, { dst, 1 } }, juce::AudioProcessorGraph::UpdateKind::none);
+    };
+
+    connectPair(inputId, ids.front());
+    for (size_t i = 0; i + 1 < ids.size(); ++i)
+        connectPair(ids[i], ids[i + 1]);
+    connectPair(ids.back(), outputId);
+    graph.rebuild();
 }
 
 // ---------- patches ----------
@@ -515,7 +574,8 @@ void PatchLinkProcessor::loadFromVarAsync(const juce::var& root,
                     (*next)();
                     return;
                 }
-                inst->enableAllBuses();
+                configureMainBusesOnly(*inst);
+                patchlink::base64ToState(inst.get(), spec.stateB64);
                 self->graph.suspendProcessing(true);
                 auto node = self->graph.addNode(std::move(inst),
                                                 juce::AudioProcessorGraph::NodeID(self->nextUid++));
