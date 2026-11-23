@@ -511,8 +511,10 @@ void PatchLinkEditor::loadPatchIntoProcessor(const juce::var& patch, const juce:
 
 void PatchLinkEditor::doImport()
 {
-    auto chooser = std::make_shared<juce::FileChooser>("Open a PatchLink chain or FL Studio preset",
-                                                      juce::File(), "*.patchlink;*.fst");
+    auto chooser = std::make_shared<juce::FileChooser>(
+        "Open a PatchLink chain or DAW preset",
+        juce::File(),
+        "*.patchlink;*.fst;*.rfxchain;*.rpp;*.adg;*.adv;*.als;*.vstpreset;*.bwpreset;*.fxchainpreset;*.fxchain;*.multipreset");
     chooser->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
         [safe = juce::Component::SafePointer<PatchLinkEditor>(this), chooser](const juce::FileChooser&) mutable {
             if (!safe) return;
@@ -628,26 +630,41 @@ namespace
 {
 bool isSupportedDropFile(const juce::File& file)
 {
-    return file.hasFileExtension(".fst;.patchlink");
+    return file.hasFileExtension(".fst;.patchlink;.rfxchain;.rpp;.adg;.adv;.als;.vstpreset;.bwpreset;.fxchainpreset;.fxchain;.multipreset");
 }
 
 juce::String describeDraggedFiles(const juce::StringArray& files)
 {
     int fstCount = 0;
+    int reaperCount = 0;
+    int abletonCount = 0;
+    int vst3PresetCount = 0;
     int patchCount = 0;
     for (const auto& path : files)
     {
         const juce::File f(path);
         if (f.hasFileExtension(".fst")) ++fstCount;
+        else if (f.hasFileExtension(".rfxchain;.rpp")) ++reaperCount;
+        else if (f.hasFileExtension(".adg;.adv;.als")) ++abletonCount;
+        else if (f.hasFileExtension(".vstpreset;.bwpreset;.fxchainpreset;.fxchain;.multipreset")) ++vst3PresetCount;
         else if (f.hasFileExtension(".patchlink")) ++patchCount;
     }
-    if (fstCount > 0 && patchCount == 0)
+    const int total = fstCount + reaperCount + abletonCount + vst3PresetCount + patchCount;
+    if (total == fstCount && fstCount > 0)
         return fstCount > 1
             ? "Drop FL Studio .fst presets to add to PatchLink"
             : "Drop FL Studio .fst preset (single effect or mixer track)";
-    if (patchCount > 0 && fstCount == 0)
+    if (total == reaperCount && reaperCount > 0)
+        return "Drop REAPER .RfxChain / .rpp FX chain into PatchLink";
+    if (total == abletonCount && abletonCount > 0)
+        return "Drop Ableton Live .adg / .adv rack into PatchLink";
+    if (total == vst3PresetCount && vst3PresetCount > 0)
+        return vst3PresetCount > 1
+            ? "Drop VST3 preset / DAW FX chain files into PatchLink"
+            : "Drop VST3 preset / DAW FX chain into PatchLink";
+    if (total == patchCount && patchCount > 0)
         return "Drop .patchlink file to open chain";
-    return "Drop .fst presets or .patchlink files";
+    return "Drop DAW FX chains (.fst, .RfxChain, .adg, .vstpreset, .patchlink)";
 }
 
 juce::String extractPatchCodeFromDraggedText(const juce::String& rawText)
@@ -891,7 +908,7 @@ void PatchLinkEditor::updateExportButtonState()
     if (hostDetection.isStandalone && selectedExportFormat == dawexport::TargetFormat::autoDetect)
     {
         dragDawButton.setButtonText("Drag to DAW");
-        dragDawButton.setTooltip("Standalone mode: click to pick DAW format (FL .fst / REAPER / VST3), then drag out to your DAW");
+        dragDawButton.setTooltip("Standalone mode: click to pick DAW format (FL / REAPER / Ableton / VST3), then drag out to your DAW");
     }
     else
     {
@@ -951,8 +968,9 @@ void PatchLinkEditor::showFormatPickerMenu(const juce::var& customPatch, int sin
                               : ("Detected host: " + hostDetection.hostName));
     menu.addItem(1, "FL Studio (.fst)", true, selectedExportFormat == dawexport::TargetFormat::flStudioFst);
     menu.addItem(2, "REAPER (.RfxChain)", true, selectedExportFormat == dawexport::TargetFormat::reaperRfxChain);
-    menu.addItem(3, "VST3 Preset (.vstpreset)", true, selectedExportFormat == dawexport::TargetFormat::vstPreset);
-    menu.addItem(4, "PatchLink (.patchlink)", true, selectedExportFormat == dawexport::TargetFormat::patchlinkFile);
+    menu.addItem(3, "Ableton Live Rack (.adg)", true, selectedExportFormat == dawexport::TargetFormat::abletonAdg);
+    menu.addItem(4, "VST3 Preset (.vstpreset)", true, selectedExportFormat == dawexport::TargetFormat::vstPreset);
+    menu.addItem(5, "PatchLink (.patchlink)", true, selectedExportFormat == dawexport::TargetFormat::patchlinkFile);
     menu.addSeparator();
     menu.addItem(10, singleSlotIndex >= 0 ? "Save single preset file..." : "Save DAW preset file...", hasNodes);
 
@@ -963,11 +981,12 @@ void PatchLinkEditor::showFormatPickerMenu(const juce::var& customPatch, int sin
     menu.showMenuAsync(opts,
         [safe = juce::Component::SafePointer<PatchLinkEditor>(this), patch, singleSlotIndex, fromDragAttempt](int result) {
             if (!safe || result == 0) return;
-            if (result >= 1 && result <= 4)
+            if (result >= 1 && result <= 5)
             {
                 const dawexport::TargetFormat map[] = {
                     dawexport::TargetFormat::flStudioFst,
                     dawexport::TargetFormat::reaperRfxChain,
+                    dawexport::TargetFormat::abletonAdg,
                     dawexport::TargetFormat::vstPreset,
                     dawexport::TargetFormat::patchlinkFile
                 };
@@ -1056,14 +1075,34 @@ void PatchLinkEditor::saveDawPresetToDisk(const juce::var& customPatch, dawexpor
                 safe->showToast(err.isNotEmpty() ? err : "Export failed", true);
                 return;
             }
-            const juce::File src(generated[0]);
-            if (!src.copyFileTo(target))
+            if (generated.size() == 1)
             {
-                safe->showToast("Could not write " + target.getFileName(), true);
+                const juce::File src(generated[0]);
+                if (!src.copyFileTo(target))
+                {
+                    safe->showToast("Could not write " + target.getFileName(), true);
+                    return;
+                }
+                safe->setStatus("Saved " + target.getFileName());
+                safe->showToast("Saved " + target.getFileName());
                 return;
             }
-            safe->setStatus("Saved " + target.getFileName());
-            safe->showToast("Saved " + target.getFileName());
+            const auto dir = target.getParentDirectory();
+            const auto base = target.getFileNameWithoutExtension();
+            int copied = 0;
+            for (const auto& path : generated)
+            {
+                const juce::File src(path);
+                if (src.copyFileTo(dir.getChildFile(base + "_" + src.getFileName())))
+                    ++copied;
+            }
+            if (copied == 0)
+            {
+                safe->showToast("Could not write preset files to " + dir.getFileName(), true);
+                return;
+            }
+            safe->setStatus("Saved " + juce::String(copied) + " ." + ext + " files");
+            safe->showToast("Saved " + juce::String(copied) + " preset files to " + dir.getFileName());
         });
 }
 
@@ -1223,7 +1262,7 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
     struct PendingItem
     {
         juce::String displayName;
-        bool isFst = false;
+        bool isDawPreset = false;
         flstudio::ParsedFst fst;
         juce::var patchVar;
         juce::String error;
@@ -1239,12 +1278,13 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
         int loadedMixerTracks = 0;
         bool anyReplaced = false;
         juce::String lastLabel;
+        juce::String lastSourceDaw { "FX Chain" };
         juce::StringArray notes;
         juce::StringArray errors;
     };
 
     auto state = std::make_shared<BatchState>();
-    // Decode cached / dropped .fst and .patchlink data into RAM immediately.
+    // Decode cached / dropped DAW preset and .patchlink data into RAM immediately.
     for (const auto& path : files)
     {
         const juce::File file(path);
@@ -1264,16 +1304,7 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
         {
             item.error = "File not found: " + file.getFileName();
         }
-        else if (file.hasFileExtension(".fst"))
-        {
-            item.isFst = true;
-            item.fst = flstudio::parseFstData(rawBlock.getData(), rawBlock.getSize());
-            if (item.fst.valid && item.fst.trackName.isEmpty())
-                item.fst.trackName = file.getFileNameWithoutExtension();
-            if (item.fst.trackName.isNotEmpty())
-                item.displayName = item.fst.trackName;
-        }
-        else
+        else if (file.hasFileExtension(".patchlink"))
         {
             const auto txt = rawBlock.toString();
             if (txt.isEmpty())
@@ -1286,6 +1317,16 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
                 if (!item.patchVar.isObject())
                     item.error = "Invalid JSON: " + file.getFileName();
             }
+        }
+        else
+        {
+            item.isDawPreset = true;
+            item.fst = flstudio::parseAnyDawFile(file, rawBlock.getData(), rawBlock.getSize());
+            dawexport::enrichParsedFstFromCache(item.fst);
+            if (item.fst.valid && item.fst.trackName.isEmpty())
+                item.fst.trackName = file.getFileNameWithoutExtension();
+            if (item.fst.trackName.isNotEmpty())
+                item.displayName = item.fst.trackName;
         }
 
         state->items.push_back(std::move(item));
@@ -1326,9 +1367,9 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
                         : "Nothing loaded";
                     safe->setStatus(status);
                     safe->showMissingPlugins(state->notes,
-                                             state->loadedMixerTracks > 0 ? "FL Studio mixer track imported"
+                                             state->loadedMixerTracks > 0 ? (state->lastSourceDaw + " chain imported")
                                              : state->loadedChains > 0   ? "Chain imported"
-                                                                         : "FL Studio preset import");
+                                                                         : (state->lastSourceDaw + " preset import"));
                     return;
                 }
 
@@ -1339,13 +1380,13 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
                 }
                 else if (state->loadedEffects > 1 && state->loadedChains == 0 && state->loadedMixerTracks == 0)
                 {
-                    const auto msg = "Added " + juce::String(state->loadedEffects) + " FL Studio presets";
+                    const auto msg = "Added " + juce::String(state->loadedEffects) + " DAW presets";
                     safe->setStatus(msg);
                     safe->showToast(msg);
                 }
                 else if (state->loadedMixerTracks > 0)
                 {
-                    const auto msg = "Loaded FL track \"" + state->lastLabel + "\"";
+                    const auto msg = "Loaded " + state->lastSourceDaw + " chain \"" + state->lastLabel + "\"";
                     safe->setStatus(msg);
                     safe->showToast(msg);
                 }
@@ -1365,7 +1406,7 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
                 return;
             }
 
-            if (!item.isFst)
+            if (!item.isDawPreset)
             {
                 safe->pluginWindows.clear();
                 state->anyReplaced = true;
@@ -1384,7 +1425,7 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
 
             if (!item.fst.valid)
             {
-                state->errors.add(item.fst.error.isNotEmpty() ? item.fst.error : ("Invalid .fst: " + item.displayName));
+                state->errors.add(item.fst.error.isNotEmpty() ? item.fst.error : ("Invalid preset: " + item.displayName));
                 (*step)();
                 return;
             }
@@ -1417,14 +1458,16 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
                 dropY = 208 + (count / 5) * 132;
             }
 
+            const auto dawTag = item.fst.sourceDaw.isNotEmpty() ? item.fst.sourceDaw : juce::String("DAW");
+            state->lastSourceDaw = dawTag;
             if (isMixerOrMulti)
             {
                 safe->pluginWindows.clear();
-                safe->setStatus("Loading FL Studio mixer track...");
+                safe->setStatus("Loading " + dawTag + " FX chain...");
             }
             else
             {
-                safe->setStatus("Loading FL Studio preset " + item.displayName + "...");
+                safe->setStatus("Loading " + dawTag + " preset " + item.displayName + "...");
             }
 
             safe->proc.importParsedFstAsync(item.fst, dropX, dropY, true,
@@ -1465,11 +1508,11 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
         juce::StringArray extraNotes;
         juce::Array<juce::var> combinedNodes;
 
-        for (const auto& item : state->items)
+        for (auto& item : state->items)
         {
             if (item.error.isNotEmpty())
                 continue;
-            if (!item.isFst && item.patchVar.isObject())
+            if (!item.isDawPreset && item.patchVar.isObject())
             {
                 stagedCandidate = item.patchVar;
                 candidateLabel = item.displayName;
@@ -1482,7 +1525,7 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
                 }
                 break;
             }
-            if (item.isFst && item.fst.valid && !item.fst.plugins.empty())
+            if (item.isDawPreset && item.fst.valid && !item.fst.plugins.empty())
             {
                 const auto v = flstudio::parsedFstToPatchVar(item.fst, &proc.getKnownList());
                 if (auto* o = v.getDynamicObject())
@@ -1490,7 +1533,7 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
                     if (candidateLabel.isEmpty())
                         candidateLabel = o->getProperty("name").toString();
                     else
-                        candidateLabel = juce::String(state->items.size()) + " FL Presets";
+                        candidateLabel = juce::String(state->items.size()) + " DAW Presets";
                     if (auto* arr = o->getProperty("nodes").getArray())
                     {
                         for (auto n : *arr)
@@ -1516,7 +1559,7 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
                 juce::DynamicObject::Ptr root = new juce::DynamicObject();
                 root->setProperty("app", "PatchLink");
                 root->setProperty("chainFormat", chainformat::kFormatVersion);
-                root->setProperty("name", candidateLabel.isNotEmpty() ? candidateLabel : "FL Chain");
+                root->setProperty("name", candidateLabel.isNotEmpty() ? candidateLabel : "FX Chain");
                 root->setProperty("nodes", combinedNodes);
                 root->setProperty("connections", juce::Array<juce::var>());
                 stagedCandidate = juce::var(root.get());

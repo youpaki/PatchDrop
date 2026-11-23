@@ -14,6 +14,7 @@ enum class TargetFormat
     autoDetect = 0,
     flStudioFst,
     reaperRfxChain,
+    abletonAdg,
     vstPreset,
     patchlinkFile
 };
@@ -31,6 +32,7 @@ inline juce::String formatLabel(TargetFormat fmt)
     {
         case TargetFormat::flStudioFst:    return "FL Studio (.fst)";
         case TargetFormat::reaperRfxChain: return "REAPER (.RfxChain)";
+        case TargetFormat::abletonAdg:     return "Ableton Live Rack (.adg)";
         case TargetFormat::vstPreset:      return "VST3 Preset (.vstpreset)";
         case TargetFormat::patchlinkFile:  return "PatchLink (.patchlink)";
         case TargetFormat::autoDetect:     return "Choose DAW format...";
@@ -44,11 +46,12 @@ inline juce::String formatExtension(TargetFormat fmt)
     {
         case TargetFormat::flStudioFst:    return "fst";
         case TargetFormat::reaperRfxChain: return "RfxChain";
+        case TargetFormat::abletonAdg:     return "adg";
         case TargetFormat::vstPreset:      return "vstpreset";
         case TargetFormat::patchlinkFile:  return "patchlink";
-        case TargetFormat::autoDetect:     return "fst";
+        case TargetFormat::autoDetect:     return "vstpreset";
     }
-    return "fst";
+    return "vstpreset";
 }
 
 inline HostDetection detectHostDaw(juce::AudioProcessor::WrapperType wrapperType)
@@ -67,6 +70,18 @@ inline HostDetection detectHostDaw(juce::AudioProcessor::WrapperType wrapperType
     if (host.isReaper() || exe.contains("reaper"))
         return { false, TargetFormat::reaperRfxChain, "REAPER" };
 
+    if (host.isAbletonLive() || exe.contains("ableton") || exe == "live")
+        return { false, TargetFormat::abletonAdg, "Ableton Live" };
+
+    if (host.isCubase() || exe.contains("cubase"))
+        return { false, TargetFormat::vstPreset, "Cubase" };
+    if (host.isNuendo() || exe.contains("nuendo"))
+        return { false, TargetFormat::vstPreset, "Nuendo" };
+    if (host.isStudioOne() || exe.contains("studio one"))
+        return { false, TargetFormat::vstPreset, "Studio One" };
+    if (host.isBitwigStudio() || exe.contains("bitwig"))
+        return { false, TargetFormat::vstPreset, "Bitwig Studio" };
+
     juce::String desc(host.getHostDescription());
     if (desc.isEmpty() || desc.equalsIgnoreCase("Unknown"))
         desc = exe.isNotEmpty() ? exe : juce::String("DAW");
@@ -78,6 +93,8 @@ namespace detail
 struct FlVst3Record
 {
     std::array<uint8_t, 16> tuid {};
+    juce::String fuidHex;
+    uint32_t reaperHash = 0;
     int juceUniqueId = 0;
     juce::String flPluginName;
     juce::String vendor;
@@ -128,13 +145,21 @@ inline const std::vector<FlVst3Record>& getFlVst3Cache()
         return cache;
     built = true;
 
-    std::vector<juce::File> searchDirs;
+    auto findOrAdd = [&](int uid, const juce::String& fuid) -> FlVst3Record& {
+        for (auto& r : cache)
+            if ((uid != 0 && r.juceUniqueId == uid) || (fuid.isNotEmpty() && r.fuidHex == fuid))
+                return r;
+        cache.emplace_back();
+        return cache.back();
+    };
+
     const auto docs = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory);
     const auto home = juce::File::getSpecialLocation(juce::File::userHomeDirectory);
-    searchDirs.push_back(docs.getChildFile("Image-Line/FL Studio/Presets/Plugin database/Installed/Effects/VST3"));
-    searchDirs.push_back(home.getChildFile("OneDrive/Documents/Image-Line/FL Studio/Presets/Plugin database/Installed/Effects/VST3"));
+    const auto appData = juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory);
 
-    for (const auto& dir : searchDirs)
+    // 1. FL Studio installed VST3 database
+    for (const auto& dir : { docs.getChildFile("Image-Line/FL Studio/Presets/Plugin database/Installed/Effects/VST3"),
+                             home.getChildFile("OneDrive/Documents/Image-Line/FL Studio/Presets/Plugin database/Installed/Effects/VST3") })
     {
         if (!dir.isDirectory())
             continue;
@@ -147,6 +172,7 @@ inline const std::vector<FlVst3Record>& getFlVst3Cache()
             FlVst3Record rec;
             if (!hexTo16Bytes(e.tuidHex, rec.tuid))
                 continue;
+            rec.fuidHex = flstudio::tuidBytesToFuidHex(rec.tuid.data());
             rec.juceUniqueId = e.juceUniqueId;
             rec.flPluginName = e.pluginName.isNotEmpty() ? e.pluginName : file.getFileNameWithoutExtension();
             rec.vendor = e.vendor;
@@ -157,6 +183,102 @@ inline const std::vector<FlVst3Record>& getFlVst3Cache()
         if (!cache.empty())
             break;
     }
+
+    // 2. REAPER VST3 cache (reaper-vstplugins64.ini)
+    const auto reaperIni = appData.getChildFile("REAPER/reaper-vstplugins64.ini");
+    if (reaperIni.existsAsFile())
+    {
+        for (const auto& rawLine : juce::StringArray::fromLines(reaperIni.loadFileAsString()))
+        {
+            const auto line = rawLine.trim();
+            const int eq = line.indexOfChar('=');
+            const int brace = line.indexOfChar('{');
+            if (eq <= 0 || brace <= eq || !line.substring(0, eq).containsIgnoreCase(".vst3"))
+                continue;
+
+            const auto filePart = line.substring(0, eq).upToFirstOccurrenceOf("<", false, false).trim();
+            const auto rest = line.substring(eq + 1);
+            const int comma1 = rest.indexOfChar(',');
+            if (comma1 < 0) continue;
+            const int relBrace = rest.indexOfChar(comma1 + 1, '{');
+            const int comma2 = rest.indexOfChar(relBrace + 1, ',');
+            if (relBrace <= comma1 || comma2 < relBrace) continue;
+
+            const auto hashStr = rest.substring(comma1 + 1, relBrace).trim();
+            const auto fuid = rest.substring(relBrace + 1, comma2).retainCharacters("0123456789abcdefABCDEF").toUpperCase();
+            if (fuid.length() != 32) continue;
+
+            auto label = rest.substring(comma2 + 1).trim();
+            if (label.endsWithIgnoreCase("!!!VSTi"))
+                label = label.dropLastCharacters(7).trim();
+            juce::String vendor;
+            const int lp = label.lastIndexOfChar('(');
+            const int rp = label.lastIndexOfChar(')');
+            if (lp > 0 && rp == label.length() - 1)
+            {
+                vendor = label.substring(lp + 1, rp).trim();
+                label = label.substring(0, lp).trim();
+            }
+
+            const int uid = flstudio::computeJuceUniqueIdFromFuidHex(fuid);
+            auto& rec = findOrAdd(uid, fuid);
+            rec.fuidHex = fuid;
+            rec.juceUniqueId = uid;
+            if (hashStr.isNotEmpty())
+                rec.reaperHash = static_cast<uint32_t>(hashStr.getIntValue());
+            flstudio::fuidHexToTuidBytes(fuid, rec.tuid.data());
+            if (rec.flPluginName.isEmpty() || rec.flPluginName.startsWithIgnoreCase("WaveShell"))
+                rec.flPluginName = label;
+            if (rec.vendor.isEmpty())
+                rec.vendor = vendor;
+            if (rec.filePath.isEmpty())
+                rec.filePath = filePart;
+            if (rec.normName.isEmpty())
+                rec.normName = normalizeKey(rec.flPluginName);
+        }
+    }
+
+    // 3. Cubase VST3 cache (vst3plugins.xml)
+    const auto steinbergDir = appData.getChildFile("Steinberg");
+    if (steinbergDir.isDirectory())
+    {
+        for (const auto& cubaseDir : steinbergDir.findChildFiles(juce::File::findDirectories, false, "Cubase*"))
+        {
+            const auto xmlFile = cubaseDir.getChildFile("Cubase Pro VST3 Cache/vst3plugins.xml");
+            if (!xmlFile.existsAsFile()) continue;
+            if (auto doc = juce::XmlDocument::parse(xmlFile))
+            {
+                for (auto* plug : doc->getChildWithTagNameIterator("plugin"))
+                {
+                    const auto fpath = plug->getChildElementAllSubText("path", {}).replace("/", "\\").trim();
+                    for (auto* cls : plug->getChildWithTagNameIterator("class"))
+                    {
+                        if (cls->getChildElementAllSubText("category", {}).trim() != "Audio Module Class")
+                            continue;
+                        const auto fuid = cls->getChildElementAllSubText("cid", {}).retainCharacters("0123456789abcdefABCDEF").toUpperCase();
+                        if (fuid.length() != 32) continue;
+                        const auto name = cls->getChildElementAllSubText("name", {}).trim();
+                        const auto vendor = cls->getChildElementAllSubText("vendor", {}).trim();
+                        const int uid = flstudio::computeJuceUniqueIdFromFuidHex(fuid);
+                        auto& rec = findOrAdd(uid, fuid);
+                        rec.fuidHex = fuid;
+                        rec.juceUniqueId = uid;
+                        flstudio::fuidHexToTuidBytes(fuid, rec.tuid.data());
+                        if (rec.flPluginName.isEmpty() || rec.flPluginName.startsWithIgnoreCase("WaveShell"))
+                            rec.flPluginName = name;
+                        if (rec.vendor.isEmpty())
+                            rec.vendor = vendor;
+                        if (rec.filePath.isEmpty() || !rec.filePath.containsAnyOf("\\/"))
+                            rec.filePath = fpath;
+                        if (rec.normName.isEmpty())
+                            rec.normName = normalizeKey(rec.flPluginName);
+                    }
+                }
+            }
+            break;
+        }
+    }
+
     return cache;
 }
 
@@ -169,6 +291,8 @@ struct NodeInfo
     juce::String fileOrId;
     juce::String identifier;
     juce::String stateBase64;
+    juce::String fuidHex;
+    uint32_t reaperHash = 0;
     int uniqueId = 0;
     bool bypass = false;
     bool hasTuid = false;
@@ -193,6 +317,10 @@ inline NodeInfo extractNodeInfo(const juce::var& nodeVar)
         info.format = ids->getProperty("format").toString();
         info.fileOrId = ids->getProperty("fileOrId").toString();
         info.identifier = ids->getProperty("identifier").toString();
+        info.fuidHex = ids->getProperty("fuidHex").toString().retainCharacters("0123456789abcdefABCDEF").toUpperCase();
+        const auto rhashVar = ids->getProperty("reaperHash");
+        if (!rhashVar.isVoid())
+            info.reaperHash = static_cast<uint32_t>(static_cast<juce::int64>(rhashVar));
         const auto uidVar = ids->getProperty("uniqueId");
         if (!uidVar.isVoid())
             info.uniqueId = static_cast<int>(uidVar);
@@ -208,13 +336,23 @@ inline NodeInfo extractNodeInfo(const juce::var& nodeVar)
         info.fileOrId = no->getProperty("fileOrId").toString();
     }
 
+    if (!info.hasTuid && info.fuidHex.length() == 32)
+        info.hasTuid = flstudio::fuidHexToTuidBytes(info.fuidHex, info.tuid.data());
+
     if (info.uniqueId == 0 && info.identifier.isNotEmpty())
         info.uniqueId = parseUniqueIdFromIdentifier(info.identifier);
+    if (info.uniqueId == 0 && info.fuidHex.length() == 32)
+        info.uniqueId = flstudio::computeJuceUniqueIdFromFuidHex(info.fuidHex);
 
-    // Enrich missing FL TUID / pluginName from local FL Studio VST3 database if available.
+    // Enrich missing TUID / FUID / REAPER hash / pluginName from multi-DAW VST3 cache if available.
     const auto& cache = getFlVst3Cache();
     const FlVst3Record* matched = nullptr;
-    if (info.uniqueId != 0)
+    if (info.fuidHex.length() == 32)
+    {
+        for (const auto& rec : cache)
+            if (rec.fuidHex == info.fuidHex) { matched = &rec; break; }
+    }
+    if (matched == nullptr && info.uniqueId != 0)
     {
         for (const auto& rec : cache)
             if (rec.juceUniqueId == info.uniqueId) { matched = &rec; break; }
@@ -242,14 +380,23 @@ inline NodeInfo extractNodeInfo(const juce::var& nodeVar)
             info.tuid = matched->tuid;
             info.hasTuid = true;
         }
+        if (info.fuidHex.isEmpty())
+            info.fuidHex = matched->fuidHex;
+        if (info.reaperHash == 0)
+            info.reaperHash = matched->reaperHash;
+        if (info.name.isEmpty())
+            info.name = matched->flPluginName;
         if (info.flPluginName.isEmpty())
             info.flPluginName = matched->flPluginName;
         if (info.manufacturer.isEmpty())
             info.manufacturer = matched->vendor;
-        if (info.fileOrId.isEmpty())
-            info.fileOrId = matched->filePath;
+        if (info.fileOrId.isEmpty() || !info.fileOrId.containsAnyOf("\\/"))
+            if (matched->filePath.isNotEmpty())
+                info.fileOrId = matched->filePath;
     }
 
+    if (info.hasTuid && info.fuidHex.isEmpty())
+        info.fuidHex = flstudio::tuidBytesToFuidHex(info.tuid.data());
     if (info.flPluginName.isEmpty())
         info.flPluginName = info.name;
     if (info.fileOrId.isEmpty() && info.name.isNotEmpty())
@@ -278,7 +425,7 @@ inline std::vector<NodeInfo> collectExportableVst3Nodes(const juce::var& patchVa
         auto info = extractNodeInfo(n);
         if (info.format.isNotEmpty() && !info.format.equalsIgnoreCase("VST3"))
             continue;
-        if (info.name.isEmpty() && info.fileOrId.isEmpty())
+        if (info.name.isEmpty() && info.fileOrId.isEmpty() && info.fuidHex.isEmpty())
             continue;
         const auto ordVar = no->getProperty("order");
         const int order = ordVar.isVoid() ? seq : static_cast<int>(ordVar);
@@ -545,6 +692,48 @@ inline bool buildFlStudioMixerTrackFst(const juce::var& patchVar, juce::MemoryBl
     return true;
 }
 
+inline void enrichParsedFstFromCache(flstudio::ParsedFst& parsed)
+{
+    const auto& cache = detail::getFlVst3Cache();
+    for (auto& entry : parsed.plugins)
+    {
+        const detail::FlVst3Record* matched = nullptr;
+        if (entry.fuidHex.length() == 32)
+        {
+            for (const auto& rec : cache)
+                if (rec.fuidHex == entry.fuidHex) { matched = &rec; break; }
+        }
+        if (matched == nullptr && entry.juceUniqueId != 0)
+        {
+            for (const auto& rec : cache)
+                if (rec.juceUniqueId == entry.juceUniqueId) { matched = &rec; break; }
+        }
+        if (matched == nullptr && entry.pluginName.isNotEmpty())
+        {
+            const auto nk = detail::normalizeKey(entry.pluginName);
+            for (const auto& rec : cache)
+                if (rec.normName == nk) { matched = &rec; break; }
+        }
+        if (matched != nullptr)
+        {
+            if (entry.pluginName.isEmpty())
+                entry.pluginName = matched->flPluginName;
+            if (entry.slotName.isEmpty())
+                entry.slotName = matched->flPluginName;
+            if (entry.vendor.isEmpty())
+                entry.vendor = matched->vendor;
+            if (entry.filePath.isEmpty())
+                entry.filePath = matched->filePath;
+            if (entry.fuidHex.isEmpty())
+                entry.fuidHex = matched->fuidHex;
+            if (entry.tuidHex.isEmpty())
+                entry.tuidHex = flstudio::bytesToLowerHex(matched->tuid.data(), 16);
+            if (entry.reaperHash == 0)
+                entry.reaperHash = matched->reaperHash;
+        }
+    }
+}
+
 inline bool buildSteinbergVstPreset(const juce::var& nodeVar, juce::MemoryBlock& out, juce::String& err)
 {
     const auto info = detail::extractNodeInfo(nodeVar);
@@ -562,7 +751,7 @@ inline bool buildSteinbergVstPreset(const juce::var& nodeVar, juce::MemoryBlock&
         return false;
     }
 
-    const auto fuidStr = detail::steinbergFuidString(info.tuid);
+    const auto fuidStr = info.fuidHex.length() == 32 ? info.fuidHex : detail::steinbergFuidString(info.tuid);
     juce::MemoryOutputStream mos(out, false);
     mos.write("VST3", 4);
     mos.writeInt(1); // format version 1
@@ -599,9 +788,25 @@ inline bool buildSteinbergVstPreset(const juce::var& nodeVar, juce::MemoryBlock&
     return true;
 }
 
-inline bool buildReaperRfxChain(const juce::var& patchVar, juce::String& outText, juce::String& err)
+inline bool buildReaperRfxChain(const juce::var& patchVar, juce::String& outText, juce::String& err, int singleNodeIndex = -1)
 {
-    const auto nodes = detail::collectExportableVst3Nodes(patchVar);
+    std::vector<detail::NodeInfo> nodes;
+    if (singleNodeIndex >= 0)
+    {
+        if (auto* root = patchVar.getDynamicObject())
+            if (auto* arr = root->getProperty("nodes").getArray())
+                if (singleNodeIndex < arr->size())
+                {
+                    auto info = detail::extractNodeInfo(arr->getReference(singleNodeIndex));
+                    if (info.format.isEmpty() || info.format.equalsIgnoreCase("VST3"))
+                        nodes.push_back(std::move(info));
+                }
+    }
+    else
+    {
+        nodes = detail::collectExportableVst3Nodes(patchVar);
+    }
+
     if (nodes.empty())
     {
         err = "No VST3 plugins in this chain to export as REAPER .RfxChain.";
@@ -612,36 +817,237 @@ inline bool buildReaperRfxChain(const juce::var& patchVar, juce::String& outText
     for (const auto& info : nodes)
     {
         lines << "BYPASS " << (info.bypass ? "1" : "0") << " 0 0\n";
-        const auto leaf = juce::File(info.fileOrId).getFileName();
-        const auto fuid = detail::steinbergFuidString(info.tuid);
+        const auto leaf = juce::File::createFileWithoutCheckingPath(info.fileOrId).getFileName();
+        const auto vst3File = leaf.isNotEmpty() ? leaf : (info.name + ".vst3");
+        const auto fuid = info.fuidHex.length() == 32 ? info.fuidHex : detail::steinbergFuidString(info.tuid);
         const auto mfr = info.manufacturer.isNotEmpty() ? " (" + info.manufacturer + ")" : juce::String();
-        lines << "<VST \"VST3: " << info.name << mfr << "\" \"" << (leaf.isNotEmpty() ? leaf : info.name + ".vst3")
-              << "\" 0 \"\" 0{" << fuid << "} \"\"\n";
+        const auto dispName = info.name.isNotEmpty() ? info.name : (info.flPluginName.isNotEmpty() ? info.flPluginName : "VST3 Plugin");
+        const uint32_t rhash = info.reaperHash != 0 ? info.reaperHash
+                                                    : static_cast<uint32_t>(flstudio::computeJuceUniqueIdFromFuidHex(fuid));
+
+        lines << "<VST \"VST3: " << dispName << mfr << "\" \"" << vst3File
+              << "\" 0 \"\" " << juce::String(static_cast<int32_t>(rhash)) << "{" << fuid << "} \"\"\n";
 
         juce::MemoryBlock comp, cont;
         flstudio::extractRawVst3ChunksFromBase64(info.stateBase64, comp, cont);
         if (comp.getSize() > 0 || cont.getSize() > 0)
         {
-            juce::MemoryBlock blob;
-            juce::MemoryOutputStream mos(blob, false);
-            mos.writeInt(static_cast<int>(comp.getSize()));
-            mos.writeInt(1);
-            if (comp.getSize() > 0)
-                mos.write(comp.getData(), comp.getSize());
-            if (cont.getSize() > 0)
+            juce::MemoryBlock chunk1;
             {
-                mos.writeInt(static_cast<int>(cont.getSize()));
-                mos.write(cont.getData(), cont.getSize());
+                juce::MemoryOutputStream mos(chunk1, false);
+                mos.writeInt(static_cast<int>(comp.getSize()));
+                mos.writeInt(comp.getSize() > 0 ? 1 : 0);
+                if (comp.getSize() > 0)
+                    mos.write(comp.getData(), comp.getSize());
+                if (cont.getSize() > 0)
+                {
+                    mos.writeInt(static_cast<int>(cont.getSize()));
+                    mos.writeInt(0);
+                    mos.write(cont.getData(), cont.getSize());
+                }
+                mos.flush();
             }
-            mos.flush();
-            const auto b64 = blob.toBase64Encoding();
-            for (int pos = 0; pos < b64.length(); pos += 128)
-                lines << "  " << b64.substring(pos, pos + 128) << "\n";
+
+            // REAPER chunk[0]: 60-byte stereo header with 0xFEED5EEE signature and chunk1 byte count
+            juce::MemoryBlock chunk0;
+            {
+                juce::MemoryOutputStream h(chunk0, false);
+                h.writeInt(static_cast<int>(rhash));
+                h.writeInt(static_cast<int>(0xFEED5EEEu));
+                h.writeInt(2); // input channels
+                h.writeInt64(1);
+                h.writeInt64(2);
+                h.writeInt(2); // output channels
+                h.writeInt64(1);
+                h.writeInt64(2);
+                h.writeInt(static_cast<int>(chunk1.getSize()));
+                h.writeInt(1);
+                h.writeInt(0x0010FFFF);
+                h.flush();
+            }
+
+            const auto b64Hdr = juce::Base64::toBase64(chunk0.getData(), chunk0.getSize());
+            lines << "  " << b64Hdr << "\n";
+            const auto b64State = juce::Base64::toBase64(chunk1.getData(), chunk1.getSize());
+            for (int pos = 0; pos < b64State.length(); pos += 128)
+                lines << "  " << b64State.substring(pos, pos + 128) << "\n";
+            lines << "  AAAQAAAA\n";
         }
         lines << ">\nPRESETNAME \"\"\nFLOATPOS 0 0 0 0\nWAK 0 0\n";
     }
     outText = lines;
     return true;
+}
+
+inline bool buildAbletonAdgRack(const juce::var& patchVar, juce::MemoryBlock& outGzip, juce::String& err, int singleNodeIndex = -1)
+{
+    std::vector<detail::NodeInfo> nodes;
+    if (singleNodeIndex >= 0)
+    {
+        if (auto* root = patchVar.getDynamicObject())
+            if (auto* arr = root->getProperty("nodes").getArray())
+                if (singleNodeIndex < arr->size())
+                {
+                    auto info = detail::extractNodeInfo(arr->getReference(singleNodeIndex));
+                    if (info.format.isEmpty() || info.format.equalsIgnoreCase("VST3"))
+                        nodes.push_back(std::move(info));
+                }
+    }
+    else
+    {
+        nodes = detail::collectExportableVst3Nodes(patchVar);
+    }
+
+    if (nodes.empty())
+    {
+        err = "No VST3 plugins in this chain to export as Ableton .adg.";
+        return false;
+    }
+
+    juce::String rackName = "PatchLink Chain";
+    if (auto* root = patchVar.getDynamicObject())
+    {
+        const auto n = root->getProperty("name").toString().trim();
+        if (n.isNotEmpty())
+            rackName = n;
+    }
+
+    auto toUpperHex = [](const juce::MemoryBlock& mb) -> juce::String {
+        static constexpr char kHex[] = "0123456789ABCDEF";
+        const auto* ptr = static_cast<const uint8_t*>(mb.getData());
+        const size_t n = mb.getSize();
+        juce::String s;
+        s.preallocateBytes(n * 2 + 16);
+        for (size_t i = 0; i < n; ++i)
+        {
+            const uint8_t b = ptr[i];
+            s << kHex[(b >> 4) & 0xF] << kHex[b & 0xF];
+        }
+        return s;
+    };
+
+    auto esc = [](const juce::String& s) {
+        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");
+    };
+
+    juce::String xml;
+    xml.preallocateBytes(32768);
+    xml << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        << "<Ableton MajorVersion=\"5\" MinorVersion=\"11.0_433\" Creator=\"Ableton Live 11.0.1d1\" Revision=\"9b647e316b473e011255bf37ec94f36700805423\">\n"
+        << "\t<GroupDevicePreset>\n"
+        << "\t\t<OverwriteProtectionNumber Value=\"2817\" />\n"
+        << "\t\t<Device>\n"
+        << "\t\t\t<AudioEffectGroupDevice Id=\"0\">\n"
+        << "\t\t\t\t<LomId Value=\"0\" />\n"
+        << "\t\t\t\t<IsExpanded Value=\"true\" />\n"
+        << "\t\t\t\t<On><LomId Value=\"0\" /><Manual Value=\"true\" /><AutomationTarget Id=\"0\"><LockEnvelope Value=\"0\" /></AutomationTarget><MidiCCOnOffThresholds><Min Value=\"64\" /><Max Value=\"127\" /></MidiCCOnOffThresholds></On>\n"
+        << "\t\t\t\t<IsFolded Value=\"false\" />\n"
+        << "\t\t\t\t<ShouldShowPresetName Value=\"true\" />\n"
+        << "\t\t\t\t<UserName Value=\"" << esc(rackName) << "\" />\n"
+        << "\t\t\t\t<Annotation Value=\"Exported from PatchLink\" />\n"
+        << "\t\t\t\t<Branches />\n"
+        << "\t\t\t\t<IsBranchesListVisible Value=\"false\" />\n"
+        << "\t\t\t\t<IsReturnBranchesListVisible Value=\"false\" />\n"
+        << "\t\t\t\t<IsRangesEditorVisible Value=\"false\" />\n"
+        << "\t\t\t\t<AreDevicesVisible Value=\"true\" />\n"
+        << "\t\t\t\t<ReturnBranches />\n"
+        << "\t\t\t\t<AreMacroControlsVisible Value=\"false\" />\n"
+        << "\t\t\t</AudioEffectGroupDevice>\n"
+        << "\t\t</Device>\n"
+        << "\t\t<PresetRef />\n"
+        << "\t\t<BranchPresets>\n"
+        << "\t\t\t<AudioEffectBranchPreset Id=\"0\">\n"
+        << "\t\t\t\t<Name Value=\"" << esc(rackName) << "\" />\n"
+        << "\t\t\t\t<IsSoloed Value=\"false\" />\n"
+        << "\t\t\t\t<DevicePresets>\n";
+
+    for (size_t idx = 0; idx < nodes.size(); ++idx)
+    {
+        const auto& info = nodes[idx];
+        const auto plugName = info.name.isNotEmpty() ? info.name : (info.flPluginName.isNotEmpty() ? info.flPluginName : "VST3 Plugin");
+        const auto fuid = info.fuidHex.length() == 32 ? info.fuidHex : detail::steinbergFuidString(info.tuid);
+        int32_t f[4] {};
+        for (int k = 0; k < 4; ++k)
+            f[k] = static_cast<int32_t>(static_cast<uint32_t>(fuid.substring(k * 8, k * 8 + 8).getHexValue64()));
+
+        juce::MemoryBlock comp, cont;
+        flstudio::extractRawVst3ChunksFromBase64(info.stateBase64, comp, cont);
+        const auto compHex = toUpperHex(comp);
+        const auto contHex = toUpperHex(cont);
+        const juce::String uidXml = "<Uid><Fields.0 Value=\"" + juce::String(f[0]) + "\" /><Fields.1 Value=\"" + juce::String(f[1])
+                                  + "\" /><Fields.2 Value=\"" + juce::String(f[2]) + "\" /><Fields.3 Value=\"" + juce::String(f[3]) + "\" /></Uid>";
+
+        xml << "\t\t\t\t\t<AbletonDevicePreset Id=\"" << juce::String(idx) << "\">\n"
+            << "\t\t\t\t\t\t<OverwriteProtectionNumber Value=\"2817\" />\n"
+            << "\t\t\t\t\t\t<Device>\n"
+            << "\t\t\t\t\t\t\t<PluginDevice Id=\"0\">\n"
+            << "\t\t\t\t\t\t\t\t<LomId Value=\"0\" />\n"
+            << "\t\t\t\t\t\t\t\t<LomIdView Value=\"0\" />\n"
+            << "\t\t\t\t\t\t\t\t<IsExpanded Value=\"true\" />\n"
+            << "\t\t\t\t\t\t\t\t<On><LomId Value=\"0\" /><Manual Value=\"" << (info.bypass ? "false" : "true") << "\" /><AutomationTarget Id=\"0\"><LockEnvelope Value=\"0\" /></AutomationTarget><MidiCCOnOffThresholds><Min Value=\"64\" /><Max Value=\"127\" /></MidiCCOnOffThresholds></On>\n"
+            << "\t\t\t\t\t\t\t\t<IsFolded Value=\"false\" />\n"
+            << "\t\t\t\t\t\t\t\t<ShouldShowPresetName Value=\"true\" />\n"
+            << "\t\t\t\t\t\t\t\t<UserName Value=\"\" />\n"
+            << "\t\t\t\t\t\t\t\t<Annotation Value=\"\" />\n"
+            << "\t\t\t\t\t\t\t\t<OverwriteProtectionNumber Value=\"2817\" />\n"
+            << "\t\t\t\t\t\t\t\t<PluginDesc>\n"
+            << "\t\t\t\t\t\t\t\t\t<Vst3PluginInfo Id=\"0\">\n"
+            << "\t\t\t\t\t\t\t\t\t\t<WinPosX Value=\"0\" />\n"
+            << "\t\t\t\t\t\t\t\t\t\t<WinPosY Value=\"0\" />\n"
+            << "\t\t\t\t\t\t\t\t\t\t<Name Value=\"" << esc(plugName) << "\" />\n"
+            << "\t\t\t\t\t\t\t\t\t\t<Preset>\n"
+            << "\t\t\t\t\t\t\t\t\t\t\t<Vst3Preset Id=\"0\">\n"
+            << "\t\t\t\t\t\t\t\t\t\t\t\t<OverwriteProtectionNumber Value=\"2817\" />\n"
+            << "\t\t\t\t\t\t\t\t\t\t\t\t" << uidXml << "\n"
+            << "\t\t\t\t\t\t\t\t\t\t\t\t<DeviceType Value=\"2\" />\n"
+            << "\t\t\t\t\t\t\t\t\t\t\t\t<ProcessorState>" << compHex << "</ProcessorState>\n"
+            << "\t\t\t\t\t\t\t\t\t\t\t\t<ControllerState>" << contHex << "</ControllerState>\n"
+            << "\t\t\t\t\t\t\t\t\t\t\t\t<Name Value=\"" << esc(plugName) << "\" />\n"
+            << "\t\t\t\t\t\t\t\t\t\t\t\t<PresetRef><Value /></PresetRef>\n"
+            << "\t\t\t\t\t\t\t\t\t\t\t</Vst3Preset>\n"
+            << "\t\t\t\t\t\t\t\t\t\t</Preset>\n"
+            << "\t\t\t\t\t\t\t\t\t\t" << uidXml << "\n"
+            << "\t\t\t\t\t\t\t\t\t\t<DeviceType Value=\"2\" />\n"
+            << "\t\t\t\t\t\t\t\t\t</Vst3PluginInfo>\n"
+            << "\t\t\t\t\t\t\t\t</PluginDesc>\n"
+            << "\t\t\t\t\t\t\t\t<ParameterList />\n"
+            << "\t\t\t\t\t\t\t</PluginDevice>\n"
+            << "\t\t\t\t\t\t</Device>\n"
+            << "\t\t\t\t\t\t<PresetRef />\n"
+            << "\t\t\t\t\t</AbletonDevicePreset>\n";
+    }
+
+    xml << "\t\t\t\t</DevicePresets>\n"
+        << "\t\t\t\t<MixerPreset>\n"
+        << "\t\t\t\t\t<AbletonDevicePreset Id=\"0\">\n"
+        << "\t\t\t\t\t\t<OverwriteProtectionNumber Value=\"2817\" />\n"
+        << "\t\t\t\t\t\t<Device>\n"
+        << "\t\t\t\t\t\t\t<AudioBranchMixerDevice Id=\"0\">\n"
+        << "\t\t\t\t\t\t\t\t<LomId Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t<IsExpanded Value=\"true\" />\n"
+        << "\t\t\t\t\t\t\t\t<On><LomId Value=\"0\" /><Manual Value=\"true\" /><AutomationTarget Id=\"0\"><LockEnvelope Value=\"0\" /></AutomationTarget></On>\n"
+        << "\t\t\t\t\t\t\t\t<Speaker><LomId Value=\"0\" /><Manual Value=\"true\" /><AutomationTarget Id=\"0\"><LockEnvelope Value=\"0\" /></AutomationTarget></Speaker>\n"
+        << "\t\t\t\t\t\t\t\t<Volume><LomId Value=\"0\" /><Manual Value=\"1\" /><MidiControllerRange><Min Value=\"0.0003162277571\" /><Max Value=\"1.99526238\" /></MidiControllerRange></Volume>\n"
+        << "\t\t\t\t\t\t\t\t<Panorama><LomId Value=\"0\" /><Manual Value=\"0\" /><MidiControllerRange><Min Value=\"-1\" /><Max Value=\"1\" /></MidiControllerRange></Panorama>\n"
+        << "\t\t\t\t\t\t\t\t<SendInfos />\n"
+        << "\t\t\t\t\t\t\t</AudioBranchMixerDevice>\n"
+        << "\t\t\t\t\t\t</Device>\n"
+        << "\t\t\t\t\t\t<PresetRef />\n"
+        << "\t\t\t\t\t</AbletonDevicePreset>\n"
+        << "\t\t\t\t</MixerPreset>\n"
+        << "\t\t\t\t<BranchSelectorRange><Min Value=\"0\" /><Max Value=\"127\" /><CrossfadeMin Value=\"0\" /><CrossfadeMax Value=\"0\" /></BranchSelectorRange>\n"
+        << "\t\t\t</AudioEffectBranchPreset>\n"
+        << "\t\t</BranchPresets>\n"
+        << "\t\t<ReturnBranchPresets />\n"
+        << "\t</GroupDevicePreset>\n"
+        << "</Ableton>\n";
+
+    outGzip.reset();
+    juce::MemoryOutputStream rawOut(outGzip, false);
+    juce::GZIPCompressorOutputStream gz(&rawOut, -1, false, 31); // windowBits 15+16 -> RFC 1952 gzip header
+    gz.write(xml.toRawUTF8(), xml.getNumBytesAsUTF8());
+    gz.flush();
+    return outGzip.getSize() > 10;
 }
 
 inline juce::StringArray prepareDragFiles(const juce::var& patchVar,
@@ -670,7 +1076,7 @@ inline juce::StringArray prepareDragFiles(const juce::var& patchVar,
         old.deleteRecursively();
 
     const auto baseTitle = detail::sanitizeFileBase(root->getProperty("name").toString(), "PatchLink_Chain");
-    const auto effectiveFmt = fmt == TargetFormat::autoDetect ? TargetFormat::flStudioFst : fmt;
+    const auto effectiveFmt = fmt == TargetFormat::autoDetect ? TargetFormat::vstPreset : fmt;
 
     if (singleNodeIndex >= 0 && singleNodeIndex < arr->size())
     {
@@ -684,6 +1090,24 @@ inline juce::StringArray prepareDragFiles(const juce::var& patchVar,
             if (!buildFlStudioSingleFst(nodeVar, fst, err)) return {};
             const auto target = dragDir.getChildFile(fileTitle + ".fst");
             if (!target.replaceWithData(fst.getData(), fst.getSize())) { err = "Could not write temp .fst"; return {}; }
+            outFiles.add(target.getFullPathName());
+            return outFiles;
+        }
+        if (effectiveFmt == TargetFormat::reaperRfxChain)
+        {
+            juce::String rfx;
+            if (!buildReaperRfxChain(patchVar, rfx, err, singleNodeIndex)) return {};
+            const auto target = dragDir.getChildFile(fileTitle + ".RfxChain");
+            if (!target.replaceWithText(rfx)) { err = "Could not write temp .RfxChain"; return {}; }
+            outFiles.add(target.getFullPathName());
+            return outFiles;
+        }
+        if (effectiveFmt == TargetFormat::abletonAdg)
+        {
+            juce::MemoryBlock adg;
+            if (!buildAbletonAdgRack(patchVar, adg, err, singleNodeIndex)) return {};
+            const auto target = dragDir.getChildFile(fileTitle + ".adg");
+            if (!target.replaceWithData(adg.getData(), adg.getSize())) { err = "Could not write temp .adg"; return {}; }
             outFiles.add(target.getFullPathName());
             return outFiles;
         }
@@ -713,11 +1137,7 @@ inline juce::StringArray prepareDragFiles(const juce::var& patchVar,
     if (effectiveFmt == TargetFormat::flStudioFst)
     {
         juce::MemoryBlock fst;
-        if (arr->size() == 1 && singleNodeIndex == 0)
-        {
-            if (!buildFlStudioSingleFst(arr->getReference(0), fst, err)) return {};
-        }
-        else if (arr->size() == 1)
+        if (arr->size() == 1)
         {
             if (!buildFlStudioSingleFst(arr->getReference(0), fst, err)) return {};
         }
@@ -738,7 +1158,7 @@ inline juce::StringArray prepareDragFiles(const juce::var& patchVar,
     if (effectiveFmt == TargetFormat::reaperRfxChain)
     {
         juce::String rfx;
-        if (!buildReaperRfxChain(patchVar, rfx, err)) return {};
+        if (!buildReaperRfxChain(patchVar, rfx, err, -1)) return {};
         const auto target = dragDir.getChildFile(baseTitle + ".RfxChain");
         if (!target.replaceWithText(rfx))
         {
@@ -749,9 +1169,21 @@ inline juce::StringArray prepareDragFiles(const juce::var& patchVar,
         return outFiles;
     }
 
-    // VST3 Preset (.vstpreset): one file per VST3 plugin
-    const auto subDir = dragDir.getChildFile(baseTitle);
-    subDir.createDirectory();
+    if (effectiveFmt == TargetFormat::abletonAdg)
+    {
+        juce::MemoryBlock adg;
+        if (!buildAbletonAdgRack(patchVar, adg, err, -1)) return {};
+        const auto target = dragDir.getChildFile(baseTitle + ".adg");
+        if (!target.replaceWithData(adg.getData(), adg.getSize()))
+        {
+            err = "Could not write temp .adg";
+            return {};
+        }
+        outFiles.add(target.getFullPathName());
+        return outFiles;
+    }
+
+    // VST3 Preset (.vstpreset): one file per VST3 plugin in chain
     for (int i = 0; i < arr->size(); ++i)
     {
         const auto& nodeVar = arr->getReference(i);
@@ -761,7 +1193,7 @@ inline juce::StringArray prepareDragFiles(const juce::var& patchVar,
         if (!buildSteinbergVstPreset(nodeVar, vp, nodeErr))
             continue;
         const auto prefix = arr->size() > 1 ? juce::String::formatted("%02d_", i + 1) : juce::String();
-        const auto target = (arr->size() > 1 ? subDir : dragDir).getChildFile(prefix + detail::sanitizeFileBase(info.name, "Preset") + ".vstpreset");
+        const auto target = dragDir.getChildFile(prefix + detail::sanitizeFileBase(info.name, "Preset") + ".vstpreset");
         if (target.replaceWithData(vp.getData(), vp.getSize()))
             outFiles.add(target.getFullPathName());
     }

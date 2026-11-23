@@ -214,7 +214,7 @@ int runFstTest(const juce::String& fstPath, bool instantiate)
     return (parsed.plugins.empty() && parsed.skipped.isEmpty()) ? 1 : (resolvedCount == 0 && !parsed.plugins.empty() ? 1 : 0);
 }
 
-int runExportRoundtripTest(const juce::String& fstPath)
+int runExportRoundtripTest(const juce::String& inputPath)
 {
     juce::AudioPluginFormatManager fm;
     fm.addDefaultFormats();
@@ -222,19 +222,40 @@ int runExportRoundtripTest(const juce::String& fstPath)
     PluginScanManager mgr(fm, list);
     mgr.loadSettings();
 
-    const auto parsed = flstudio::parseFstFile(juce::File(fstPath));
-    if (!parsed.valid || parsed.plugins.empty())
+    const juce::File inFile(inputPath);
+    juce::var patchVar;
+    int expectedVst3 = 0;
+
+    if (inFile.hasFileExtension(".patchlink;.json"))
     {
-        printf("EXPORT TEST FAIL: could not parse input %s\n", fstPath.toRawUTF8());
-        return 2;
+        patchVar = juce::JSON::parse(inFile.loadFileAsString());
+        if (auto* o = patchVar.getDynamicObject())
+            if (auto* nodesArr = o->getProperty("nodes").getArray())
+                for (const auto& n : *nodesArr)
+                    if (dawexport::detail::extractNodeInfo(n).format.isEmpty()
+                        || dawexport::detail::extractNodeInfo(n).format.equalsIgnoreCase("VST3"))
+                        ++expectedVst3;
+    }
+    else
+    {
+        auto parsed = flstudio::parseAnyDawFile(inFile);
+        dawexport::enrichParsedFstFromCache(parsed);
+        if (!parsed.valid || parsed.plugins.empty())
+        {
+            printf("EXPORT TEST FAIL: could not parse input %s (%s)\n",
+                   inputPath.toRawUTF8(), parsed.error.toRawUTF8());
+            return 2;
+        }
+        patchVar = flstudio::parsedFstToPatchVar(parsed, &list);
+        for (const auto& p : parsed.plugins)
+            if (!p.isVst2) ++expectedVst3;
     }
 
-    const auto patchVar = flstudio::parsedFstToPatchVar(parsed, &list);
     auto* root = patchVar.getDynamicObject();
     auto* arr = root ? root->getProperty("nodes").getArray() : nullptr;
     if (arr == nullptr || arr->isEmpty())
     {
-        printf("EXPORT TEST FAIL: parsedFstToPatchVar produced empty nodes\n");
+        printf("EXPORT TEST FAIL: input produced empty nodes\n");
         return 3;
     }
 
@@ -247,34 +268,23 @@ int runExportRoundtripTest(const juce::String& fstPath)
     }
 
     const auto reparsed = flstudio::parseFstData(fstOut.getData(), fstOut.getSize());
-    if (!reparsed.valid)
+    const int expectedFst = juce::jmin(10, expectedVst3);
+    if (!reparsed.valid || (int)reparsed.plugins.size() != expectedFst)
     {
-        printf("EXPORT TEST FAIL: reparse error: %s\n", reparsed.error.toRawUTF8());
+        printf("EXPORT TEST FAIL: FST roundtrip mismatch (got=%d expected=%d err=%s)\n",
+               (int)reparsed.plugins.size(), expectedFst, reparsed.error.toRawUTF8());
         return 5;
     }
-
-    int expectedVst3 = 0;
-    for (const auto& p : parsed.plugins)
-        if (!p.isVst2) ++expectedVst3;
-
-    printf("ROUNDTRIP FST: origVst3=%d reparsed=%d trackName=\"%s\" bytes=%d\n",
-           expectedVst3, (int)reparsed.plugins.size(), reparsed.trackName.toRawUTF8(), (int)fstOut.getSize());
-    if ((int)reparsed.plugins.size() != expectedVst3)
-    {
-        printf("EXPORT TEST FAIL: count mismatch\n");
-        return 6;
-    }
+    printf("ROUNDTRIP FST OK: %d VST3 slots, trackName=\"%s\", %d bytes\n",
+           (int)reparsed.plugins.size(), reparsed.trackName.toRawUTF8(), (int)fstOut.getSize());
 
     for (size_t i = 0; i < reparsed.plugins.size(); ++i)
     {
         const auto& rp = reparsed.plugins[i];
-        printf("  [%d] slot=\"%s\" tuid=%s bypass=%s stateB64Len=%d\n",
-               (int)i, rp.slotName.toRawUTF8(), rp.tuidHex.toRawUTF8(),
-               rp.bypass ? "true" : "false", rp.stateBase64.length());
         if (rp.tuidHex.length() != 32 || rp.stateBase64.isEmpty())
         {
-            printf("EXPORT TEST FAIL: missing tuid or state on slot %d\n", (int)i);
-            return 7;
+            printf("EXPORT TEST FAIL: missing tuid or state on FST slot %d\n", (int)i);
+            return 6;
         }
     }
 
@@ -282,40 +292,100 @@ int runExportRoundtripTest(const juce::String& fstPath)
     if (!dawexport::buildFlStudioSingleFst(arr->getReference(0), singleFst, err))
     {
         printf("EXPORT TEST FAIL: single fst: %s\n", err.toRawUTF8());
-        return 8;
+        return 7;
     }
     const auto reparsedSingle = flstudio::parseFstData(singleFst.getData(), singleFst.getSize());
     if (!reparsedSingle.valid || reparsedSingle.plugins.size() != 1 || reparsedSingle.plugins[0].stateBase64.isEmpty())
     {
         printf("EXPORT TEST FAIL: single fst roundtrip failed\n");
-        return 9;
+        return 8;
     }
     printf("SINGLE FST OK: %s (%d bytes)\n", reparsedSingle.plugins[0].slotName.toRawUTF8(), (int)singleFst.getSize());
 
+    // VST3 .vstpreset roundtrip
     juce::MemoryBlock vstPreset;
     if (!dawexport::buildSteinbergVstPreset(arr->getReference(0), vstPreset, err)
         || vstPreset.getSize() < 48 || std::memcmp(vstPreset.getData(), "VST3", 4) != 0)
     {
         printf("EXPORT TEST FAIL: .vstpreset: %s\n", err.toRawUTF8());
+        return 9;
+    }
+    const auto reparsedVp = flstudio::parseVstPresetData(vstPreset.getData(), vstPreset.getSize(), "Preset");
+    if (!reparsedVp.valid || reparsedVp.plugins.size() != 1
+        || reparsedVp.plugins[0].fuidHex.length() != 32 || reparsedVp.plugins[0].stateBase64.isEmpty())
+    {
+        printf("EXPORT TEST FAIL: .vstpreset roundtrip (%s)\n", reparsedVp.error.toRawUTF8());
         return 10;
     }
-    printf("VSTPRESET OK: %d bytes\n", (int)vstPreset.getSize());
+    printf("ROUNDTRIP VSTPRESET OK: fuid=%s stateB64=%d (%d bytes)\n",
+           reparsedVp.plugins[0].fuidHex.toRawUTF8(), reparsedVp.plugins[0].stateBase64.length(), (int)vstPreset.getSize());
 
+    // REAPER .RfxChain roundtrip
     juce::String rfx;
     if (!dawexport::buildReaperRfxChain(patchVar, rfx, err) || !rfx.contains("<VST \"VST3:"))
     {
         printf("EXPORT TEST FAIL: .RfxChain: %s\n", err.toRawUTF8());
         return 11;
     }
-    printf("RFXCHAIN OK: %d chars\n", rfx.length());
-
-    const auto dragFiles = dawexport::prepareDragFiles(patchVar, dawexport::TargetFormat::flStudioFst, err, -1);
-    if (dragFiles.isEmpty() || !juce::File(dragFiles[0]).existsAsFile())
+    const auto reparsedRfx = flstudio::parseReaperRfxChainData(rfx.toRawUTF8(), rfx.getNumBytesAsUTF8(), "ReaperChain");
+    if (!reparsedRfx.valid || (int)reparsedRfx.plugins.size() != expectedVst3)
     {
-        printf("EXPORT TEST FAIL: prepareDragFiles: %s\n", err.toRawUTF8());
+        printf("EXPORT TEST FAIL: .RfxChain roundtrip got=%d expected=%d err=%s\n",
+               (int)reparsedRfx.plugins.size(), expectedVst3, reparsedRfx.error.toRawUTF8());
         return 12;
     }
-    printf("PREPARE DRAG OK: %s\n", dragFiles[0].toRawUTF8());
+    for (size_t i = 0; i < reparsedRfx.plugins.size(); ++i)
+    {
+        if (reparsedRfx.plugins[i].fuidHex.length() != 32 || reparsedRfx.plugins[i].stateBase64.isEmpty())
+        {
+            printf("EXPORT TEST FAIL: missing fuid or state in .RfxChain slot %d\n", (int)i);
+            return 13;
+        }
+    }
+    printf("ROUNDTRIP RFXCHAIN OK: %d plugins, %d chars\n", (int)reparsedRfx.plugins.size(), rfx.length());
+
+    // Ableton Live .adg roundtrip (verify GZIP 0x1F 0x8B header + full XML decode)
+    juce::MemoryBlock adgOut;
+    if (!dawexport::buildAbletonAdgRack(patchVar, adgOut, err) || adgOut.getSize() < 20)
+    {
+        printf("EXPORT TEST FAIL: .adg: %s\n", err.toRawUTF8());
+        return 14;
+    }
+    const auto* adgBytes = static_cast<const uint8_t*>(adgOut.getData());
+    if (adgBytes[0] != 0x1f || adgBytes[1] != 0x8b)
+    {
+        printf("EXPORT TEST FAIL: .adg missing GZIP magic (got %02x %02x)\n", adgBytes[0], adgBytes[1]);
+        return 15;
+    }
+    const auto reparsedAdg = flstudio::parseAbletonAdgData(adgOut.getData(), adgOut.getSize(), "AbletonRack");
+    if (!reparsedAdg.valid || (int)reparsedAdg.plugins.size() != expectedVst3)
+    {
+        printf("EXPORT TEST FAIL: .adg roundtrip got=%d expected=%d err=%s\n",
+               (int)reparsedAdg.plugins.size(), expectedVst3, reparsedAdg.error.toRawUTF8());
+        return 16;
+    }
+    for (size_t i = 0; i < reparsedAdg.plugins.size(); ++i)
+    {
+        if (reparsedAdg.plugins[i].fuidHex.length() != 32 || reparsedAdg.plugins[i].stateBase64.isEmpty())
+        {
+            printf("EXPORT TEST FAIL: missing fuid or state in .adg slot %d\n", (int)i);
+            return 17;
+        }
+    }
+    printf("ROUNDTRIP ABLETON ADG OK: %d plugins, %d gz bytes (magic 1f 8b)\n",
+           (int)reparsedAdg.plugins.size(), (int)adgOut.getSize());
+
+    for (auto fmt : { dawexport::TargetFormat::flStudioFst, dawexport::TargetFormat::reaperRfxChain,
+                      dawexport::TargetFormat::abletonAdg, dawexport::TargetFormat::vstPreset })
+    {
+        const auto dragFiles = dawexport::prepareDragFiles(patchVar, fmt, err, -1);
+        if (dragFiles.isEmpty() || !juce::File(dragFiles[0]).existsAsFile())
+        {
+            printf("EXPORT TEST FAIL: prepareDragFiles fmt=%d (%s)\n", (int)fmt, err.toRawUTF8());
+            return 18;
+        }
+    }
+    printf("ALL 4 DAW FORMAT PREPARE DRAG TESTS PASSED!\n");
     return 0;
 }
 } // namespace

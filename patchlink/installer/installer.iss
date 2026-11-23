@@ -3,7 +3,7 @@
 ; Compile: ISCC.exe installer.iss   (run from patchlink/installer/)
 
 #define MyAppName "PatchLink"
-#define MyAppVersion "1.5.1"
+#define MyAppVersion "1.6.0"
 #define MyAppPublisher "leve"
 #define MyAppURL "https://gg.trenas.fr/patchdrop/"
 
@@ -39,7 +39,7 @@ Name: "full"; Description: "Full installation (recommended)"
 Name: "custom"; Description: "Custom installation"; Flags: iscustom
 
 [Components]
-Name: "vst3"; Description: "VST3 plugin  (FL Studio / Ableton)"; Types: full custom; Flags: fixed
+Name: "vst3"; Description: "VST3 plugin  (FL Studio / REAPER / Ableton / Cubase / Studio One)"; Types: full custom; Flags: fixed
 Name: "standalone"; Description: "Standalone app  (no DAW needed)"; Types: full custom
 
 [Tasks]
@@ -73,7 +73,7 @@ begin
     'Where things go', 'No wrong answers here.',
     'VST3 plugins MUST live in the shared system folder, so the installer puts PatchLink there automatically:' + #13#10 +
     '  C:\Program Files\Common Files\VST3\PatchLink.vst3' + #13#10#13#10 +
-    'Your DAW finds it on the next plugin rescan (FL: Plugin Manager / Ableton: Preferences > Plug-ins).' + #13#10#13#10 +
+    'Your DAW finds it on the next plugin rescan (FL / REAPER / Ableton / Cubase / Studio One).' + #13#10#13#10 +
     'Existing installs are replaced, your saved patches and share codes are untouched.',
     '');
 end;

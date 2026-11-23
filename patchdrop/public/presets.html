@@ -29,14 +29,14 @@
     <a href="presets.html" class="active">Presets</a>
     <a href="#publish">Publish</a>
   </nav>
-  <a class="btn small secondary" href="index.html#download">v1.5.1</a>
+  <a class="btn small secondary" href="index.html#download">v1.6.0</a>
 </header>
 
 <main id="top">
   <section class="section page-head">
     <div class="hero-eyebrow">PATCHDROP // COMMUNITY PRESET DIRECTORY</div>
     <h1>Community presets</h1>
-    <p class="sub">Browse chains shared by other producers. Filter by category, click any <span class="mono">#hashtag</span>, or search by VST3 plugin name. <b>Two-step drag &amp; drop:</b> drag any preset card (or <b>FL .fst</b>) from this website into <b>PatchLink</b>, then drag from <b>PatchLink</b> straight into your DAW (or click <b>FL .fst</b> to download).</p>
+    <p class="sub">Browse chains shared by other producers. Filter by category, click any <span class="mono">#hashtag</span>, search by VST3 plugin name, or download directly as <span class="mono">.fst</span>, <span class="mono">.RfxChain</span>, <span class="mono">.adg</span>, or <span class="mono">.vstpreset</span>. <b>Two-step drag &amp; drop:</b> drag any preset card from this website into <b>PatchLink</b>, then drag from <b>PatchLink</b> straight into your DAW.</p>
 
     <div class="filter-bar">
       <div class="search">
@@ -58,8 +58,8 @@
   </section>
 
   <section id="publish" class="section">
-    <h2>Publish from file or drag &amp; drop</h2>
-    <p class="sub">Drop an exported <span class="mono">.patchlink</span> or FL Studio <span class="mono">.fst</span> file anywhere onto this window, pick a category and <span class="mono">#hashtags</span>, and generate a 6-character share code right in your browser.</p>
+    <h2>Publish from any DAW file or drag &amp; drop</h2>
+    <p class="sub">Drop an <span class="mono">.RfxChain</span>, Ableton <span class="mono">.adg</span> / <span class="mono">.adv</span>, FL Studio <span class="mono">.fst</span>, <span class="mono">.vstpreset</span> / <span class="mono">.fxchainpreset</span>, or <span class="mono">.patchlink</span> file anywhere onto this window, add a category and <span class="mono">#hashtags</span>, and generate a share code in your browser.</p>
     <form id="pubform" class="pub">
       <div class="pub-row">
         <label>Title<input id="f-title" maxlength="80" placeholder="Lead vocal chain" required></label>
@@ -81,8 +81,8 @@
       </div>
       <label>Description<input id="f-desc" maxlength="500" placeholder="Pro-Q 3 -> CLA-76 -> Pro-DS"></label>
       <div id="drop-box" class="drop-hint-box">
-        <label>.patchlink or FL Studio .fst file<input id="f-file" type="file" accept=".patchlink,.fst,.json,application/json" required></label>
-        <div id="drop-summary" class="drop-summary">Or drag &amp; drop any .fst / .patchlink file anywhere on this page.</div>
+        <label>DAW preset or chain file<input id="f-file" type="file" accept=".patchlink,.fst,.rfxchain,.rpp,.adg,.adv,.als,.vstpreset,.bwpreset,.fxchainpreset,.fxchain,.multipreset,.json,application/json" required></label>
+        <div id="drop-summary" class="drop-summary">Or drag &amp; drop .RfxChain, .adg, .fst, .vstpreset, or .patchlink anywhere on this page.</div>
       </div>
       <label class="check"><input id="f-public" type="checkbox" checked> List publicly in community presets above</label>
       <button class="btn big" type="submit">Upload and generate code</button>
@@ -91,7 +91,7 @@
   </section>
 </main>
 
-<footer>PATCHDROP · PatchLink v1.5.1 by leve · <a href="index.html">Back to main site</a> · <a href="#top">Top</a></footer>
+<footer>PATCHDROP · PatchLink v1.6.0 by leve · <a href="index.html">Back to main site</a> · <a href="#top">Top</a></footer>
 <script src="app.js"></script>
 </body>
 </html>

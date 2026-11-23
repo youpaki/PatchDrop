@@ -3,2323 +3,3228 @@
     "64d69c5c": {
       "tuid": "41545356627461356d706c6974756265",
       "flPlugin": "AmpliTube 5",
-      "vendor": "IK Multimedia"
+      "vendor": "IK Multimedia",
+      "fuid": "56535441746235616D706C6974756265",
+      "reaperHash": 1566108953,
+      "file": "C:\\Program Files\\Common Files\\VST3\\AmpliTube 5.vst3"
     },
     "0a026f84": {
       "tuid": "01efcdab8291ebfa4e4453504154474a",
       "flPlugin": "Archetype Gojira",
       "vendor": "Neural DSP",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Neural DSP\\Archetype Gojira.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Neural DSP\\Archetype Gojira.vst3",
+      "fuid": "ABCDEF019182FAEB4E4453504154474A",
+      "reaperHash": 34721016
     },
     "bfe085c2": {
       "tuid": "535453564154614d7564696f74726163",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "AudioTrack Mono",
+      "vendor": "Waves",
+      "fuid": "5653545354414D617564696F74726163"
     },
     "bff70bc2": {
       "tuid": "53545356415461537564696f74726163",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "AudioTrack Stereo",
+      "vendor": "Waves",
+      "fuid": "56535453544153617564696F74726163"
     },
     "77854cb3": {
       "tuid": "41545356654b617975746f2d6b657900",
       "flPlugin": "Auto-Key",
       "vendor": "Antares",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Antares\\Auto-Key.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Antares\\Auto-Key.vst3",
+      "fuid": "565354414B65796175746F2D6B657900",
+      "reaperHash": 991503367
     },
     "3a3eac18": {
       "tuid": "415453566154616375746f2d74756e65",
       "flPlugin": "Auto-Tune Access",
       "vendor": "Antares",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Antares\\Auto-Tune Access.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Antares\\Auto-Tune Access.vst3",
+      "fuid": "565354415461636175746F2D74756E65",
+      "reaperHash": 320553643
     },
     "527aa78d": {
       "tuid": "3fb3c20003e25744ba45e1bed447b693",
       "flPlugin": "Auto-Tune Artist",
       "vendor": "Antares",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Antares\\Auto-Tune Artist.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Antares\\Auto-Tune Artist.vst3",
+      "fuid": "00C2B33FE2034457BA45E1BED447B693",
+      "reaperHash": 1267761127
     },
     "16677ef8": {
       "tuid": "415453566150416e75746f2d54756e65",
       "flPlugin": "Auto-Tune EFX",
       "vendor": "Antares",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Antares\\Auto-Tune EFX.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Antares\\Auto-Tune EFX.vst3",
+      "fuid": "5653544150616E4175746F2D54756E65",
+      "reaperHash": 596640360
     },
     "7f9981f8": {
       "tuid": "415453563854413175746f2d54756e65",
       "flPlugin": "Auto-Tune",
       "vendor": "Antares",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Antares\\Auto-Tune.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Antares\\Auto-Tune.vst3",
+      "fuid": "565354415438314175746F2D54756E65",
+      "reaperHash": 2130760944
     },
     "db52ce39": {
       "tuid": "01efcdab8291ebfa4477766542736674",
       "flPlugin": "BodeShifter",
       "vendor": "Dreamwave",
-      "file": "C:\\Program Files\\Common Files\\VST3\\BodeShifter.vst3\\Contents\\x86_64-win\\BodeShifter.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\BodeShifter.vst3\\Contents\\x86_64-win\\BodeShifter.vst3",
+      "fuid": "ABCDEF019182FAEB4477766542736674",
+      "reaperHash": 548660044
     },
     "44952fdd": {
       "tuid": "666675424772696c7463682e52766448",
       "flPlugin": "Buffr Glitch",
       "vendor": "Robbert van der Helm",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Buffr Glitch.vst3\\Contents\\x86_64-win\\Buffr Glitch.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Buffr Glitch.vst3\\Contents\\x86_64-win\\Buffr Glitch.vst3",
+      "fuid": "4275666672476C697463682E52766448",
+      "reaperHash": 2101594673
     },
     "65e94c5e": {
       "tuid": "43545356504d634d3120636f6d70206d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "C1 comp Mono",
+      "vendor": "Waves",
+      "fuid": "565354434D504D633120636F6D70206D",
+      "reaperHash": 1346150377,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "65ffd264": {
       "tuid": "43545356504d63533120636f6d702073",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "C1 comp Stereo",
+      "vendor": "Waves",
+      "fuid": "565354434D5053633120636F6D702073",
+      "reaperHash": 123829597,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "dca65958": {
       "tuid": "435453564d4f634d3120636f6d702d67",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "C1 comp-gate Mono",
+      "vendor": "Waves",
+      "fuid": "565354434F4D4D633120636F6D702D67",
+      "reaperHash": 191070437,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "dcbcdf58": {
       "tuid": "435453564d4f63533120636f6d702d67",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "C1 comp-gate Stereo",
+      "vendor": "Waves",
+      "fuid": "565354434F4D53633120636F6D702D67",
+      "reaperHash": 1327027067,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "191c5964": {
       "tuid": "435453564331634d3120636f6d702d73",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "C1 comp-sc Mono",
+      "vendor": "Waves",
+      "fuid": "5653544331434D633120636F6D702D73",
+      "reaperHash": 174743757,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "1932df64": {
       "tuid": "43545356433163533120636f6d702d73",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "C1 comp-sc Stereo",
+      "vendor": "Waves",
+      "fuid": "56535443314353633120636F6D702D73",
+      "reaperHash": 248467731,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "6fe49828": {
       "tuid": "475453565441634d312067617465206d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "C1 gate Mono",
+      "vendor": "Waves",
+      "fuid": "5653544741544D63312067617465206D"
     },
     "6ffb1e2e": {
       "tuid": "47545356544163533120676174652073",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "C1 gate Stereo",
+      "vendor": "Waves",
+      "fuid": "56535447415453633120676174652073"
     },
     "bfaad650": {
       "tuid": "445453565145634d34206d6f6e6f0000",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "C4 Mono",
+      "vendor": "Waves",
+      "fuid": "5653544445514D6334206D6F6E6F0000",
+      "reaperHash": 370384141,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "b6c57c5a": {
       "tuid": "4454535651456353342073746572656f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "C4 Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544445515363342073746572656F",
+      "reaperHash": 763288060,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "9028332f": {
       "tuid": "43545356544e6353656e746572207374",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Center Stereo",
+      "vendor": "Waves",
+      "fuid": "565354434E545363656E746572207374",
+      "reaperHash": 576218106,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "473a9783": {
       "tuid": "01efcdab8291ebfa586e746843726d61",
       "flPlugin": "Chroma",
       "vendor": "Xynth Audio",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Chroma.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Chroma.vst3",
+      "fuid": "ABCDEF019182FAEB586E746843726D61",
+      "reaperHash": 1307306188
     },
     "794d04fe": {
       "tuid": "736972435070756c67696e527664482e",
       "flPlugin": "Crisp",
       "vendor": "Robbert van der Helm",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Crisp.vst3\\Contents\\x86_64-win\\Crisp.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Crisp.vst3\\Contents\\x86_64-win\\Crisp.vst3",
+      "fuid": "4372697370506C7567696E527664482E",
+      "reaperHash": 878385771
     },
     "578d6d1c": {
       "tuid": "736f72436f73657672527664482e2e2e",
       "flPlugin": "Crossover",
       "vendor": "Robbert van der Helm",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Crossover.vst3\\Contents\\x86_64-win\\Crossover.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Crossover.vst3\\Contents\\x86_64-win\\Crossover.vst3",
+      "fuid": "43726F73736F766572527664482E2E2E",
+      "reaperHash": 581943433
     },
     "9a3fa0ac": {
       "tuid": "435453566479634c796d617469637320",
       "flPlugin": "Cymatics Diablo Lite",
-      "vendor": "Cymatics"
+      "vendor": "Cymatics",
+      "fuid": "5653544379644C63796D617469637320",
+      "reaperHash": 616503979,
+      "file": "C:\\Program Files\\Common Files\\VST3\\Cymatics Diablo Lite.vst3"
     },
     "fff9b4fa": {
       "tuid": "445453564153644d656573736572206d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "DeEsser Mono",
+      "vendor": "Waves",
+      "fuid": "5653544453414D64656573736572206D",
+      "reaperHash": 2114649267,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "00103b00": {
       "tuid": "44545356415364536565737365722073",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "DeEsser Stereo",
+      "vendor": "Waves",
+      "fuid": "56535444534153646565737365722073",
+      "reaperHash": 1549465959,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "7dbd5445": {
       "tuid": "01efcdab8291ebfa4162726e44696769",
       "flPlugin": "Digitalis",
       "vendor": "Aberrant DSP",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Digitalis.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Digitalis.vst3",
+      "fuid": "ABCDEF019182FAEB4162726E44696769",
+      "reaperHash": 2781033
     },
     "f20d03fc": {
       "tuid": "706f6944657350726c7567527664482e",
       "flPlugin": "Diopser",
       "vendor": "Robbert van der Helm",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Diopser.vst3\\Contents\\x86_64-win\\Diopser.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Diopser.vst3\\Contents\\x86_64-win\\Diopser.vst3",
+      "fuid": "44696F70736572506C7567527664482E",
+      "reaperHash": 19504833
     },
     "9e3757ce": {
       "tuid": "01efcdab8291ebfa4270723044317274",
       "flPlugin": "DirtyFilter",
-      "vendor": "Bedroom Producers Blog"
+      "vendor": "Bedroom Producers Blog",
+      "fuid": "ABCDEF019182FAEB4270723044317274",
+      "reaperHash": 1952020688,
+      "file": "C:\\Program Files\\Common Files\\VST3\\DirtyFilter.vst3"
     },
     "f477a221": {
       "tuid": "44545356415064586f70706c6572206d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Doppler Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "56535444504158646F70706C6572206D",
+      "reaperHash": 627597958,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "f464dd27": {
       "tuid": "44545356415064536f70706c65722073",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Doppler Stereo",
+      "vendor": "Waves",
+      "fuid": "56535444504153646F70706C65722073",
+      "reaperHash": 2075822561,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "b0caa4e1": {
       "tuid": "57545356324464586f75626c65723220",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Doubler2 Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "56535457443258646F75626C65723220"
     },
     "b0a159e1": {
       "tuid": "575453563244644d6f75626c65723220",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Doubler2 Mono",
+      "vendor": "Waves",
+      "fuid": "5653545744324D646F75626C65723220"
     },
     "b0b7dfe1": {
       "tuid": "57545356324464536f75626c65723220",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Doubler2 Stereo",
+      "vendor": "Waves",
+      "fuid": "56535457443253646F75626C65723220"
     },
     "b84ca6e1": {
       "tuid": "57545356344464586f75626c65723420",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Doubler4 Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "56535457443458646F75626C65723420"
     },
     "b8235be1": {
       "tuid": "575453563444644d6f75626c65723420",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Doubler4 Mono",
+      "vendor": "Waves",
+      "fuid": "5653545744344D646F75626C65723420"
     },
     "b839e1e1": {
       "tuid": "57545356344464536f75626c65723420",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Doubler4 Stereo",
+      "vendor": "Waves",
+      "fuid": "56535457443453646F75626C65723420"
     },
     "af662ba0": {
       "tuid": "01efcdab8291ebfa4361626238333038",
       "flPlugin": "Driftmaker",
       "vendor": "Puremagnetik",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Driftmaker\\Driftmaker.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Driftmaker\\Driftmaker.vst3",
+      "fuid": "ABCDEF019182FAEB4361626238333038",
+      "reaperHash": 1582589776
     },
     "becdfe57": {
       "tuid": "45545356444b654d6b72616d65722064",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "EKramer DR Mono",
+      "vendor": "Waves",
+      "fuid": "565354454B444D656B72616D65722064",
+      "reaperHash": 689690790,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "bee48457": {
       "tuid": "45545356444b65536b72616d65722064",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "EKramer DR Stereo",
+      "vendor": "Waves",
+      "fuid": "565354454B4453656B72616D65722064",
+      "reaperHash": 803553072,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "222015cb": {
       "tuid": "435453564c46654d6d6f2d6632206d6f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "EMO-F2 Mono",
+      "vendor": "Waves",
+      "fuid": "56535443464C4D656D6F2D6632206D6F",
+      "reaperHash": 2064578146,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "2236a1d0": {
       "tuid": "435453564c4665536d6f2d6632207374",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "EMO-F2 Stereo",
+      "vendor": "Waves",
+      "fuid": "56535443464C53656D6F2D6632207374",
+      "reaperHash": 1320357171,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "85b053dd": {
       "tuid": "535453564749654d6d6f2d67656e6572",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "EMO-Generator Mono",
+      "vendor": "Waves",
+      "fuid": "5653545349474D656D6F2D67656E6572"
     },
     "85c6d9dd": {
       "tuid": "53545356474965536d6f2d67656e6572",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "EMO-Generator Stereo",
+      "vendor": "Waves",
+      "fuid": "56535453494753656D6F2D67656E6572"
     },
     "150ca2d6": {
       "tuid": "4d5453563451654d6d6f2d7134206d6f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "EMO-Q4 Mono",
+      "vendor": "Waves",
+      "fuid": "5653544D51344D656D6F2D7134206D6F"
     },
     "15232edb": {
       "tuid": "4d545356345165536d6f2d7134207374",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "EMO-Q4 Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544D513453656D6F2D7134207374"
     },
     "64d25062": {
       "tuid": "45545356474e65586e69676d61206d6f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Enigma Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "565354454E4758656E69676D61206D6F",
+      "reaperHash": 1822042413,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "64bf9167": {
       "tuid": "45545356474e65536e69676d61207374",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Enigma Stereo",
+      "vendor": "Waves",
+      "fuid": "565354454E4753656E69676D61207374",
+      "reaperHash": 840337987,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "2d3f434b": {
       "tuid": "f2a24ccd9800ac4900439bb9001cb96a",
       "flPlugin": "Fresh Air",
       "vendor": "Slate Digital",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Slate Digital\\Fresh Air.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Slate Digital\\Fresh Air.vst3",
+      "fuid": "CD4CA2F2009849AC00439BB9001CB96A",
+      "reaperHash": 1158173615
     },
     "10330df1": {
       "tuid": "475453563241674d747220616d702032",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GTR Amp 2Cab Mono",
+      "vendor": "Waves",
+      "fuid": "5653544741324D67747220616D702032",
+      "reaperHash": 2060298040,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "75b7592c": {
       "tuid": "475453564d416758747220616d70206d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GTR Amp Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "56535447414D5867747220616D70206D"
     },
     "758e0e2c": {
       "tuid": "475453564d41674d747220616d70206d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GTR Amp Mono",
+      "vendor": "Waves",
+      "fuid": "56535447414D4D67747220616D70206D"
     },
     "75a49432": {
       "tuid": "475453564d416753747220616d702073",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GTR Amp Stereo",
+      "vendor": "Waves",
+      "fuid": "56535447414D5367747220616D702073"
     },
     "995ba85d": {
       "tuid": "475453563243675874722073746f6d70",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GTR Stomp 2 Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "565354474332586774722073746F6D70",
+      "reaperHash": 1594086796,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "99325d5d": {
       "tuid": "475453563243674d74722073746f6d70",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GTR Stomp 2 Mono",
+      "vendor": "Waves",
+      "fuid": "5653544743324D6774722073746F6D70",
+      "reaperHash": 1567459815,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "9948e35d": {
       "tuid": "475453563243675374722073746f6d70",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GTR Stomp 2 Stereo",
+      "vendor": "Waves",
+      "fuid": "565354474332536774722073746F6D70",
+      "reaperHash": 382796677,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "a0dda85d": {
       "tuid": "475453563443675874722073746f6d70",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GTR Stomp 4 Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "565354474334586774722073746F6D70",
+      "reaperHash": 1449639302,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "a0b45d5d": {
       "tuid": "475453563443674d74722073746f6d70",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GTR Stomp 4 Mono",
+      "vendor": "Waves",
+      "fuid": "5653544743344D6774722073746F6D70",
+      "reaperHash": 1351630809,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "a0cae35d": {
       "tuid": "475453563443675374722073746f6d70",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GTR Stomp 4 Stereo",
+      "vendor": "Waves",
+      "fuid": "565354474334536774722073746F6D70",
+      "reaperHash": 1582781123,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "0277a85d": {
       "tuid": "475453564e43675874722073746f6d70",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GTR Stomp 6 Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "56535447434E586774722073746F6D70"
     },
     "024e5d5d": {
       "tuid": "475453564e43674d74722073746f6d70",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GTR Stomp 6 Mono",
+      "vendor": "Waves",
+      "fuid": "56535447434E4D6774722073746F6D70"
     },
     "0264e35d": {
       "tuid": "475453564e43675374722073746f6d70",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GTR Stomp 6 Stereo",
+      "vendor": "Waves",
+      "fuid": "56535447434E536774722073746F6D70"
     },
     "4cb6a72c": {
       "tuid": "475453564d566758747220746f6f6c20",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GTR Tool Rack Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "56535447564D5867747220746F6F6C20"
     },
     "4ca3e22c": {
       "tuid": "475453564d566753747220746f6f6c20",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GTR Tool Rack Stereo",
+      "vendor": "Waves",
+      "fuid": "56535447564D5367747220746F6F6C20"
     },
     "e8f83e51": {
       "tuid": "54545356334e674d74722074756e6572",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GTR Tuner Mono",
+      "vendor": "Waves",
+      "fuid": "565354544E334D6774722074756E6572"
     },
     "9a9f7ed6": {
       "tuid": "475453564d52674d7720746f6e656365",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GW ToneCentric Mono",
+      "vendor": "Waves",
+      "fuid": "56535447524D4D677720746F6E656365"
     },
     "9ab604d6": {
       "tuid": "475453564d5267537720746f6e656365",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "GW ToneCentric Stereo",
+      "vendor": "Waves",
+      "fuid": "56535447524D53677720746F6E656365"
     },
     "fb691fe7": {
       "tuid": "43545356414c684d2d636f6d70206d6f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "H-Comp Mono",
+      "vendor": "Waves",
+      "fuid": "565354434C414D682D636F6D70206D6F",
+      "reaperHash": 623476617,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "fb7fabec": {
       "tuid": "43545356414c68532d636f6d70207374",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "H-Comp Stereo",
+      "vendor": "Waves",
+      "fuid": "565354434C4153682D636F6D70207374",
+      "reaperHash": 103137592,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "6e4e2da1": {
       "tuid": "48545356444268582d64656c6179206d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "H-Delay Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "56535448424458682D64656C6179206D"
     },
     "6e24e2a1": {
       "tuid": "485453564442684d2d64656c6179206d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "H-Delay Mono",
+      "vendor": "Waves",
+      "fuid": "5653544842444D682D64656C6179206D"
     },
     "6e3b68a7": {
       "tuid": "48545356444268532d64656c61792073",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "H-Delay Stereo",
+      "vendor": "Waves",
+      "fuid": "56535448424453682D64656C61792073"
     },
     "405b0955": {
       "tuid": "4354535645306958722d6c206d6f6e6f",
-      "flPlugin": "WaveShell2-VST3 12.0_x64",
-      "vendor": "Waves"
+      "flPlugin": "IR-L Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544330455869722D6C206D6F6E6F",
+      "reaperHash": 769038137,
+      "file": "WaveShell2_VST3_12.0_x64.vst3"
     },
     "4031be55": {
       "tuid": "435453564530694d722d6c206d6f6e6f",
-      "flPlugin": "WaveShell2-VST3 12.0_x64",
-      "vendor": "Waves"
+      "flPlugin": "IR-L Mono",
+      "vendor": "Waves",
+      "fuid": "5653544330454D69722D6C206D6F6E6F",
+      "reaperHash": 1588611046,
+      "file": "WaveShell2_VST3_12.0_x64.vst3"
     },
     "383f3c4f": {
       "tuid": "4354535645306953722d6c2065666669",
-      "flPlugin": "WaveShell2-VST3 12.0_x64",
-      "vendor": "Waves"
+      "flPlugin": "IR-L efficient Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544330455369722D6C2065666669",
+      "reaperHash": 217572345,
+      "file": "WaveShell2_VST3_12.0_x64.vst3"
     },
     "3d0f4252": {
       "tuid": "4354535646306953722d6c2066756c6c",
-      "flPlugin": "WaveShell2-VST3 12.0_x64",
-      "vendor": "Waves"
+      "flPlugin": "IR-L full Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544330465369722D6C2066756C6C",
+      "reaperHash": 993500261,
+      "file": "WaveShell2_VST3_12.0_x64.vst3"
     },
     "e342cd2a": {
       "tuid": "01efcdab8291ebfa447776654a636565",
       "flPlugin": "Juicee",
       "vendor": "Dreamwave",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Juicee.vst3\\Contents\\x86_64-win\\Juicee.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Juicee.vst3\\Contents\\x86_64-win\\Juicee.vst3",
+      "fuid": "ABCDEF019182FAEB447776654A636565",
+      "reaperHash": 710871404
     },
     "191aefbc": {
       "tuid": "4c54535643316c4d31206c696d697465",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "L1 limiter Mono",
+      "vendor": "Waves",
+      "fuid": "5653544C31434D6C31206C696D697465"
     },
     "193175bc": {
       "tuid": "4c54535643316c5331206c696d697465",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "L1 limiter Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544C3143536C31206C696D697465"
     },
     "56929f2c": {
       "tuid": "4c5453564d496c31312b20756c747261",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "L1+ Ultramaximizer Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544C494D316C312B20756C747261"
     },
     "1faa9b11": {
       "tuid": "4c5453564d326c4d32206d6f6e6f0000",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "L2 Mono",
+      "vendor": "Waves",
+      "fuid": "5653544C324D4D6C32206D6F6E6F0000"
     },
     "16c5411b": {
       "tuid": "4c5453564d326c53322073746572656f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "L2 Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544C324D536C322073746572656F"
     },
     "08f30538": {
       "tuid": "4c54535650336c4d33206d756c74696d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "L3 MultiMaximizer Mono",
+      "vendor": "Waves",
+      "fuid": "5653544C33504D6C33206D756C74696D"
     },
     "09098b38": {
       "tuid": "4c54535650336c5333206d756c74696d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "L3 MultiMaximizer Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544C3350536C33206D756C74696D"
     },
     "ef28f421": {
       "tuid": "4c54535647336c4d3320756c7472616d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "L3 UltraMaximizer Mono",
+      "vendor": "Waves",
+      "fuid": "5653544C33474D6C3320756C7472616D"
     },
     "ef3f7a21": {
       "tuid": "4c54535647336c533320756c7472616d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "L3 UltraMaximizer Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544C3347536C3320756C7472616D"
     },
     "be81ab5a": {
       "tuid": "5254535650336c4d332d6c6c206d756c",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "L3-LL Multi Mono",
+      "vendor": "Waves",
+      "fuid": "5653545233504D6C332D6C6C206D756C"
     },
     "be98315a": {
       "tuid": "5254535650336c53332d6c6c206d756c",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "L3-LL Multi Stereo",
+      "vendor": "Waves",
+      "fuid": "565354523350536C332D6C6C206D756C"
     },
     "9cc0a262": {
       "tuid": "5254535647336c4d332d6c6c20756c74",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "L3-LL Ultra Mono",
+      "vendor": "Waves",
+      "fuid": "5653545233474D6C332D6C6C20756C74"
     },
     "9cd72862": {
       "tuid": "5254535647336c53332d6c6c20756c74",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "L3-LL Ultra Stereo",
+      "vendor": "Waves",
+      "fuid": "565354523347536C332D6C6C20756C74"
     },
     "b60315be": {
       "tuid": "4c54535641516c4d696e65712062726f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "LinEQ Broadband Mono",
+      "vendor": "Waves",
+      "fuid": "5653544C51414D6C696E65712062726F"
     },
     "b6199bbe": {
       "tuid": "4c54535641516c53696e65712062726f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "LinEQ Broadband Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544C5141536C696E65712062726F"
     },
     "f99f12c6": {
       "tuid": "4c54535653516c4d696e6571206c6f77",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "LinEQ Lowband Mono",
+      "vendor": "Waves",
+      "fuid": "5653544C51534D6C696E6571206C6F77"
     },
     "f9b598c6": {
       "tuid": "4c54535653516c53696e6571206c6f77",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "LinEQ Lowband Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544C5153536C696E6571206C6F77"
     },
     "fb0308ec": {
       "tuid": "4c54535635436c4d696e6d62206d6f6e",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "LinMB Mono",
+      "vendor": "Waves",
+      "fuid": "5653544C43354D6C696E6D62206D6F6E"
     },
     "fb1f93e3": {
       "tuid": "4c54535635436c53696e6d6220737465",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "LinMB Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544C4335536C696E6D6220737465"
     },
     "ec1a029e": {
       "tuid": "4c545356414f6c426f61697220352e30",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "LoAir 5.0/5.1",
+      "vendor": "Waves",
+      "fuid": "5653544C4F41426C6F61697220352E30"
     },
     "ebecf69f": {
       "tuid": "4c545356414f6c366f61697220352e31",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "LoAir 5.1",
+      "vendor": "Waves",
+      "fuid": "5653544C4F41366C6F61697220352E31"
     },
     "ec7b8edc": {
       "tuid": "4c545356414f6c4d6f616972206d6f6e",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "LoAir Mono",
+      "vendor": "Waves",
+      "fuid": "5653544C4F414D6C6F616972206D6F6E"
     },
     "ec9819d3": {
       "tuid": "4c545356414f6c536f61697220737465",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "LoAir Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544C4F41536C6F61697220737465"
     },
     "30a77aa9": {
       "tuid": "64756f4c656e73735761722e52766448",
       "flPlugin": "Loudness War Winner",
       "vendor": "Robbert van der Helm",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Loudness War Winner.vst3\\Contents\\x86_64-win\\Loudness War Winner.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Loudness War Winner.vst3\\Contents\\x86_64-win\\Loudness War Winner.vst3",
+      "fuid": "4C6F75646E6573735761722E52766448",
+      "reaperHash": 1152920700
     },
     "210b082b": {
       "tuid": "646c654d70616f724d6167634d616763",
       "flPlugin": "MAGC",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MAGC.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MAGC.vst3",
+      "fuid": "4D656C646170726F4D6167634D616763",
+      "reaperHash": 1212222073
     },
     "1d0bc9cb": {
       "tuid": "646c654d70616f724d416d704d416d70",
       "flPlugin": "MAmp",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MAmp.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MAmp.vst3",
+      "fuid": "4D656C646170726F4D416D704D416D70",
+      "reaperHash": 552671417
     },
     "1d0ac80b": {
       "tuid": "646c654d70616f724d4165624d416562",
       "flPlugin": "MAnalyzer",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MAnalyzer.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MAnalyzer.vst3",
+      "fuid": "4D656C646170726F4D4165624D416562",
+      "reaperHash": 2056371313
     },
     "1d0647eb": {
       "tuid": "646c654d70616f724d4141614d414161",
       "flPlugin": "MAutoAlign",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MAutoAlign.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MAutoAlign.vst3",
+      "fuid": "4D656C646170726F4D4141614D414161",
+      "reaperHash": 1203735321
     },
     "216d43eb": {
       "tuid": "646c654d70616f724d6479414d647941",
       "flPlugin": "MAutoDynamicEq",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MAutoDynamicEq.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MAutoDynamicEq.vst3",
+      "fuid": "4D656C646170726F4D6479414D647941",
+      "reaperHash": 1975821305
     },
     "1d0acb8b": {
       "tuid": "646c654d70616f724d41657e4d41657e",
       "flPlugin": "MAutoEqualizer",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MAutoEqualizer.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MAutoEqualizer.vst3",
+      "fuid": "4D656C646170726F4D41657E4D41657E",
+      "reaperHash": 1092676105
     },
     "1d0de20b": {
       "tuid": "646c654d70616f724d417e324d417e32",
       "flPlugin": "MAutoEqualizerLP",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MAutoEqualizerLP.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MAutoEqualizerLP.vst3",
+      "fuid": "4D656C646170726F4D417E324D417E32",
+      "reaperHash": 983201189
     },
     "210cc64b": {
       "tuid": "646c654d70616f724d6175544d617554",
       "flPlugin": "MAutoPitch",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Pitch Shift\\MAutoPitch.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Pitch Shift\\MAutoPitch.vst3",
+      "fuid": "4D656C646170726F4D6175544D617554",
+      "reaperHash": 1269386353
     },
     "210c888b": {
       "tuid": "646c654d70616f724d6173664d617366",
       "flPlugin": "MAutoStereoFix",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MAutoStereoFix.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MAutoStereoFix.vst3",
+      "fuid": "4D656C646170726F4D6173664D617366",
+      "reaperHash": 589577733
     },
     "1d0cca8b": {
       "tuid": "646c654d70616f724d4175764d417576",
       "flPlugin": "MAutoVolume",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MAutoVolume.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MAutoVolume.vst3",
+      "fuid": "4D656C646170726F4D4175764D417576",
+      "reaperHash": 217713657
     },
     "1d0ac1cb": {
       "tuid": "646c654d70616f724d4165304d416530",
       "flPlugin": "MAutopan",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MAutopan.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MAutopan.vst3",
+      "fuid": "4D656C646170726F4D4165304D416530",
+      "reaperHash": 2031542153
     },
     "63e5024b": {
       "tuid": "646c654d70616f726778373467783734",
       "flPlugin": "MAutopanMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MAutopanMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MAutopanMB.vst3",
+      "fuid": "4D656C646170726F6778373467783734",
+      "reaperHash": 803727817
     },
     "1d2a43cb": {
       "tuid": "646c654d70616f724d4261404d426140",
       "flPlugin": "MBandPass",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MBandPass.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MBandPass.vst3",
+      "fuid": "4D656C646170726F4D4261404D426140",
+      "reaperHash": 943283377
     },
     "1d2a4a2b": {
       "tuid": "646c654d70616f724d4261734d426173",
       "flPlugin": "MBassador",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MBassador.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MBassador.vst3",
+      "fuid": "4D656C646170726F4D4261734D426173",
+      "reaperHash": 1921398593
     },
     "1d2b448b": {
       "tuid": "646c654d70616f724d4269464d426946",
       "flPlugin": "MBitFun",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MBitFun.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MBitFun.vst3",
+      "fuid": "4D656C646170726F4D4269464D426946",
+      "reaperHash": 1979977713
     },
     "2126648b": {
       "tuid": "646c654d70616f724d6242464d624246",
       "flPlugin": "MBitFunMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MBitFunMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MBitFunMB.vst3",
+      "fuid": "4D656C646170726F4D6242464D624246",
+      "reaperHash": 197399001
     },
     "1d4684ab": {
       "tuid": "646c654d70616f724d4343474d434347",
       "flPlugin": "MCCGenerator",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MCCGenerator.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MCCGenerator.vst3",
+      "fuid": "4D656C646170726F4D4343474D434347",
+      "reaperHash": 1276117185
     },
     "1d4a480b": {
       "tuid": "646c654d70616f724d4361624d436162",
       "flPlugin": "MCabinet",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MCabinet.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MCabinet.vst3",
+      "fuid": "4D656C646170726F4D4361624D436162",
+      "reaperHash": 1780993513
     },
     "1d4a456b": {
       "tuid": "646c654d70616f724d43614d4d43614d",
       "flPlugin": "MCabinetMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MCabinetMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MCabinetMB.vst3",
+      "fuid": "4D656C646170726F4D43614D4D43614D",
+      "reaperHash": 683624273
     },
     "1d4b256b": {
       "tuid": "646c654d70616f724d43684d4d43684d",
       "flPlugin": "MChannelMatrix",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MChannelMatrix.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MChannelMatrix.vst3",
+      "fuid": "4D656C646170726F4D43684D4D43684D",
+      "reaperHash": 40636197
     },
     "1d4b2a0b": {
       "tuid": "646c654d70616f724d4368724d436872",
       "flPlugin": "MCharacter",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MCharacter.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MCharacter.vst3",
+      "fuid": "4D656C646170726F4D4368724D436872",
+      "reaperHash": 1811133037
     },
     "1d4b268b": {
       "tuid": "646c654d70616f724d4368564d436856",
       "flPlugin": "MCharmVerb",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MCharmVerb.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MCharmVerb.vst3",
+      "fuid": "4D656C646170726F4D4368564D436856",
+      "reaperHash": 1600390853
     },
     "1e8a88cb": {
       "tuid": "646c654d70616f724d4d63684d4d6368",
       "flPlugin": "MChorusMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MChorusMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MChorusMB.vst3",
+      "fuid": "4D656C646170726F4D4D63684D4D6368",
+      "reaperHash": 520478421
     },
     "1d4c096b": {
       "tuid": "646c654d70616f724d436f6d4d436f6d",
       "flPlugin": "MComb",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MComb.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MComb.vst3",
+      "fuid": "4D656C646170726F4D436F6D4D436F6D",
+      "reaperHash": 1592115929
     },
     "1e8689ab": {
       "tuid": "646c654d70616f724d4d436f4d4d436f",
       "flPlugin": "MCombMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MCombMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MCombMB.vst3",
+      "fuid": "4D656C646170726F4D4D436F4D4D436F",
+      "reaperHash": 1967951801
     },
     "1d4bc9cb": {
       "tuid": "646c654d70616f724d436d704d436d70",
       "flPlugin": "MCompare",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MCompare.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MCompare.vst3",
+      "fuid": "4D656C646170726F4D436D704D436D70",
+      "reaperHash": 144562105
     },
     "1d0ac1eb": {
       "tuid": "646c654d70616f724d4165314d416531",
       "flPlugin": "MCompressor",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MCompressor.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MCompressor.vst3",
+      "fuid": "4D656C646170726F4D4165314D416531",
+      "reaperHash": 886559297
     },
     "1d4acb0b": {
       "tuid": "646c654d70616f724d43657a4d43657a",
       "flPlugin": "MConvolutionEZ",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MConvolutionEZ.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MConvolutionEZ.vst3",
+      "fuid": "4D656C646170726F4D43657A4D43657A",
+      "reaperHash": 862266665
     },
     "1e8685ab": {
       "tuid": "646c654d70616f724d4d434f4d4d434f",
       "flPlugin": "MConvolutionMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MConvolutionMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MConvolutionMB.vst3",
+      "fuid": "4D656C646170726F4D4D434F4D4D434F",
+      "reaperHash": 476099129
     },
     "63e5026b": {
       "tuid": "646c654d70616f726778373567783735",
       "flPlugin": "MDelayMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Delay\\MDelayMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Delay\\MDelayMB.vst3",
+      "fuid": "4D656C646170726F6778373567783735",
+      "reaperHash": 416248761
     },
     "216b4a2b": {
       "tuid": "646c654d70616f724d6469734d646973",
       "flPlugin": "MDistortionMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MDistortionMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MDistortionMB.vst3",
+      "fuid": "4D656C646170726F4D6469734D646973",
+      "reaperHash": 473838825
     },
     "1d6c064b": {
       "tuid": "646c654d70616f724d446f544d446f54",
       "flPlugin": "MDoubleTracker",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MDoubleTracker.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MDoubleTracker.vst3",
+      "fuid": "4D656C646170726F4D446F544D446F54",
+      "reaperHash": 882524817
     },
     "1d6c056b": {
       "tuid": "646c654d70616f724d446f4d4d446f4d",
       "flPlugin": "MDoubleTrackerMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MDoubleTrackerMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MDoubleTrackerMB.vst3",
+      "fuid": "4D656C646170726F4D446F4D4D446F4D",
+      "reaperHash": 315256341
     },
     "1d66c98b": {
       "tuid": "646c654d70616f724d44456e4d44456e",
       "flPlugin": "MDrumEnhancer",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MDrumEnhancer.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MDrumEnhancer.vst3",
+      "fuid": "4D656C646170726F4D44456E4D44456E",
+      "reaperHash": 435230209
     },
     "1d6c654b": {
       "tuid": "646c654d70616f724d44724c4d44724c",
       "flPlugin": "MDrumLeveler",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MDrumLeveler.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MDrumLeveler.vst3",
+      "fuid": "4D656C646170726F4D44724C4D44724C",
+      "reaperHash": 1675351793
     },
     "1d6c660b": {
       "tuid": "646c654d70616f724d4472524d447252",
       "flPlugin": "MDrumReplacer",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MDrumReplacer.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MDrumReplacer.vst3",
+      "fuid": "4D656C646170726F4D4472524D447252",
+      "reaperHash": 739756845
     },
     "216d45eb": {
       "tuid": "646c654d70616f724d6479514d647951",
       "flPlugin": "MDynamicEq",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MDynamicEq.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MDynamicEq.vst3",
+      "fuid": "4D656C646170726F4D6479514D647951",
+      "reaperHash": 1828391385
     },
     "1d0ac04b": {
       "tuid": "646c654d70616f724d4165244d416524",
       "flPlugin": "MDynamics",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MDynamics.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MDynamics.vst3",
+      "fuid": "4D656C646170726F4D4165244D416524",
+      "reaperHash": 1118755473
     },
     "1d0ac0cb": {
       "tuid": "646c654d70616f724d4165284d416528",
       "flPlugin": "MDynamicsMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MDynamicsMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MDynamicsMB.vst3",
+      "fuid": "4D656C646170726F4D4165284D416528",
+      "reaperHash": 508427993
     },
     "1d0ac7cb": {
       "tuid": "646c654d70616f724d4165604d416560",
       "flPlugin": "MDynamicsMBLarge",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MDynamicsMBLarge.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MDynamicsMBLarge.vst3",
+      "fuid": "4D656C646170726F4D4165604D416560",
+      "reaperHash": 1241894313
     },
     "1d0ac22b": {
       "tuid": "646c654d70616f724d4165334d416533",
       "flPlugin": "MEqualizer",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MEqualizer.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MEqualizer.vst3",
+      "fuid": "4D656C646170726F4D4165334D416533",
+      "reaperHash": 928022665
     },
     "1d0ac90b": {
       "tuid": "646c654d70616f724d41656a4d41656a",
       "flPlugin": "MEqualizerLP",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MEqualizerLP.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MEqualizerLP.vst3",
+      "fuid": "4D656C646170726F4D41656A4D41656A",
+      "reaperHash": 951331185
     },
     "1d0ac88b": {
       "tuid": "646c654d70616f724d4165664d416566",
       "flPlugin": "MFilter",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MFilter.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MFilter.vst3",
+      "fuid": "4D656C646170726F4D4165664D416566",
+      "reaperHash": 1695513017
     },
     "1d06c08b": {
       "tuid": "646c654d70616f724d4145264d414526",
       "flPlugin": "MFlanger",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MFlanger.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MFlanger.vst3",
+      "fuid": "4D656C646170726F4D4145264D414526",
+      "reaperHash": 1126396409
     },
     "1e86648b": {
       "tuid": "646c654d70616f724d4d42464d4d4246",
       "flPlugin": "MFlangerMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MFlangerMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MFlangerMB.vst3",
+      "fuid": "4D656C646170726F4D4D42464D4D4246",
+      "reaperHash": 1477371549
     },
     "1da6486b": {
       "tuid": "646c654d70616f724d4641654d464165",
       "flPlugin": "MFreeformAnalogEq",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MFreeformAnalogEq.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MFreeformAnalogEq.vst3",
+      "fuid": "4D656C646170726F4D4641654D464165",
+      "reaperHash": 1818275921
     },
     "1d0ac5eb": {
       "tuid": "646c654d70616f724d4165514d416551",
       "flPlugin": "MFreeformEqualizer",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MFreeformEqualizer.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MFreeformEqualizer.vst3",
+      "fuid": "4D656C646170726F4D4165514D416551",
+      "reaperHash": 1433427777
     },
     "1d0ae9cb": {
       "tuid": "646c654d70616f724d4166704d416670",
       "flPlugin": "MFreeformPhase",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MFreeformPhase.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MFreeformPhase.vst3",
+      "fuid": "4D656C646170726F4D4166704D416670",
+      "reaperHash": 2056799161
     },
     "1d0ac48b": {
       "tuid": "646c654d70616f724d4165464d416546",
       "flPlugin": "MFreqShifter",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MFreqShifter.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MFreqShifter.vst3",
+      "fuid": "4D656C646170726F4D4165464D416546",
+      "reaperHash": 1360924857
     },
     "1d07c48b": {
       "tuid": "646c654d70616f724d414d464d414d46",
       "flPlugin": "MFreqShifterMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MFreqShifterMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MFreqShifterMB.vst3",
+      "fuid": "4D656C646170726F4D414D464D414D46",
+      "reaperHash": 1275353193
     },
     "1e870a0b": {
       "tuid": "646c654d70616f724d4d47724d4d4772",
       "flPlugin": "MGranularMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Time\\MGranularMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Time\\MGranularMB.vst3",
+      "fuid": "4D656C646170726F4D4D47724D4D4772",
+      "reaperHash": 180839645
     },
     "1dc64a0b": {
       "tuid": "646c654d70616f724d4741724d474172",
       "flPlugin": "MGuitarArchitect",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MGuitarArchitect.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MGuitarArchitect.vst3",
+      "fuid": "4D656C646170726F4D4741724D474172",
+      "reaperHash": 1994877889
     },
     "228c68cb": {
       "tuid": "646c654d70616f724d6d72684d6d7268",
       "flPlugin": "MHarmonizerMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Pitch Shift\\MHarmonizerMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Pitch Shift\\MHarmonizerMB.vst3",
+      "fuid": "4D656C646170726F4D6D72684D6D7268",
+      "reaperHash": 1396713305
     },
     "1d0ac0eb": {
       "tuid": "646c654d70616f724d4165294d416529",
       "flPlugin": "MLimiterMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MLimiterMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MLimiterMB.vst3",
+      "fuid": "4D656C646170726F4D4165294D416529",
+      "reaperHash": 1950022721
     },
     "1d0aaaeb": {
       "tuid": "646c654d70616f724d4164794d416479",
       "flPlugin": "MLimiterX",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MLimiterX.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MLimiterX.vst3",
+      "fuid": "4D656C646170726F4D4164794D416479",
+      "reaperHash": 939065521
     },
     "1e6a498b": {
       "tuid": "646c654d70616f724d4c616e4d4c616e",
       "flPlugin": "MLoudnessAnalyzer",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MLoudnessAnalyzer.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MLoudnessAnalyzer.vst3",
+      "fuid": "4D656C646170726F4D4C616E4D4C616E",
+      "reaperHash": 687462225
     },
     "1e8aca4b": {
       "tuid": "646c654d70616f724d4d65744d4d6574",
       "flPlugin": "MMetronome",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MMetronome.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MMetronome.vst3",
+      "fuid": "4D656C646170726F4D4D65744D4D6574",
+      "reaperHash": 857384017
     },
     "1e8c042b": {
       "tuid": "646c654d70616f724d4d6f434d4d6f43",
       "flPlugin": "MModernCompressor",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MModernCompressor.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MModernCompressor.vst3",
+      "fuid": "4D656C646170726F4D4D6F434D4D6F43",
+      "reaperHash": 339366617
     },
     "1e8c0a0b": {
       "tuid": "646c654d70616f724d4d6f724d4d6f72",
       "flPlugin": "MMorph",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MMorph.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MMorph.vst3",
+      "fuid": "4D656C646170726F4D4D6F724D4D6F72",
+      "reaperHash": 1549008237
     },
     "1e8c040b": {
       "tuid": "646c654d70616f724d4d6f424d4d6f42",
       "flPlugin": "MMorphB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MMorphB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MMorphB.vst3",
+      "fuid": "4D656C646170726F4D4D6F424D4D6F42",
+      "reaperHash": 1244631245
     },
     "1e86498b": {
       "tuid": "646c654d70616f724d4d416e4d4d416e",
       "flPlugin": "MMultiAnalyzer",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MMultiAnalyzer.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MMultiAnalyzer.vst3",
+      "fuid": "4D656C646170726F4D4D416E4D4D416E",
+      "reaperHash": 1861948625
     },
     "1eac08eb": {
       "tuid": "646c654d70616f724d4e6f694d4e6f69",
       "flPlugin": "MNoiseGenerator",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MNoiseGenerator.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MNoiseGenerator.vst3",
+      "fuid": "4D656C646170726F4D4E6F694D4E6F69",
+      "reaperHash": 1495451981
     },
     "1eac0a4b": {
       "tuid": "646c654d70616f724d4e6f744d4e6f74",
       "flPlugin": "MNotepad",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MNotepad.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MNotepad.vst3",
+      "fuid": "4D656C646170726F4D4E6F744D4E6F74",
+      "reaperHash": 622612097
     },
     "1ecc812b": {
       "tuid": "646c654d70616f724d4f732b4d4f732b",
       "flPlugin": "MOscillator",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MOscillator.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MOscillator.vst3",
+      "fuid": "4D656C646170726F4D4F732B4D4F732B",
+      "reaperHash": 958121065
     },
     "1ecc862b": {
       "tuid": "646c654d70616f724d4f73534d4f7353",
       "flPlugin": "MOscilloscope",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MOscilloscope.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MOscilloscope.vst3",
+      "fuid": "4D656C646170726F4D4F73534D4F7353",
+      "reaperHash": 1016140057
     },
     "1d0ac26b": {
       "tuid": "646c654d70616f724d4165354d416535",
       "flPlugin": "MPhaser",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MPhaser.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MPhaser.vst3",
+      "fuid": "4D656C646170726F4D4165354D416535",
+      "reaperHash": 1737134521
     },
     "9b04c2ab": {
       "tuid": "646c654d70616f723131353731313537",
       "flPlugin": "MPhaserMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MPhaserMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MPhaserMB.vst3",
+      "fuid": "4D656C646170726F3131353731313537",
+      "reaperHash": 1170179785
     },
     "1eeb27eb": {
       "tuid": "646c654d70616f724d5068614d506861",
       "flPlugin": "MPhatik",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MPhatik.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MPhatik.vst3",
+      "fuid": "4D656C646170726F4D5068614D506861",
+      "reaperHash": 373661981
     },
     "1eec062b": {
       "tuid": "646c654d70616f724d506f534d506f53",
       "flPlugin": "MPolySaturator",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MPolySaturator.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MPolySaturator.vst3",
+      "fuid": "4D656C646170726F4D506F534D506F53",
+      "reaperHash": 1973648709
     },
     "1f2a4a4b": {
       "tuid": "646c654d70616f724d5261744d526174",
       "flPlugin": "MRatio",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MRatio.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MRatio.vst3",
+      "fuid": "4D656C646170726F4D5261744D526174",
+      "reaperHash": 1716651929
     },
     "1f2bc80b": {
       "tuid": "646c654d70616f724d526d624d526d62",
       "flPlugin": "MRatioMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MRatioMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MRatioMB.vst3",
+      "fuid": "4D656C646170726F4D526D624D526D62",
+      "reaperHash": 616546385
     },
     "1f2ac82b": {
       "tuid": "646c654d70616f724d5265634d526563",
       "flPlugin": "MRecorder",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MRecorder.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MRecorder.vst3",
+      "fuid": "4D656C646170726F4D5265634D526563",
+      "reaperHash": 1164720185
     },
     "1d0aca0b": {
       "tuid": "646c654d70616f724d4165724d416572",
       "flPlugin": "MReverb",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MReverb.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MReverb.vst3",
+      "fuid": "4D656C646170726F4D4165724D416572",
+      "reaperHash": 1405676273
     },
     "fb6aa2ab": {
       "tuid": "646c654d70616f723434643734346437",
       "flPlugin": "MReverbMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MReverbMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MReverbMB.vst3",
+      "fuid": "4D656C646170726F3434643734346437",
+      "reaperHash": 192225641
     },
     "1f2b2aeb": {
       "tuid": "646c654d70616f724d5268794d526879",
       "flPlugin": "MRhythmizer",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Time\\MRhythmizer.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Time\\MRhythmizer.vst3",
+      "fuid": "4D656C646170726F4D5268794D526879",
+      "reaperHash": 262742777
     },
     "1f2b1feb": {
       "tuid": "646c654d70616f724d5268214d526821",
       "flPlugin": "MRhythmizerMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Time\\MRhythmizerMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Time\\MRhythmizerMB.vst3",
+      "fuid": "4D656C646170726F4D5268214D526821",
+      "reaperHash": 2016475801
     },
     "1d0ac28b": {
       "tuid": "646c654d70616f724d4165364d416536",
       "flPlugin": "MRingModulator",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MRingModulator.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MRingModulator.vst3",
+      "fuid": "4D656C646170726F4D4165364D416536",
+      "reaperHash": 332743673
     },
     "228c696b": {
       "tuid": "646c654d70616f724d6d726d4d6d726d",
       "flPlugin": "MRingModulatorMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MRingModulatorMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MRingModulatorMB.vst3",
+      "fuid": "4D656C646170726F4D6D726D4D6D726D",
+      "reaperHash": 1702901769
     },
     "1f2c0a4b": {
       "tuid": "646c654d70616f724d526f744d526f74",
       "flPlugin": "MRotary",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MRotary.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MRotary.vst3",
+      "fuid": "4D656C646170726F4D526F744D526F74",
+      "reaperHash": 384140777
     },
     "1d0ac24b": {
       "tuid": "646c654d70616f724d4165344d416534",
       "flPlugin": "MSaturator",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MSaturator.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MSaturator.vst3",
+      "fuid": "4D656C646170726F4D4165344D416534",
+      "reaperHash": 1093031185
     },
     "1e86654b": {
       "tuid": "646c654d70616f724d4d424c4d4d424c",
       "flPlugin": "MSaturatorMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MSaturatorMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MSaturatorMB.vst3",
+      "fuid": "4D656C646170726F4D4D424C4D4D424C",
+      "reaperHash": 176761753
     },
     "1f4c284b": {
       "tuid": "646c654d70616f724d5370644d537064",
       "flPlugin": "MSpectralDelay",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Delay\\MSpectralDelay.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Delay\\MSpectralDelay.vst3",
+      "fuid": "4D656C646170726F4D5370644D537064",
+      "reaperHash": 2033682329
     },
     "1d02a2eb": {
       "tuid": "646c654d70616f724d4124394d412439",
       "flPlugin": "MSpectralDynamics",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MSpectralDynamics.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MSpectralDynamics.vst3",
+      "fuid": "4D656C646170726F4D4124394D412439",
+      "reaperHash": 216789553
     },
     "1d02a9eb": {
       "tuid": "646c654d70616f724d4124714d412471",
       "flPlugin": "MSpectralDynamicsMini",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MSpectralDynamicsMini.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MSpectralDynamicsMini.vst3",
+      "fuid": "4D656C646170726F4D4124714D412471",
+      "reaperHash": 1796525377
     },
     "1f4c25cb": {
       "tuid": "646c654d70616f724d5370504d537050",
       "flPlugin": "MSpectralPan",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MSpectralPan.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MSpectralPan.vst3",
+      "fuid": "4D656C646170726F4D5370504D537050",
+      "reaperHash": 1989439449
     },
     "1d0ac7eb": {
       "tuid": "646c654d70616f724d4165614d416561",
       "flPlugin": "MStereoExpander",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MStereoExpander.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MStereoExpander.vst3",
+      "fuid": "4D656C646170726F4D4165614D416561",
+      "reaperHash": 861403297
     },
     "1f4ca4ab": {
       "tuid": "646c654d70616f724d5374474d537447",
       "flPlugin": "MStereoGenerator",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MStereoGenerator.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MStereoGenerator.vst3",
+      "fuid": "4D656C646170726F4D5374474D537447",
+      "reaperHash": 1305769097
     },
     "1d02a04b": {
       "tuid": "646c654d70616f724d4124244d412424",
       "flPlugin": "MStereoProcessor",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MStereoProcessor.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MStereoProcessor.vst3",
+      "fuid": "4D656C646170726F4D4124244D412424",
+      "reaperHash": 1367645117
     },
     "1f48882b": {
       "tuid": "646c654d70616f724d5353634d535363",
       "flPlugin": "MStereoScope",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MStereoScope.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MStereoScope.vst3",
+      "fuid": "4D656C646170726F4D5353634D535363",
+      "reaperHash": 1728685561
     },
     "1f4ca62b": {
       "tuid": "646c654d70616f724d5374534d537453",
       "flPlugin": "MStereoSpread",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MStereoSpread.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Stereo\\MStereoSpread.vst3",
+      "fuid": "4D656C646170726F4D5374534D537453",
+      "reaperHash": 237639001
     },
     "1f4cc54b": {
       "tuid": "646c654d70616f724d53754c4d53754c",
       "flPlugin": "MSuperLooper",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MSuperLooper.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MSuperLooper.vst3",
+      "fuid": "4D656C646170726F4D53754C4D53754C",
+      "reaperHash": 806359657
     },
     "1f4cc2ab": {
       "tuid": "646c654d70616f724d5375374d537537",
       "flPlugin": "MSuperLooper16in16out",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MSuperLooper16in16out.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MSuperLooper16in16out.vst3",
+      "fuid": "4D656C646170726F4D5375374D537537",
+      "reaperHash": 164103369
     },
     "1f4cc28b": {
       "tuid": "646c654d70616f724d5375364d537536",
       "flPlugin": "MSuperLooper16out",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MSuperLooper16out.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MSuperLooper16out.vst3",
+      "fuid": "4D656C646170726F4D5375364D537536",
+      "reaperHash": 1855538553
     },
     "1da8aa0b": {
       "tuid": "646c654d70616f724d4654724d465472",
       "flPlugin": "MTransformer",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Pitch Shift\\MTransformer.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Pitch Shift\\MTransformer.vst3",
+      "fuid": "4D656C646170726F4D4654724D465472",
+      "reaperHash": 459287809
     },
     "1f6c67eb": {
       "tuid": "646c654d70616f724d5472614d547261",
       "flPlugin": "MTransient",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MTransient.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MTransient.vst3",
+      "fuid": "4D656C646170726F4D5472614D547261",
+      "reaperHash": 526991633
     },
     "1e8caa0b": {
       "tuid": "646c654d70616f724d4d74724d4d7472",
       "flPlugin": "MTransientMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MTransientMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MTransientMB.vst3",
+      "fuid": "4D656C646170726F4D4D74724D4D7472",
+      "reaperHash": 123372873
     },
     "1d0ac2ab": {
       "tuid": "646c654d70616f724d4165374d416537",
       "flPlugin": "MTremolo",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MTremolo.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MTremolo.vst3",
+      "fuid": "4D656C646170726F4D4165374D416537",
+      "reaperHash": 1326722673
     },
     "228ca96b": {
       "tuid": "646c654d70616f724d6d746d4d6d746d",
       "flPlugin": "MTremoloMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MTremoloMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MTremoloMB.vst3",
+      "fuid": "4D656C646170726F4D6D746D4D6D746D",
+      "reaperHash": 1261112913
     },
     "1f6cc98b": {
       "tuid": "646c654d70616f724d54756e4d54756e",
       "flPlugin": "MTuner",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MTuner.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MTuner.vst3",
+      "fuid": "4D656C646170726F4D54756E4D54756E",
+      "reaperHash": 1332983745
     },
     "1f6cc3eb": {
       "tuid": "646c654d70616f724d5475414d547541",
       "flPlugin": "MTurboAmp",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MTurboAmp.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MTurboAmp.vst3",
+      "fuid": "4D656C646170726F4D5475414D547541",
+      "reaperHash": 1394731265
     },
     "1f6cc42b": {
       "tuid": "646c654d70616f724d5475434d547543",
       "flPlugin": "MTurboComp",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MTurboComp.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MTurboComp.vst3",
+      "fuid": "4D656C646170726F4D5475434D547543",
+      "reaperHash": 1031186521
     },
     "1f66896b": {
       "tuid": "646c654d70616f724d54436d4d54436d",
       "flPlugin": "MTurboCompMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MTurboCompMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MTurboCompMB.vst3",
+      "fuid": "4D656C646170726F4D54436D4D54436D",
+      "reaperHash": 444418181
     },
     "1f6cc44b": {
       "tuid": "646c654d70616f724d5475444d547544",
       "flPlugin": "MTurboDelay",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Delay\\MTurboDelay.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Delay\\MTurboDelay.vst3",
+      "fuid": "4D656C646170726F4D5475444D547544",
+      "reaperHash": 359393049
     },
     "1f66a96b": {
       "tuid": "646c654d70616f724d54446d4d54446d",
       "flPlugin": "MTurboDelayMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Delay\\MTurboDelayMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Delay\\MTurboDelayMB.vst3",
+      "fuid": "4D656C646170726F4D54446D4D54446D",
+      "reaperHash": 859367789
     },
     "1f6cc46b": {
       "tuid": "646c654d70616f724d5475454d547545",
       "flPlugin": "MTurboEQ",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MTurboEQ.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\EQ\\MTurboEQ.vst3",
+      "fuid": "4D656C646170726F4D5475454D547545",
+      "reaperHash": 1832603025
     },
     "1f6cc48b": {
       "tuid": "646c654d70616f724d5475464d547546",
       "flPlugin": "MTurboFilter",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MTurboFilter.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MTurboFilter.vst3",
+      "fuid": "4D656C646170726F4D5475464D547546",
+      "reaperHash": 1137154305
     },
     "2368686b": {
       "tuid": "646c654d70616f724d7452654d745265",
       "flPlugin": "MTurboReverb",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MTurboReverb.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MTurboReverb.vst3",
+      "fuid": "4D656C646170726F4D7452654D745265",
+      "reaperHash": 1369102329
     },
     "2368696b": {
       "tuid": "646c654d70616f724d74526d4d74526d",
       "flPlugin": "MTurboReverbMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MTurboReverbMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Reverb\\MTurboReverbMB.vst3",
+      "fuid": "4D656C646170726F4D74526D4D74526D",
+      "reaperHash": 300647577
     },
     "1d0bcacb": {
       "tuid": "646c654d70616f724d416d784d416d78",
       "flPlugin": "MUltraMaximizer",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MUltraMaximizer.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Dynamics\\MUltraMaximizer.vst3",
+      "fuid": "4D656C646170726F4D416D784D416D78",
+      "reaperHash": 85610057
     },
     "1f8be8eb": {
       "tuid": "646c654d70616f724d556e694d556e69",
       "flPlugin": "MUnison",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MUnison.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MUnison.vst3",
+      "fuid": "4D656C646170726F4D556E694D556E69",
+      "reaperHash": 1012438385
     },
     "238ca8eb": {
       "tuid": "646c654d70616f724d7574694d757469",
       "flPlugin": "MUtility",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MUtility.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Tools\\MUtility.vst3",
+      "fuid": "4D656C646170726F4D7574694D757469",
+      "reaperHash": 1423054497
     },
     "1d742ef3": {
       "tuid": "4d54535632566d4d7632206d6f6e6f00",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "MV2 Mono",
+      "vendor": "Waves",
+      "fuid": "5653544D56324D6D7632206D6F6E6F00"
     },
     "2281b912": {
       "tuid": "4d54535632566d537632207374657265",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "MV2 Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544D5632536D7632207374657265"
     },
     "1d0ac2cb": {
       "tuid": "646c654d70616f724d4165384d416538",
       "flPlugin": "MVibrato",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MVibrato.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MVibrato.vst3",
+      "fuid": "4D656C646170726F4D4165384D416538",
+      "reaperHash": 2015610777
     },
     "2288e8eb": {
       "tuid": "646c654d70616f724d6d56694d6d5669",
       "flPlugin": "MVibratoMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MVibratoMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MVibratoMB.vst3",
+      "fuid": "4D656C646170726F4D6D56694D6D5669",
+      "reaperHash": 1090040145
     },
     "1fa869ab": {
       "tuid": "646c654d70616f724d56526f4d56526f",
       "flPlugin": "MVintageRotary",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MVintageRotary.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Modulation\\MVintageRotary.vst3",
+      "fuid": "4D656C646170726F4D56526F4D56526F",
+      "reaperHash": 166777129
     },
     "1fac082b": {
       "tuid": "646c654d70616f724d566f634d566f63",
       "flPlugin": "MVocoder",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MVocoder.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MVocoder.vst3",
+      "fuid": "4D656C646170726F4D566F634D566F63",
+      "reaperHash": 1704114485
     },
     "1fca448b": {
       "tuid": "646c654d70616f724d5761464d576146",
       "flPlugin": "MWaveFolder",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MWaveFolder.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MWaveFolder.vst3",
+      "fuid": "4D656C646170726F4D5761464D576146",
+      "reaperHash": 516865201
     },
     "2289088b": {
       "tuid": "646c654d70616f724d6d57664d6d5766",
       "flPlugin": "MWaveFolderMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MWaveFolderMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MWaveFolderMB.vst3",
+      "fuid": "4D656C646170726F4D6D57664D6D5766",
+      "reaperHash": 24787829
     },
     "1d0ac2eb": {
       "tuid": "646c654d70616f724d4165394d416539",
       "flPlugin": "MWaveShaper",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MWaveShaper.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MWaveShaper.vst3",
+      "fuid": "4D656C646170726F4D4165394D416539",
+      "reaperHash": 1397860385
     },
     "22890a2b": {
       "tuid": "646c654d70616f724d6d57734d6d5773",
       "flPlugin": "MWaveShaperMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MWaveShaperMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Distortion\\MWaveShaperMB.vst3",
+      "fuid": "4D656C646170726F4D6D57734D6D5773",
+      "reaperHash": 1213452729
     },
     "1fcc080b": {
       "tuid": "646c654d70616f724d576f624d576f62",
       "flPlugin": "MWobbler",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MWobbler.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MWobbler.vst3",
+      "fuid": "4D656C646170726F4D576F624D576F62",
+      "reaperHash": 394801845
     },
     "1e8909ab": {
       "tuid": "646c654d70616f724d4d576f4d4d576f",
       "flPlugin": "MWobblerMB",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MWobblerMB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\Filter\\MWobblerMB.vst3",
+      "fuid": "4D656C646170726F4D4D576F4D4D576F",
+      "reaperHash": 1069345849
     },
     "1fe926cb": {
       "tuid": "646c654d70616f724d5858584d585858",
       "flPlugin": "MXXX",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MXXX.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MXXX.vst3",
+      "fuid": "4D656C646170726F4D5858584D585858",
+      "reaperHash": 354198185
     },
     "1fe921eb": {
       "tuid": "646c654d70616f724d5858314d585831",
       "flPlugin": "MXXX1",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MXXX1.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MXXX1.vst3",
+      "fuid": "4D656C646170726F4D5858314D585831",
+      "reaperHash": 1611460973
     },
     "1fe4e28b": {
       "tuid": "646c654d70616f724d5836364d583636",
       "flPlugin": "MXXX6in6out",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MXXX6in6out.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MXXX6in6out.vst3",
+      "fuid": "4D656C646170726F4D5836364D583636",
+      "reaperHash": 1383223373
     },
     "1fe9228b": {
       "tuid": "646c654d70616f724d5858364d585836",
       "flPlugin": "MXXX6out",
       "vendor": "MeldaProduction",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MXXX6out.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MXXX6out.vst3",
+      "fuid": "4D656C646170726F4D5858364D585836",
+      "reaperHash": 624066837
     },
     "4b0dd9be": {
       "tuid": "4d54535642586d4d6178786261737320",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "MaxxBass Mono",
+      "vendor": "Waves",
+      "fuid": "5653544D58424D6D6178786261737320"
     },
     "4b245fbe": {
       "tuid": "4d54535642586d536178786261737320",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "MaxxBass Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544D5842536D6178786261737320"
     },
     "fc8f0cfb": {
       "tuid": "495453564c566d4d617878766f6c756d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "MaxxVolume Mono",
+      "vendor": "Waves",
+      "fuid": "56535449564C4D6D617878766F6C756D"
     },
     "fca592fb": {
       "tuid": "495453564c566d53617878766f6c756d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "MaxxVolume Stereo",
+      "vendor": "Waves",
+      "fuid": "56535449564C536D617878766F6C756D"
     },
     "9ea34efc": {
       "tuid": "4d545356706c6d67656c6f64796e6520",
       "flPlugin": "Melodyne",
       "vendor": "Celemony",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Celemony\\Melodyne\\Melodyne.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Celemony\\Melodyne\\Melodyne.vst3",
+      "fuid": "5653544D6C70676D656C6F64796E6520",
+      "reaperHash": 214222609
     },
     "804617b9": {
       "tuid": "5354535654466d5865746166696c7465",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "MetaFilter Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "565354534654586D65746166696C7465"
     },
     "801cccb9": {
       "tuid": "5354535654466d4d65746166696c7465",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "MetaFilter Mono",
+      "vendor": "Waves",
+      "fuid": "5653545346544D6D65746166696C7465"
     },
     "803352b9": {
       "tuid": "5354535654466d5365746166696c7465",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "MetaFilter Stereo",
+      "vendor": "Waves",
+      "fuid": "565354534654536D65746166696C7465"
     },
     "f2af28e8": {
       "tuid": "465453564e4c6d58657461666c616e67",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "MetaFlanger Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "565354464C4E586D657461666C616E67",
+      "reaperHash": 1953885631,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "f285dde8": {
       "tuid": "465453564e4c6d4d657461666c616e67",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "MetaFlanger Mono",
+      "vendor": "Waves",
+      "fuid": "565354464C4E4D6D657461666C616E67",
+      "reaperHash": 361828060,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "f29c63e8": {
       "tuid": "465453564e4c6d53657461666c616e67",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "MetaFlanger Stereo",
+      "vendor": "Waves",
+      "fuid": "565354464C4E536D657461666C616E67",
+      "reaperHash": 2047259366,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "3583941d": {
       "tuid": "34fc1a754315bc4caa73672a109be0ff",
       "flPlugin": "FabFilter Micro",
       "vendor": "FabFilter",
-      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Micro.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Micro.vst3",
+      "fuid": "751AFC3415434CBCAA73672A109BE0FF",
+      "reaperHash": 1543484030
     },
     "467cab51": {
       "tuid": "4d545356444f6d586f6e646f6d6f6420",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "MondoMod Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544D4F44586D6F6E646F6D6F6420"
     },
     "46536051": {
       "tuid": "4d545356444f6d4d6f6e646f6d6f6420",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "MondoMod Mono",
+      "vendor": "Waves",
+      "fuid": "5653544D4F444D6D6F6E646F6D6F6420"
     },
     "4669e651": {
       "tuid": "4d545356444f6d536f6e646f6d6f6420",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "MondoMod Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544D4F44536D6F6E646F6D6F6420"
     },
     "84463721": {
       "tuid": "5654535657436d586f7270686f646572",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Morphoder Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "565354564357586D6F7270686F646572"
     },
     "841cec21": {
       "tuid": "5654535657436d4d6f7270686f646572",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Morphoder Mono",
+      "vendor": "Waves",
+      "fuid": "5653545643574D6D6F7270686F646572"
     },
     "84337221": {
       "tuid": "5654535657436d536f7270686f646572",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Morphoder Stereo",
+      "vendor": "Waves",
+      "fuid": "565354564357536D6F7270686F646572"
     },
     "67aac232": {
       "tuid": "0de7aef2de004e4f4d75736574507356",
       "flPlugin": "MusePlugin",
       "vendor": "Muse",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MusePlugin.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MusePlugin.vst3",
+      "fuid": "F2AEE70D00DE4F4E4D75736574507356",
+      "reaperHash": 1577205739
     },
     "628ea156": {
       "tuid": "0de7aef2de004e4f4d7573656f34527a",
       "flPlugin": "MuseRecordingPlugin",
       "vendor": "Muse",
-      "file": "C:\\Program Files\\Common Files\\VST3\\MuseRecordingPlugin.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\MuseRecordingPlugin.vst3",
+      "fuid": "F2AEE70D00DE4F4E4D7573656F34527A",
+      "reaperHash": 858723537
     },
     "706361dd": {
       "tuid": "a46c3f54eec01f4889ea57c17dc26443",
       "flPlugin": "Plugins.VST.NDI.Input",
-      "vendor": "NDI"
+      "vendor": "NDI",
+      "fuid": "543F6CA4C0EE481F89EA57C17DC26443",
+      "reaperHash": 1619199410,
+      "file": "Plugins.VST.NDI.Input.vst3"
     },
     "e69bcc14": {
       "tuid": "d00f265dff7253419a487413b7576704",
       "flPlugin": "Plugins.VST.NDI.Output",
-      "vendor": "NDI"
+      "vendor": "NDI",
+      "fuid": "5D260FD072FF41539A487413B7576704",
+      "reaperHash": 806422942,
+      "file": "Plugins.VST.NDI.Output.vst3"
     },
     "a83befb9": {
       "tuid": "53545356534d6e4d6c73206275737320",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "NLS Buss Mono",
+      "vendor": "Waves",
+      "fuid": "565354534D534D6E6C73206275737320"
     },
     "a85275b9": {
       "tuid": "53545356534d6e536c73206275737320",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "NLS Buss Stereo",
+      "vendor": "Waves",
+      "fuid": "565354534D53536E6C73206275737320"
     },
     "e519eb26": {
       "tuid": "5354535643536e4d6c73206368616e6e",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "NLS Channel Mono",
+      "vendor": "Waves",
+      "fuid": "5653545353434D6E6C73206368616E6E"
     },
     "e5307126": {
       "tuid": "5354535643536e536c73206368616e6e",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "NLS Channel Stereo",
+      "vendor": "Waves",
+      "fuid": "565354535343536E6C73206368616E6E"
     },
     "07c12157": {
       "tuid": "5854535654666f547474000000000000",
       "flPlugin": "OTT",
-      "vendor": "Xfer Records"
+      "vendor": "Xfer Records",
+      "fuid": "565354586654546F7474000000000000",
+      "reaperHash": 1090028261,
+      "file": "C:\\Program Files\\Common Files\\VST3\\OTT.vst3"
     },
     "2430e5b6": {
       "tuid": "4f545356444b6f4d6e656b6e6f622064",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "OneKnob Driver Mono",
+      "vendor": "Waves",
+      "fuid": "5653544F4B444D6F6E656B6E6F622064"
     },
     "24476bb6": {
       "tuid": "4f545356444b6f536e656b6e6f622064",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "OneKnob Driver Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544F4B44536F6E656B6E6F622064"
     },
     "33b442d5": {
       "tuid": "5254535646536f4d6e656b6e6f622066",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "OneKnob Filter Mono",
+      "vendor": "Waves",
+      "fuid": "5653545253464D6F6E656B6E6F622066"
     },
     "33cac8d5": {
       "tuid": "5254535646536f536e656b6e6f622066",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "OneKnob Filter Stereo",
+      "vendor": "Waves",
+      "fuid": "565354525346536F6E656B6E6F622066"
     },
     "a1dfb73e": {
       "tuid": "5354535631506f4d6e656b6e6f622070",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "OneKnob Pumper Mono",
+      "vendor": "Waves",
+      "fuid": "5653545350314D6F6E656B6E6F622070"
     },
     "a1f63d3e": {
       "tuid": "5354535631506f536e656b6e6f622070",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "OneKnob Pumper Stereo",
+      "vendor": "Waves",
+      "fuid": "565354535031536F6E656B6E6F622070"
     },
     "fbccb574": {
       "tuid": "5a545356596e4f397a6f6e6520392044",
       "flPlugin": "Ozone 9 Dynamic EQ",
       "vendor": "iZotope, Inc.",
-      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Dynamic EQ.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Dynamic EQ.vst3",
+      "fuid": "5653545A6E59394F7A6F6E6520392044",
+      "reaperHash": 247990216
     },
     "acf7b574": {
       "tuid": "5a545356446e4f397a6f6e6520392044",
       "flPlugin": "Ozone 9 Dynamics",
       "vendor": "iZotope, Inc.",
-      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Dynamics.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Dynamics.vst3",
+      "fuid": "5653545A6E44394F7A6F6E6520392044",
+      "reaperHash": 1319137989
     },
     "2515d175": {
       "tuid": "5a545356394f4f557a6f6e6520392045",
       "flPlugin": "Ozone 9 Equalizer",
       "vendor": "iZotope, Inc.",
-      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Equalizer.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Equalizer.vst3",
+      "fuid": "5653545A4F39554F7A6F6E6520392045",
+      "reaperHash": 2028705396
     },
     "25211475": {
       "tuid": "5a545356394f4f587a6f6e6520392045",
       "flPlugin": "Ozone 9 Exciter",
       "vendor": "iZotope, Inc.",
-      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Exciter.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Exciter.vst3",
+      "fuid": "5653545A4F39584F7A6F6E6520392045",
+      "reaperHash": 429904451
     },
     "bfbcb579": {
       "tuid": "5a545356496e4f397a6f6e6520392049",
       "flPlugin": "Ozone 9 Imager",
       "vendor": "iZotope, Inc.",
-      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Imager.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Imager.vst3",
+      "fuid": "5653545A6E49394F7A6F6E6520392049",
+      "reaperHash": 254843295
     },
     "24f4087c": {
       "tuid": "5a545356394f4f4c7a6f6e652039204c",
       "flPlugin": "Ozone 9 Low End Focus",
       "vendor": "iZotope, Inc.",
-      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Low End Focus.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Low End Focus.vst3",
+      "fuid": "5653545A4F394C4F7A6F6E652039204C",
+      "reaperHash": 1049670300
     },
     "250a8e7d": {
       "tuid": "5a545356394f4f527a6f6e652039204d",
       "flPlugin": "Ozone 9 Master Rebalance",
       "vendor": "iZotope, Inc.",
-      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Master Rebalance.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Master Rebalance.vst3",
+      "fuid": "5653545A4F39524F7A6F6E652039204D",
+      "reaperHash": 393064633
     },
     "24e5047d": {
       "tuid": "5a545356394f4f487a6f6e652039204d",
       "flPlugin": "Ozone 9 Match EQ",
       "vendor": "iZotope, Inc.",
-      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Match EQ.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Match EQ.vst3",
+      "fuid": "5653545A4F39484F7A6F6E652039204D",
+      "reaperHash": 1603222763
     },
     "24f7c97d": {
       "tuid": "5a545356394f4f4d7a6f6e652039204d",
       "flPlugin": "Ozone 9 Maximizer",
       "vendor": "iZotope, Inc.",
-      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Maximizer.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Maximizer.vst3",
+      "fuid": "5653545A4F394D4F7A6F6E652039204D",
+      "reaperHash": 547736436
     },
     "250e4f83": {
       "tuid": "5a545356394f4f537a6f6e6520392053",
       "flPlugin": "Ozone 9 Spectral Shaper",
       "vendor": "iZotope, Inc.",
-      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Spectral Shaper.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Spectral Shaper.vst3",
+      "fuid": "5653545A4F39534F7A6F6E6520392053",
+      "reaperHash": 982113700
     },
     "24d23f86": {
       "tuid": "5a545356394f4f437a6f6e6520392056",
       "flPlugin": "Ozone 9 Vintage Compressor",
       "vendor": "iZotope, Inc.",
-      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Vintage Compressor.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Vintage Compressor.vst3",
+      "fuid": "5653545A4F39434F7A6F6E6520392056",
+      "reaperHash": 891186139
     },
     "2506cd86": {
       "tuid": "5a545356394f4f517a6f6e6520392056",
       "flPlugin": "Ozone 9 Vintage EQ",
       "vendor": "iZotope, Inc.",
-      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Vintage EQ.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Vintage EQ.vst3",
+      "fuid": "5653545A4F39514F7A6F6E6520392056",
+      "reaperHash": 723042265
     },
     "25199286": {
       "tuid": "5a545356394f4f567a6f6e6520392056",
       "flPlugin": "Ozone 9 Vintage Limiter",
       "vendor": "iZotope, Inc.",
-      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Vintage Limiter.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Vintage Limiter.vst3",
+      "fuid": "5653545A4F39564F7A6F6E6520392056",
+      "reaperHash": 1040019868
     },
     "25121086": {
       "tuid": "5a545356394f4f547a6f6e6520392056",
       "flPlugin": "Ozone 9 Vintage Tape",
       "vendor": "iZotope, Inc.",
-      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Vintage Tape.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9 Vintage Tape.vst3",
+      "fuid": "5653545A4F39544F7A6F6E6520392056",
+      "reaperHash": 1561636674
     },
     "d6429530": {
       "tuid": "5a5453564f6e4f397a6f6e6520390000",
       "flPlugin": "Ozone 9",
       "vendor": "iZotope, Inc.",
-      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Ozone 9.vst3",
+      "fuid": "5653545A6E4F394F7A6F6E6520390000",
+      "reaperHash": 35078274
     },
     "ff9bc805": {
       "tuid": "5754535645417053617a2d20616e616c",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PAZ- Analyzer Stereo",
+      "vendor": "Waves",
+      "fuid": "5653545741455370617A2D20616E616C"
     },
     "0489460a": {
       "tuid": "575453564541704d617a2d2066726571",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PAZ- Frequency Mono",
+      "vendor": "Waves",
+      "fuid": "5653545741454D70617A2D2066726571"
     },
     "f59bcc0a": {
       "tuid": "5754535641417053617a2d2066726571",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PAZ- Frequency Stereo",
+      "vendor": "Waves",
+      "fuid": "5653545741415370617A2D2066726571"
     },
     "1c8c54fe": {
       "tuid": "575453565556704d617a2d206d657465",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PAZ- Meters Mono",
+      "vendor": "Waves",
+      "fuid": "5653545756554D70617A2D206D657465"
     },
     "1ca2dafe": {
       "tuid": "5754535655567053617a2d206d657465",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PAZ- Meters Stereo",
+      "vendor": "Waves",
+      "fuid": "5653545756555370617A2D206D657465"
     },
     "37e7da02": {
       "tuid": "5754535650417053617a2d20706f7369",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PAZ- Position Stereo",
+      "vendor": "Waves",
+      "fuid": "5653545741505370617A2D20706F7369"
     },
     "df1dc928": {
       "tuid": "01efcdab8291ebfa4c657665506c6163",
       "flPlugin": "PLACE",
       "vendor": "leve",
-      "file": "C:\\Program Files\\Common Files\\VST3\\PLACE.vst3\\PLACE.vst3\\Contents\\x86_64-win\\PLACE.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\PLACE.vst3\\PLACE.vst3\\Contents\\x86_64-win\\PLACE.vst3",
+      "fuid": "ABCDEF019182FAEB4C657665506C6163",
+      "reaperHash": 1271820099
     },
     "fd5ab969": {
       "tuid": "505453565353704d7332322073706c69",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PS22 Split Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "5653545053534D707332322073706C69"
     },
     "fd713f69": {
       "tuid": "50545356535370537332322073706c69",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PS22 Split Stereo",
+      "vendor": "Waves",
+      "fuid": "56535450535353707332322073706C69"
     },
     "c8ccbf65": {
       "tuid": "505453564553704d7332322073707265",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PS22 Spread Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "5653545053454D707332322073707265"
     },
     "c8e34565": {
       "tuid": "50545356455370537332322073707265",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PS22 Spread Stereo",
+      "vendor": "Waves",
+      "fuid": "56535450534553707332322073707265"
     },
     "97ffbf65": {
       "tuid": "505453563853704d7332322073707265",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PS22 Spread(10) Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "5653545053384D707332322073707265"
     },
     "98164565": {
       "tuid": "50545356385370537332322073707265",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PS22 Spread(10) Stereo",
+      "vendor": "Waves",
+      "fuid": "56535450533853707332322073707265"
     },
     "1522bd6c": {
       "tuid": "505453565853704d733232207873706c",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PS22 XSplit Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "5653545053584D70733232207873706C"
     },
     "1539436c": {
       "tuid": "5054535658537053733232207873706c",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PS22 XSplit Stereo",
+      "vendor": "Waves",
+      "fuid": "5653545053585370733232207873706C"
     },
     "bf1dd630": {
       "tuid": "01efcdab8291ebfa6c657665506c6e6b",
       "flPlugin": "PatchLink",
       "vendor": "leve",
-      "file": "C:\\Program Files\\Common Files\\VST3\\PatchLink.vst3\\Contents\\x86_64-win\\PatchLink.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\PatchLink.vst3\\Contents\\x86_64-win\\PatchLink.vst3",
+      "fuid": "ABCDEF019182FAEB6C657665506C6E6B",
+      "reaperHash": 1066960224
     },
     "3df37f66": {
       "tuid": "01efcdab8291ebfa4f7574705052544c",
       "flPlugin": "Portal",
       "vendor": "Output",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Output\\Portal.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Output\\Portal.vst3",
+      "fuid": "ABCDEF019182FAEB4F7574705052544C",
+      "reaperHash": 1982040431
     },
     "763029ad": {
       "tuid": "e315f479e7c80748ad5da3cf7024f618",
       "flPlugin": "FabFilter Pro-C 2",
       "vendor": "FabFilter",
-      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-C 2.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-C 2.vst3",
+      "fuid": "79F415E3C8E74807AD5DA3CF7024F618",
+      "reaperHash": 1000537396
     },
     "cba24108": {
       "tuid": "d024e359e88ee111b8578101bbe59b18",
       "flPlugin": "FabFilter Pro-DS",
       "vendor": "FabFilter",
-      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-DS.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-DS.vst3",
+      "fuid": "59E324D08EE811E1B8578101BBE59B18",
+      "reaperHash": 838599213
     },
     "5a6e43a2": {
       "tuid": "f7cc1d9d8a916f43a3cdd7115d8b193b",
       "flPlugin": "FabFilter Pro-G",
       "vendor": "FabFilter",
-      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-G.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-G.vst3",
+      "fuid": "9D1DCCF7918A436FA3CDD7115D8B193B",
+      "reaperHash": 2024995055
     },
     "45398b95": {
       "tuid": "722fd9af049ab747b5e8d1d568dea985",
       "flPlugin": "FabFilter Pro-L 2",
       "vendor": "FabFilter",
-      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-L 2.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-L 2.vst3",
+      "fuid": "AFD92F729A0447B7B5E8D1D568DEA985",
+      "reaperHash": 1938458649
     },
     "49321b1b": {
       "tuid": "4281b6c398c7f24682b73cabdf139076",
       "flPlugin": "FabFilter Pro-MB",
       "vendor": "FabFilter",
-      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-MB.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-MB.vst3",
+      "fuid": "C3B68142C79846F282B73CABDF139076",
+      "reaperHash": 1847376412
     },
     "ba5f7ab2": {
       "tuid": "71dbc4724d7a9a45b97e51745d84b39d",
       "flPlugin": "FabFilter Pro-Q 3",
       "vendor": "FabFilter",
-      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-Q 3.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-Q 3.vst3",
+      "fuid": "72C4DB717A4D459AB97E51745D84B39D",
+      "reaperHash": 756089518
     },
     "78c01fa6": {
       "tuid": "30b56e03592ae211a28170076288709b",
       "flPlugin": "FabFilter Pro-R",
       "vendor": "FabFilter",
-      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-R.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Pro-R.vst3",
+      "fuid": "036EB5302A5911E2A28170076288709B",
+      "reaperHash": 274244728
     },
     "ca0fb3e8": {
       "tuid": "6562755074725379696d2e2e52766448",
       "flPlugin": "Puberty Simulator",
       "vendor": "Robbert van der Helm",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Puberty Simulator.vst3\\Contents\\x86_64-win\\Puberty Simulator.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Puberty Simulator.vst3\\Contents\\x86_64-win\\Puberty Simulator.vst3",
+      "fuid": "5075626572747953696D2E2E52766448",
+      "reaperHash": 192112535
     },
     "4e6ae291": {
       "tuid": "505453564131704d7569677465632065",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PuigTec EQP1A Mono",
+      "vendor": "Waves",
+      "fuid": "5653545031414D707569677465632065"
     },
     "4e816891": {
       "tuid": "50545356413170537569677465632065",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PuigTec EQP1A Stereo",
+      "vendor": "Waves",
+      "fuid": "56535450314153707569677465632065"
     },
     "3d5ee299": {
       "tuid": "50545356354d704d756967746563206d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PuigTec MEQ5 Mono",
+      "vendor": "Waves",
+      "fuid": "565354504D354D70756967746563206D"
     },
     "3d756899": {
       "tuid": "50545356354d7053756967746563206d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "PuigTec MEQ5 Stereo",
+      "vendor": "Waves",
+      "fuid": "565354504D355370756967746563206D"
     },
     "0c16daf3": {
       "tuid": "535453565451714d2d63617074757265",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q-Capture Mono",
+      "vendor": "Waves",
+      "fuid": "5653545351544D712D63617074757265"
     },
     "82a4dddc": {
       "tuid": "535453563151714d2d636c6f6e65206d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q-Clone Mono",
+      "vendor": "Waves",
+      "fuid": "5653545351314D712D636C6F6E65206D"
     },
     "82bb63e2": {
       "tuid": "53545356315171532d636c6f6e652073",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q-Clone Stereo",
+      "vendor": "Waves",
+      "fuid": "56535453513153712D636C6F6E652073"
     },
     "f68b7f3d": {
       "tuid": "455453563151714d31206d6f6e6f0000",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q1 Mono",
+      "vendor": "Waves",
+      "fuid": "5653544551314D7131206D6F6E6F0000",
+      "reaperHash": 678487343,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "eda62547": {
       "tuid": "4554535631517153312073746572656f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q1 Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544551315371312073746572656F",
+      "reaperHash": 893475054,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "35819aff": {
       "tuid": "455453564151714d3130206d6f6e6f00",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q10 Mono",
+      "vendor": "Waves",
+      "fuid": "5653544551414D713130206D6F6E6F00",
+      "reaperHash": 1397830709,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "3a8f251e": {
       "tuid": "45545356415171533130207374657265",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q10 Stereo",
+      "vendor": "Waves",
+      "fuid": "56535445514153713130207374657265",
+      "reaperHash": 2104435169,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "194c7f3d": {
       "tuid": "455453563251714d32206d6f6e6f0000",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q2 Mono",
+      "vendor": "Waves",
+      "fuid": "5653544551324D7132206D6F6E6F0000",
+      "reaperHash": 1117922111,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "10672547": {
       "tuid": "4554535632517153322073746572656f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q2 Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544551325371322073746572656F",
+      "reaperHash": 1610315674,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "3c0d7f3d": {
       "tuid": "455453563351714d33206d6f6e6f0000",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q3 Mono",
+      "vendor": "Waves",
+      "fuid": "5653544551334D7133206D6F6E6F0000",
+      "reaperHash": 1055576991,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "33282547": {
       "tuid": "4554535633517153332073746572656f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q3 Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544551335371332073746572656F",
+      "reaperHash": 1866088926,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "5ece7f3d": {
       "tuid": "455453563451714d34206d6f6e6f0000",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q4 Mono",
+      "vendor": "Waves",
+      "fuid": "5653544551344D7134206D6F6E6F0000",
+      "reaperHash": 1280410319,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "55e92547": {
       "tuid": "4554535634517153342073746572656f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q4 Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544551345371342073746572656F",
+      "reaperHash": 685404978,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "a4507f3d": {
       "tuid": "455453563651714d36206d6f6e6f0000",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q6 Mono",
+      "vendor": "Waves",
+      "fuid": "5653544551364D7136206D6F6E6F0000",
+      "reaperHash": 1228972855,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "9b6b2547": {
       "tuid": "4554535636517153362073746572656f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q6 Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544551365371362073746572656F",
+      "reaperHash": 1215125850,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "e9d27f3d": {
       "tuid": "455453563851714d38206d6f6e6f0000",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q8 Mono",
+      "vendor": "Waves",
+      "fuid": "5653544551384D7138206D6F6E6F0000",
+      "reaperHash": 1664450711,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "e0ed2547": {
       "tuid": "4554535638517153382073746572656f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Q8 Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544551385371382073746572656F",
+      "reaperHash": 579341266,
+      "file": "WaveShell1_VST3_12.7_x64.vst3"
     },
     "9c4095bb": {
       "tuid": "52545356424e724d62617373206d6f6e",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "RBass Mono",
+      "vendor": "Waves",
+      "fuid": "565354524E424D7262617373206D6F6E"
     },
     "9c5d20b2": {
       "tuid": "52545356424e72536261737320737465",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "RBass Stereo",
+      "vendor": "Waves",
+      "fuid": "565354524E4253726261737320737465"
     },
     "4dcaaed2": {
       "tuid": "52545356544e72586368616e6e656c20",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "RChannel Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "565354524E5458726368616E6E656C20"
     },
     "4da163d2": {
       "tuid": "52545356544e724d6368616e6e656c20",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "RChannel Mono",
+      "vendor": "Waves",
+      "fuid": "565354524E544D726368616E6E656C20"
     },
     "4db7e9d2": {
       "tuid": "52545356544e72536368616e6e656c20",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "RChannel Stereo",
+      "vendor": "Waves",
+      "fuid": "565354524E5453726368616E6E656C20"
     },
     "16ac3c80": {
       "tuid": "555453564352724d636f6d7072657373",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "RCompressor Mono",
+      "vendor": "Waves",
+      "fuid": "5653545552434D72636F6D7072657373"
     },
     "16c2c280": {
       "tuid": "5554535643527253636f6d7072657373",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "RCompressor Stereo",
+      "vendor": "Waves",
+      "fuid": "5653545552435372636F6D7072657373"
     },
     "e383e66d": {
       "tuid": "525453565344724d6465657373657220",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "RDeEsser Mono",
+      "vendor": "Waves",
+      "fuid": "5653545244534D726465657373657220"
     },
     "e39a6c6d": {
       "tuid": "52545356534472536465657373657220",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "RDeEsser Stereo",
+      "vendor": "Waves",
+      "fuid": "56535452445353726465657373657220"
     },
     "021680dc": {
       "tuid": "525453563251724d65712032206d6f6e",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "REQ 2 Mono",
+      "vendor": "Waves",
+      "fuid": "5653545251324D7265712032206D6F6E"
     },
     "02330bd3": {
       "tuid": "52545356325172536571203220737465",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "REQ 2 Stereo",
+      "vendor": "Waves",
+      "fuid": "56535452513253726571203220737465"
     },
     "0998811a": {
       "tuid": "525453563451724d65712034206d6f6e",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "REQ 4 Mono",
+      "vendor": "Waves",
+      "fuid": "5653545251344D7265712034206D6F6E"
     },
     "09b50c11": {
       "tuid": "52545356345172536571203420737465",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "REQ 4 Stereo",
+      "vendor": "Waves",
+      "fuid": "56535452513453726571203420737465"
     },
     "111a8158": {
       "tuid": "525453563651724d65712036206d6f6e",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "REQ 6 Mono",
+      "vendor": "Waves",
+      "fuid": "5653545251364D7265712036206D6F6E"
     },
     "11370c4f": {
       "tuid": "52545356365172536571203620737465",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "REQ 6 Stereo",
+      "vendor": "Waves",
+      "fuid": "56535452513653726571203620737465"
     },
     "1be9bfac": {
       "tuid": "525453564652725876657262206d6f6e",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "RVerb Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "565354525246587276657262206D6F6E"
     },
     "1bdcffa3": {
       "tuid": "52545356465272537665726220737465",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "RVerb Stereo",
+      "vendor": "Waves",
+      "fuid": "56535452524653727665726220737465"
     },
     "2c06dfd4": {
       "tuid": "4d5453565658724d766f78206d6f6e6f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "RVox Mono",
+      "vendor": "Waves",
+      "fuid": "5653544D58564D72766F78206D6F6E6F"
     },
     "32225cd7": {
       "tuid": "4d54535656587253766f782073746572",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "RVox Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544D58565372766F782073746572"
     },
     "d36d5885": {
       "tuid": "525453565841724d656e61697373616e",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Renaissance Axx Mono",
+      "vendor": "Waves",
+      "fuid": "5653545241584D72656E61697373616E"
     },
     "d383de85": {
       "tuid": "5254535658417253656e61697373616e",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Renaissance Axx Stereo",
+      "vendor": "Waves",
+      "fuid": "5653545241585372656E61697373616E"
     },
     "c1f50d4a": {
       "tuid": "4e545356485373533120696d61676572",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "S1 Imager Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544E534853733120696D61676572"
     },
     "bd0b11a7": {
       "tuid": "4d5453565853735331206d73206d6174",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "S1 MS Matrix Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544D5358537331206D73206D6174"
     },
     "3cf143a9": {
       "tuid": "4e54535644497353312073687566666c",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "S1 Shuffler Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544E49445373312073687566666C"
     },
     "0660b9c0": {
       "tuid": "656661537974694c6d7472527664482e",
       "flPlugin": "Safety Limiter",
       "vendor": "Robbert van der Helm",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Safety Limiter.vst3\\Contents\\x86_64-win\\Safety Limiter.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Safety Limiter.vst3\\Contents\\x86_64-win\\Safety Limiter.vst3",
+      "fuid": "5361666574794C696D7472527664482E",
+      "reaperHash": 1849311315
     },
     "14d40b87": {
       "tuid": "505453565352734d617068697261206d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Saphira Mono",
+      "vendor": "Waves",
+      "fuid": "5653545052534D73617068697261206D"
     },
     "14ea918d": {
       "tuid": "50545356535273536170686972612073",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Saphira Stereo",
+      "vendor": "Waves",
+      "fuid": "56535450525353736170686972612073"
     },
     "5a67e07f": {
       "tuid": "3375068da0d81d49baa36c064c6abbfb",
       "flPlugin": "FabFilter Saturn 2",
       "vendor": "FabFilter",
-      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Saturn 2.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Saturn 2.vst3",
+      "fuid": "8D067533D8A0491DBAA36C064C6ABBFB",
+      "reaperHash": 1437095695
     },
     "ba7a48d1": {
       "tuid": "01efcdab8291ebfa4361626c43474c33",
       "flPlugin": "ShaperBox 3",
       "vendor": "Cableguys",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Cableguys\\ShaperBox 3.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Cableguys\\ShaperBox 3.vst3",
+      "fuid": "ABCDEF019182FAEB4361626C43474C33",
+      "reaperHash": 841703268
     },
     "f15fcaf9": {
       "tuid": "535453564249734d6962696c616e6365",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Sibilance Mono",
+      "vendor": "Waves",
+      "fuid": "5653545349424D736962696C616E6365"
     },
     "f17650f9": {
       "tuid": "53545356424973536962696c616e6365",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Sibilance Stereo",
+      "vendor": "Waves",
+      "fuid": "56535453494253736962696C616E6365"
     },
     "16e9caf9": {
       "tuid": "535453564c49734d6962696c616e6365",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Sibilance-Live Mono",
+      "vendor": "Waves",
+      "fuid": "56535453494C4D736962696C616E6365"
     },
     "170050f9": {
       "tuid": "535453564c4973536962696c616e6365",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Sibilance-Live Stereo",
+      "vendor": "Waves",
+      "fuid": "56535453494C53736962696C616E6365"
     },
     "0d2072a0": {
       "tuid": "70f41733e855e447896b59c21b843fae",
       "flPlugin": "FabFilter Simplon",
       "vendor": "FabFilter",
-      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Simplon.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Simplon.vst3",
+      "fuid": "3317F47055E847E4896B59C21B843FAE",
+      "reaperHash": 1075354568
     },
     "eac19648": {
       "tuid": "545453565053734d6d61636b20617474",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Smack Attack Mono",
+      "vendor": "Waves",
+      "fuid": "5653545453504D736D61636B20617474"
     },
     "ead81c48": {
       "tuid": "54545356505373536d61636b20617474",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Smack Attack Stereo",
+      "vendor": "Waves",
+      "fuid": "56535454535053736D61636B20617474"
     },
     "ec4ccc2c": {
       "tuid": "01efcdab8291ebfa44777665536d6467",
       "flPlugin": "Smudge",
       "vendor": "Dreamwave",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Smudge.vst3\\Contents\\x86_64-win\\Smudge.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Smudge.vst3\\Contents\\x86_64-win\\Smudge.vst3",
+      "fuid": "ABCDEF019182FAEB44777665536D6467",
+      "reaperHash": 850845616
     },
     "62f6d35d": {
       "tuid": "74666f5361567563756d2e527664482e",
       "flPlugin": "Soft Vacuum",
       "vendor": "Robbert van der Helm",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Soft Vacuum.vst3\\Contents\\x86_64-win\\Soft Vacuum.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Soft Vacuum.vst3\\Contents\\x86_64-win\\Soft Vacuum.vst3",
+      "fuid": "536F667456616375756D2E527664482E",
+      "reaperHash": 1743099384
     },
     "b728e66e": {
       "tuid": "01efcdab8291ebfa536f6e6f4e427573",
       "flPlugin": "SonoBus",
-      "vendor": "Sonosaurus"
+      "vendor": "Sonosaurus",
+      "fuid": "ABCDEF019182FAEB536F6E6F4E427573",
+      "reaperHash": 1116277104,
+      "file": "C:\\Program Files\\Common Files\\VST3\\SonoBus.vst3\\Contents\\x86_64-win\\SonoBus.vst3"
     },
     "85b7df61": {
       "tuid": "545453565253734d6f756e6473686966",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "SoundShifter Pitch Mono",
+      "vendor": "Waves",
+      "fuid": "5653545453524D736F756E6473686966"
     },
     "85ce6561": {
       "tuid": "54545356525373536f756e6473686966",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "SoundShifter Pitch Stereo",
+      "vendor": "Waves",
+      "fuid": "56535454535253736F756E6473686966"
     },
     "32b27129": {
       "tuid": "535453564270736c70616365626c656e",
       "flPlugin": "SpaceBlender",
-      "vendor": "Soundtoys"
+      "vendor": "Soundtoys",
+      "fuid": "5653545370426C7370616365626C656E",
+      "reaperHash": 127347988,
+      "file": "C:\\Program Files\\Common Files\\VST3\\Soundtoys\\SpaceBlender.vst3"
     },
     "d6e5e556": {
       "tuid": "636570537274436c6f6d707252766448",
       "flPlugin": "Spectral Compressor",
       "vendor": "Robbert van der Helm",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Spectral Compressor.vst3\\Contents\\x86_64-win\\Spectral Compressor.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Spectral Compressor.vst3\\Contents\\x86_64-win\\Spectral Compressor.vst3",
+      "fuid": "5370656374726C436F6D707252766448",
+      "reaperHash": 1715641195
     },
     "58a650a4": {
       "tuid": "535453564d42734d75626d6172696e65",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Submarine Mono",
+      "vendor": "Waves",
+      "fuid": "56535453424D4D7375626D6172696E65"
     },
     "58bcd6a4": {
       "tuid": "535453564d42735375626d6172696e65",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Submarine Stereo",
+      "vendor": "Waves",
+      "fuid": "56535453424D537375626D6172696E65"
     },
     "891aed34": {
       "tuid": "4d545356325473587570657274617020",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "SuperTap 2-Taps Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544D543258737570657274617020"
     },
     "88f1a234": {
       "tuid": "4d5453563254734d7570657274617020",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "SuperTap 2-Taps Mono",
+      "vendor": "Waves",
+      "fuid": "5653544D54324D737570657274617020"
     },
     "89082834": {
       "tuid": "4d545356325473537570657274617020",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "SuperTap 2-Taps Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544D543253737570657274617020"
     },
     "981eed34": {
       "tuid": "4d545356365473587570657274617020",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "SuperTap 6-Taps Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544D543658737570657274617020"
     },
     "97f5a234": {
       "tuid": "4d5453563654734d7570657274617020",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "SuperTap 6-Taps Mono",
+      "vendor": "Waves",
+      "fuid": "5653544D54364D737570657274617020"
     },
     "980c2834": {
       "tuid": "4d545356365473537570657274617020",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "SuperTap 6-Taps Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544D543653737570657274617020"
     },
     "ed4ddc26": {
       "tuid": "01efcdab8291ebfa44777665546e7461",
       "flPlugin": "Tarantula",
       "vendor": "Dreamwave",
-      "file": "C:\\Program Files\\Common Files\\VST3\\Tarantula.vst3\\Contents\\x86_64-win\\Tarantula.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\Tarantula.vst3\\Contents\\x86_64-win\\Tarantula.vst3",
+      "fuid": "ABCDEF019182FAEB44777665546E7461",
+      "reaperHash": 1879136340
     },
     "96546ef3": {
       "tuid": "f267eed252c52d40902115931afdae6b",
       "flPlugin": "FabFilter Timeless 3",
       "vendor": "FabFilter",
-      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Timeless 3.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Timeless 3.vst3",
+      "fuid": "D2EE67F2C552402D902115931AFDAE6B",
+      "reaperHash": 2123585227
     },
     "4d8f303a": {
       "tuid": "5a5453564d4254326f6e616c2042616c",
       "flPlugin": "Tonal Balance Control 2",
       "vendor": "iZotope, Inc.",
-      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Tonal Balance Control 2.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\iZotope\\Tonal Balance Control 2.vst3",
+      "fuid": "5653545A424D32546F6E616C2042616C",
+      "reaperHash": 821757972
     },
     "3965e902": {
       "tuid": "545453563458744d72616e7378206d75",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "TransX Multi Mono",
+      "vendor": "Waves",
+      "fuid": "5653545458344D7472616E7378206D75"
     },
     "397c6f02": {
       "tuid": "545453563458745372616e7378206d75",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "TransX Multi Stereo",
+      "vendor": "Waves",
+      "fuid": "565354545834537472616E7378206D75"
     },
     "bcc8f2f6": {
       "tuid": "545453565758744d72616e7378207769",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "TransX Wide Mono",
+      "vendor": "Waves",
+      "fuid": "5653545458574D7472616E7378207769"
     },
     "bcdf78f6": {
       "tuid": "545453565758745372616e7378207769",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "TransX Wide Stereo",
+      "vendor": "Waves",
+      "fuid": "565354545857537472616E7378207769"
     },
     "0525120a": {
       "tuid": "545453564d5674587275657665726220",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "TrueVerb Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "56535454564D58747275657665726220"
     },
     "1b81c70a": {
       "tuid": "545453565356744d7275657665726220",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "TrueVerb Mono",
+      "vendor": "Waves",
+      "fuid": "5653545456534D747275657665726220"
     },
     "a7394d0a": {
       "tuid": "54545356345674537275657665726220",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "TrueVerb Stereo",
+      "vendor": "Waves",
+      "fuid": "56535454563453747275657665726220"
     },
     "f682a06b": {
       "tuid": "01efcdab8291ebfa5541447855334459",
       "flPlugin": "uaudio_ua_1176",
       "vendor": "Universal Audio (UADx)",
-      "file": "C:\\Program Files\\Common Files\\VST3\\uaudio_ua_1176.vst3\\Contents\\x86_64-win\\uaudio_ua_1176.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\uaudio_ua_1176.vst3\\Contents\\x86_64-win\\uaudio_ua_1176.vst3",
+      "fuid": "ABCDEF019182FAEB5541447855334459",
+      "reaperHash": 652516912
     },
     "f682a05c": {
       "tuid": "01efcdab8291ebfa554144785533444a",
       "flPlugin": "uaudio_teletronix_la-2a_tc",
       "vendor": "Universal Audio (UADx)",
-      "file": "C:\\Program Files\\Common Files\\VST3\\uaudio_teletronix_la-2a_tc.vst3\\Contents\\x86_64-win\\uaudio_teletronix_la-2a_tc.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\uaudio_teletronix_la-2a_tc.vst3\\Contents\\x86_64-win\\uaudio_teletronix_la-2a_tc.vst3",
+      "fuid": "ABCDEF019182FAEB554144785533444A",
+      "reaperHash": 434407865
     },
     "66644424": {
       "tuid": "53545356334875586c74726170697463",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "UltraPitch 3 Voices Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "56535453483358756C74726170697463"
     },
     "663af924": {
       "tuid": "535453563348754d6c74726170697463",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "UltraPitch 3 Voices Mono",
+      "vendor": "Waves",
+      "fuid": "5653545348334D756C74726170697463"
     },
     "71a74424": {
       "tuid": "53545356364875586c74726170697463",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "UltraPitch 6 Voices Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "56535453483658756C74726170697463"
     },
     "717df924": {
       "tuid": "535453563648754d6c74726170697463",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "UltraPitch 6 Voices Mono",
+      "vendor": "Waves",
+      "fuid": "5653545348364D756C74726170697463"
     },
     "e2454424": {
       "tuid": "53545356544875586c74726170697463",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "UltraPitch Shift Mono/Stereo",
+      "vendor": "Waves",
+      "fuid": "56535453485458756C74726170697463"
     },
     "e21bf924": {
       "tuid": "535453565448754d6c74726170697463",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "UltraPitch Shift Mono",
+      "vendor": "Waves",
+      "fuid": "5653545348544D756C74726170697463"
     },
     "c8b118e6": {
       "tuid": "4e5453564356764d636f6d70206d6f6e",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "VComp Mono",
+      "vendor": "Waves",
+      "fuid": "5653544E56434D76636F6D70206D6F6E"
     },
     "c8cda3dd": {
       "tuid": "4e54535643567653636f6d7020737465",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "VComp Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544E56435376636F6D7020737465"
     },
     "b7780837": {
       "tuid": "4e5453565145764d657133206d6f6e6f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "VEQ3 Mono",
+      "vendor": "Waves",
+      "fuid": "5653544E45514D76657133206D6F6E6F"
     },
     "bd93853a": {
       "tuid": "4e545356514576536571332073746572",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "VEQ3 Stereo",
+      "vendor": "Waves",
+      "fuid": "5653544E455153766571332073746572"
     },
     "b77bca2f": {
       "tuid": "565453565145764d657134206d6f6e6f",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "VEQ4 Mono",
+      "vendor": "Waves",
+      "fuid": "5653545645514D76657134206D6F6E6F"
     },
     "bd974732": {
       "tuid": "56545356514576536571342073746572",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "VEQ4 Stereo",
+      "vendor": "Waves",
+      "fuid": "56535456455153766571342073746572"
     },
     "a5a5bd3b": {
       "tuid": "565453564d55764d75206d6574657220",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "VU Meter Mono",
+      "vendor": "Waves",
+      "fuid": "56535456554D4D7675206D6574657220"
     },
     "a5bc433b": {
       "tuid": "565453564d55765375206d6574657220",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "VU Meter Stereo",
+      "vendor": "Waves",
+      "fuid": "56535456554D537675206D6574657220"
     },
     "6fd8f880": {
       "tuid": "565453564d54764d6974616d696e206d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Vitamin Mono",
+      "vendor": "Waves",
+      "fuid": "56535456544D4D766974616D696E206D"
     },
     "6fef7e86": {
       "tuid": "565453564d5476536974616d696e2073",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Vitamin Stereo",
+      "vendor": "Waves",
+      "fuid": "56535456544D53766974616D696E2073"
     },
     "ae347b62": {
       "tuid": "4833925df7adb5439f86ec29572b103e",
       "flPlugin": "FabFilter Volcano 2",
       "vendor": "FabFilter",
-      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Volcano 2.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Volcano 2.vst3",
+      "fuid": "5D923348ADF743B59F86EC29572B103E",
+      "reaperHash": 1392351207
     },
     "bfa4bea5": {
       "tuid": "575453564d4c77356c6d206d65746572",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "WLM Meter 5.0",
+      "vendor": "Waves",
+      "fuid": "565354574C4D35776C6D206D65746572"
     },
     "bfa87fa5": {
       "tuid": "575453564d4c77366c6d206d65746572",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "WLM Meter 5.1",
+      "vendor": "Waves",
+      "fuid": "565354574C4D36776C6D206D65746572"
     },
     "bffed6a5": {
       "tuid": "575453564d4c774d6c6d206d65746572",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "WLM Meter Mono",
+      "vendor": "Waves",
+      "fuid": "565354574C4D4D776C6D206D65746572"
     },
     "c0155ca5": {
       "tuid": "575453564d4c77536c6d206d65746572",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "WLM Meter Stereo",
+      "vendor": "Waves",
+      "fuid": "565354574C4D53776C6D206D65746572"
     },
     "0de4ccb0": {
       "tuid": "575453564c5777356c6d20706c757320",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "WLM Plus 5.0",
+      "vendor": "Waves",
+      "fuid": "56535457574C35776C6D20706C757320"
     },
     "0de88db0": {
       "tuid": "575453564c5777366c6d20706c757320",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "WLM Plus 5.1",
+      "vendor": "Waves",
+      "fuid": "56535457574C36776C6D20706C757320"
     },
     "0e3ee4b0": {
       "tuid": "575453564c57774d6c6d20706c757320",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "WLM Plus Mono",
+      "vendor": "Waves",
+      "fuid": "56535457574C4D776C6D20706C757320"
     },
     "0e556ab0": {
       "tuid": "575453564c5777536c6d20706c757320",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "WLM Plus Stereo",
+      "vendor": "Waves",
+      "fuid": "56535457574C53776C6D20706C757320"
     },
     "a55be53e": {
       "tuid": "545453564c4e774d617665732074756e",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Waves Tune LT Mono",
+      "vendor": "Waves",
+      "fuid": "565354544E4C4D77617665732074756E"
     },
     "a5726b3e": {
       "tuid": "545453564c4e7753617665732074756e",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Waves Tune LT Stereo",
+      "vendor": "Waves",
+      "fuid": "565354544E4C5377617665732074756E"
     },
     "cc8d8335": {
       "tuid": "50545356577677726964657200000000",
       "flPlugin": "Wider",
-      "vendor": "Polyverse Music"
+      "vendor": "Polyverse Music",
+      "fuid": "56535450765772776964657200000000",
+      "reaperHash": 208368998,
+      "file": "C:\\Program Files\\Common Files\\VST3\\Wider.vst3"
     },
     "4f083d44": {
       "tuid": "585453564c43784d2d636c69636b206d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "X-Click Mono",
+      "vendor": "Waves",
+      "fuid": "56535458434C4D782D636C69636B206D"
     },
     "4f1ec34a": {
       "tuid": "585453564c4378532d636c69636b2073",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "X-Click Stereo",
+      "vendor": "Waves",
+      "fuid": "56535458434C53782D636C69636B2073"
     },
     "658f4244": {
       "tuid": "585453565243784d2d637261636b6c65",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "X-Crackle Mono",
+      "vendor": "Waves",
+      "fuid": "5653545843524D782D637261636B6C65"
     },
     "65a5c844": {
       "tuid": "58545356524378532d637261636b6c65",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "X-Crackle Stereo",
+      "vendor": "Waves",
+      "fuid": "56535458435253782D637261636B6C65"
     },
     "d567a3c1": {
       "tuid": "585453564d48784d2d68756d206d6f6e",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "X-Hum Mono",
+      "vendor": "Waves",
+      "fuid": "56535458484D4D782D68756D206D6F6E"
     },
     "d5842eb8": {
       "tuid": "585453564d4878532d68756d20737465",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "X-Hum Stereo",
+      "vendor": "Waves",
+      "fuid": "56535458484D53782D68756D20737465"
     },
     "c59e9a44": {
       "tuid": "58545356534e784d2d6e6f697365206d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "X-Noise Mono",
+      "vendor": "Waves",
+      "fuid": "565354584E534D782D6E6F697365206D"
     },
     "c5b5204a": {
       "tuid": "58545356534e78532d6e6f6973652073",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "X-Noise Stereo",
+      "vendor": "Waves",
+      "fuid": "565354584E5353782D6E6F6973652073"
     },
     "8eadedc1": {
       "tuid": "0de7aef2de004e4f6774755975726259",
       "flPlugin": "Youlean Loudness Meter 2",
-      "vendor": "Youlean"
+      "vendor": "Youlean",
+      "fuid": "F2AEE70D00DE4F4E6774755975726259",
+      "reaperHash": 1178696879,
+      "file": "C:\\Program Files\\Common Files\\VST3\\Youlean Loudness Meter 2.vst3"
     },
     "c59e2d67": {
       "tuid": "57545356534e7a4d2d6e6f697365206d",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Z-Noise Mono",
+      "vendor": "Waves",
+      "fuid": "565354574E534D7A2D6E6F697365206D"
     },
     "c5b4b36d": {
       "tuid": "57545356534e7a532d6e6f6973652073",
-      "flPlugin": "WaveShell1-VST3 12.7_x64",
-      "vendor": "Waves"
+      "flPlugin": "Z-Noise Stereo",
+      "vendor": "Waves",
+      "fuid": "565354574E53537A2D6E6F6973652073"
     },
     "3f2478d9": {
       "tuid": "01efcdab8291ebfa4f656b5353746842",
       "flPlugin": "soothe2_x64",
       "vendor": "oeksound",
-      "file": "C:\\Program Files\\Common Files\\VST3\\oeksound\\soothe2_x64.vst3"
+      "file": "C:\\Program Files\\Common Files\\VST3\\oeksound\\soothe2_x64.vst3",
+      "fuid": "ABCDEF019182FAEB4F656B5353746842",
+      "reaperHash": 211261246
+    },
+    "357abb5a": {
+      "tuid": "695b9dd3afd6fa421234567844695661",
+      "fuid": "D39D5B69D6AF42FA1234567844695661",
+      "reaperHash": 1702226742,
+      "flPlugin": "Diva",
+      "vendor": "u-he",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Diva(x64).vst3"
+    },
+    "adb7ab48": {
+      "tuid": "5fdee8845592222296fae4133c935a18",
+      "fuid": "84E8DE5F9255222296FAE4133C935A18",
+      "reaperHash": 103502701,
+      "flPlugin": "Omnisphere (Spectrasonics)",
+      "vendor": "18 out",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Omnisphere.vst3"
+    },
+    "1d68656b": {
+      "tuid": "646c654d70616f724d44524d4d44524d",
+      "fuid": "4D656C646170726F4D44524D4D44524D",
+      "reaperHash": 1132857785,
+      "flPlugin": "MDrummer (MeldaProduction)",
+      "vendor": "32 out",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MDrummer.vst3"
+    },
+    "1d68628b": {
+      "tuid": "646c654d70616f724d4452364d445236",
+      "fuid": "4D656C646170726F4D4452364D445236",
+      "reaperHash": 1166068109,
+      "flPlugin": "MDrummer16out (MeldaProduction)",
+      "vendor": "32 out",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MDrummer16out.vst3"
+    },
+    "1d6861eb": {
+      "tuid": "646c654d70616f724d4452314d445231",
+      "fuid": "4D656C646170726F4D4452314D445231",
+      "reaperHash": 1899299793,
+      "flPlugin": "MDrummer1out",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MDrummer1out.vst3"
+    },
+    "1f6cca0b": {
+      "tuid": "646c654d70616f724d5475724d547572",
+      "fuid": "4D656C646170726F4D5475724D547572",
+      "reaperHash": 293508449,
+      "flPlugin": "MPowerSynth",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MPowerSynth.vst3"
+    },
+    "200946eb": {
+      "tuid": "646c654d70616f724d5959594d595959",
+      "fuid": "4D656C646170726F4D5959594D595959",
+      "reaperHash": 1919343977,
+      "flPlugin": "MSoundFactory",
+      "vendor": "MeldaProduction",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MSoundFactory.vst3"
+    },
+    "2009428b": {
+      "tuid": "646c654d70616f724d5959364d595936",
+      "fuid": "4D656C646170726F4D5959364D595936",
+      "reaperHash": 346419305,
+      "flPlugin": "MSoundFactory6out (MeldaProduction)",
+      "vendor": "12 out",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MeldaProduction\\MSoundFactory6out.vst3"
+    },
+    "ec3eed50": {
+      "tuid": "40fc4092cd10a045b7dacecaddc2e97a",
+      "fuid": "9240FC4010CD45A0B7DACECADDC2E97A",
+      "reaperHash": 504970876,
+      "flPlugin": "One",
+      "vendor": "FabFilter",
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter One.vst3"
+    },
+    "d554d3e7": {
+      "tuid": "ea5b72997b83df4bb778cc6848c61f5a",
+      "fuid": "99725BEA837B4BDFB778CC6848C61F5A",
+      "reaperHash": 1945320767,
+      "flPlugin": "Twin 2",
+      "vendor": "FabFilter",
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter\\FabFilter Twin 2.vst3"
+    },
+    "66188e5c": {
+      "tuid": "4e54535624696b446f6e74616b740000",
+      "fuid": "5653544E6924446B6F6E74616B740000",
+      "reaperHash": 821777587,
+      "flPlugin": "Kontakt (Native Instruments)",
+      "vendor": "64 out",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Kontakt.vst3"
+    },
+    "ee332904": {
+      "tuid": "535453566e61627462632073796d7068",
+      "fuid": "56535453616E746262632073796D7068",
+      "reaperHash": 885344108,
+      "flPlugin": "BBC Symphony Orchestra (Spitfire Audio)",
+      "vendor": "32 out",
+      "file": "C:\\Program Files\\Common Files\\VST3\\BBC Symphony Orchestra (64 Bit).vst3\\Contents\\x86_64-win\\BBC Symphony Orchestra (64 Bit).vst3"
+    },
+    "9acb4b39": {
+      "tuid": "535453564c666c626162730000000000",
+      "fuid": "56535453664C626C6162730000000000",
+      "reaperHash": 359949351,
+      "flPlugin": "LABS",
+      "vendor": "Spitfire Audio",
+      "file": "C:\\Program Files\\Common Files\\VST3\\LABS (64 Bit).vst3"
+    },
+    "d7709eec": {
+      "tuid": "01efcdab8291ebfa4447534244657864",
+      "fuid": "ABCDEF019182FAEB4447534244657864",
+      "reaperHash": 475117838,
+      "flPlugin": "Dexed",
+      "vendor": "Digital Suburban",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Dexed.vst3"
+    },
+    "2a108230": {
+      "tuid": "01efcdab8291ebfa4d7573657a6f776b",
+      "fuid": "ABCDEF019182FAEB4D7573657A6F776B",
+      "reaperHash": 351989038,
+      "flPlugin": "Muse Spark",
+      "vendor": "Muse",
+      "file": "C:\\Program Files\\Common Files\\VST3\\MuseSpark.vst3"
+    },
+    "92748e3f": {
+      "tuid": "535453565862736c75626c6162786c00",
+      "fuid": "5653545362586C7375626C6162786C00",
+      "reaperHash": 1471554464,
+      "flPlugin": "SubLabXL",
+      "vendor": "FutureAudioWorkshop",
+      "file": "C:\\Program Files\\Common Files\\VST3\\SubLabXL.vst3"
+    },
+    "a7b9b8ab": {
+      "tuid": "7574724156415349416c617650726f63",
+      "fuid": "4172747541564953416C617650726F63",
+      "reaperHash": 714224766,
+      "flPlugin": "Analog Lab V",
+      "vendor": "Arturia",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Arturia\\Analog Lab V.vst3"
+    },
+    "9d8e009d": {
+      "tuid": "df554732df8f8847b4ce5b70a8037ec4",
+      "fuid": "324755DF8FDF4788B4CE5B70A8037EC4",
+      "reaperHash": 1784013433,
+      "flPlugin": "ZENOLOGY",
+      "vendor": "Roland Cloud",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Roland Cloud\\ZENOLOGY.vst3"
+    },
+    "d8a6335c": {
+      "tuid": "41545356435261447263616465000000",
+      "fuid": "56535441524344617263616465000000",
+      "reaperHash": 786184450,
+      "flPlugin": "Arcade",
+      "vendor": "Output",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Arcade.vst3\\Contents\\x86_64-win\\Arcade.vst3"
+    },
+    "f6988c48": {
+      "tuid": "01efcdab8291ebfa5541447855493036",
+      "fuid": "ABCDEF019182FAEB5541447855493036",
+      "reaperHash": 775621227,
+      "flPlugin": "UADx PolyMAX Synth (Universal Audio (UADx))",
+      "file": "C:\\Program Files\\Common Files\\VST3\\uaudio_polymax.vst3\\Contents\\x86_64-win\\uaudio_polymax.vst3",
+      "vendor": "Universal Audio (UADx)"
+    },
+    "b228e66e": {
+      "tuid": "01efcdab8291ebfa536f6e6f49427573",
+      "fuid": "ABCDEF019182FAEB536F6E6F49427573",
+      "reaperHash": 2071224503,
+      "flPlugin": "SonoBusInstrument (Sonosaurus)",
+      "vendor": "18ch",
+      "file": "C:\\Program Files\\Common Files\\VST3\\SonoBusInstrument.vst3\\Contents\\x86_64-win\\SonoBusInstrument.vst3"
+    },
+    "033deeaa": {
+      "tuid": "47545356385265536c65637472696320",
+      "fuid": "56535447523853656C65637472696320",
+      "flPlugin": "Electric Grand 80 Stereo",
+      "vendor": "Waves"
     }
   },
   "byName": {
@@ -3188,6 +4093,498 @@
     "wavesznoisestereo": "c5b4b36d",
     "soothe2": "3f2478d9",
     "soothe2x64": "3f2478d9",
-    "oeksoundsoothe2": "3f2478d9"
+    "oeksoundsoothe2": "3f2478d9",
+    "diva": "357abb5a",
+    "omnispherespectrasonics": "adb7ab48",
+    "youleanloudnessmeter2youlean": "8eadedc1",
+    "mdrummermeldaproduction": "1d68656b",
+    "mdrummer16outmeldaproduction": "1d68628b",
+    "mdrummer1out": "1d6861eb",
+    "mpowersynth": "1f6cca0b",
+    "msoundfactory": "200946eb",
+    "msoundfactory6outmeldaproduction": "2009428b",
+    "msuperlooper16in16outmeldaproduction": "1f4cc2ab",
+    "msuperlooper16outmeldaproduction": "1f4cc28b",
+    "mxxx6in6outmeldaproduction": "1fe4e28b",
+    "mxxx6outmeldaproduction": "1fe9228b",
+    "one": "ec3eed50",
+    "twin2": "d554d3e7",
+    "kontaktnativeinstruments": "66188e5c",
+    "bbcsymphonyorchestraspitfireaudio": "ee332904",
+    "labs": "9acb4b39",
+    "dexed": "d7709eec",
+    "musespark": "2a108230",
+    "uadxla2atubecompressoruniversalaudiouadx": "f682a05c",
+    "sublabxl": "92748e3f",
+    "analoglabv": "a7b9b8ab",
+    "uadx1176fetcompressoruniversalaudiouadx": "f682a06b",
+    "zenology": "9d8e009d",
+    "crossoverrobbertvanderhelm": "578d6d1c",
+    "arcade": "d8a6335c",
+    "uadxpolymaxsynthuniversalaudiouadx": "f6988c48",
+    "sonobusinstrumentsonosaurus": "b228e66e",
+    "sonobussonosaurus": "b728e66e",
+    "ndioutputndi": "e69bcc14",
+    "ndiinputndi": "706361dd",
+    "bbcsymphonyorchestra": "ee332904",
+    "kontakt": "66188e5c",
+    "mdrummer": "1d68656b",
+    "mdrummer16out": "1d68628b",
+    "msoundfactory6out": "2009428b",
+    "omnisphere": "adb7ab48",
+    "sonobusinstrument": "b228e66e",
+    "uadxpolymaxsynth": "f6988c48",
+    "electricgrand80stereo": "033deeaa"
+  },
+  "byFuid": {
+    "56535441746235616D706C6974756265": "64d69c5c",
+    "ABCDEF019182FAEB4E4453504154474A": "0a026f84",
+    "5653545354414D617564696F74726163": "bfe085c2",
+    "56535453544153617564696F74726163": "bff70bc2",
+    "565354414B65796175746F2D6B657900": "77854cb3",
+    "565354415461636175746F2D74756E65": "3a3eac18",
+    "00C2B33FE2034457BA45E1BED447B693": "527aa78d",
+    "5653544150616E4175746F2D54756E65": "16677ef8",
+    "565354415438314175746F2D54756E65": "7f9981f8",
+    "ABCDEF019182FAEB4477766542736674": "db52ce39",
+    "4275666672476C697463682E52766448": "44952fdd",
+    "565354434D504D633120636F6D70206D": "65e94c5e",
+    "565354434D5053633120636F6D702073": "65ffd264",
+    "565354434F4D4D633120636F6D702D67": "dca65958",
+    "565354434F4D53633120636F6D702D67": "dcbcdf58",
+    "5653544331434D633120636F6D702D73": "191c5964",
+    "56535443314353633120636F6D702D73": "1932df64",
+    "5653544741544D63312067617465206D": "6fe49828",
+    "56535447415453633120676174652073": "6ffb1e2e",
+    "5653544445514D6334206D6F6E6F0000": "bfaad650",
+    "5653544445515363342073746572656F": "b6c57c5a",
+    "565354434E545363656E746572207374": "9028332f",
+    "ABCDEF019182FAEB586E746843726D61": "473a9783",
+    "4372697370506C7567696E527664482E": "794d04fe",
+    "43726F73736F766572527664482E2E2E": "578d6d1c",
+    "5653544379644C63796D617469637320": "9a3fa0ac",
+    "5653544453414D64656573736572206D": "fff9b4fa",
+    "56535444534153646565737365722073": "00103b00",
+    "ABCDEF019182FAEB4162726E44696769": "7dbd5445",
+    "44696F70736572506C7567527664482E": "f20d03fc",
+    "ABCDEF019182FAEB4270723044317274": "9e3757ce",
+    "56535444504158646F70706C6572206D": "f477a221",
+    "56535444504153646F70706C65722073": "f464dd27",
+    "56535457443258646F75626C65723220": "b0caa4e1",
+    "5653545744324D646F75626C65723220": "b0a159e1",
+    "56535457443253646F75626C65723220": "b0b7dfe1",
+    "56535457443458646F75626C65723420": "b84ca6e1",
+    "5653545744344D646F75626C65723420": "b8235be1",
+    "56535457443453646F75626C65723420": "b839e1e1",
+    "ABCDEF019182FAEB4361626238333038": "af662ba0",
+    "565354454B444D656B72616D65722064": "becdfe57",
+    "565354454B4453656B72616D65722064": "bee48457",
+    "56535443464C4D656D6F2D6632206D6F": "222015cb",
+    "56535443464C53656D6F2D6632207374": "2236a1d0",
+    "5653545349474D656D6F2D67656E6572": "85b053dd",
+    "56535453494753656D6F2D67656E6572": "85c6d9dd",
+    "5653544D51344D656D6F2D7134206D6F": "150ca2d6",
+    "5653544D513453656D6F2D7134207374": "15232edb",
+    "565354454E4758656E69676D61206D6F": "64d25062",
+    "565354454E4753656E69676D61207374": "64bf9167",
+    "CD4CA2F2009849AC00439BB9001CB96A": "2d3f434b",
+    "5653544741324D67747220616D702032": "10330df1",
+    "56535447414D5867747220616D70206D": "75b7592c",
+    "56535447414D4D67747220616D70206D": "758e0e2c",
+    "56535447414D5367747220616D702073": "75a49432",
+    "565354474332586774722073746F6D70": "995ba85d",
+    "5653544743324D6774722073746F6D70": "99325d5d",
+    "565354474332536774722073746F6D70": "9948e35d",
+    "565354474334586774722073746F6D70": "a0dda85d",
+    "5653544743344D6774722073746F6D70": "a0b45d5d",
+    "565354474334536774722073746F6D70": "a0cae35d",
+    "56535447434E586774722073746F6D70": "0277a85d",
+    "56535447434E4D6774722073746F6D70": "024e5d5d",
+    "56535447434E536774722073746F6D70": "0264e35d",
+    "56535447564D5867747220746F6F6C20": "4cb6a72c",
+    "56535447564D5367747220746F6F6C20": "4ca3e22c",
+    "565354544E334D6774722074756E6572": "e8f83e51",
+    "56535447524D4D677720746F6E656365": "9a9f7ed6",
+    "56535447524D53677720746F6E656365": "9ab604d6",
+    "565354434C414D682D636F6D70206D6F": "fb691fe7",
+    "565354434C4153682D636F6D70207374": "fb7fabec",
+    "56535448424458682D64656C6179206D": "6e4e2da1",
+    "5653544842444D682D64656C6179206D": "6e24e2a1",
+    "56535448424453682D64656C61792073": "6e3b68a7",
+    "5653544330455869722D6C206D6F6E6F": "405b0955",
+    "5653544330454D69722D6C206D6F6E6F": "4031be55",
+    "5653544330455369722D6C2065666669": "383f3c4f",
+    "5653544330465369722D6C2066756C6C": "3d0f4252",
+    "ABCDEF019182FAEB447776654A636565": "e342cd2a",
+    "5653544C31434D6C31206C696D697465": "191aefbc",
+    "5653544C3143536C31206C696D697465": "193175bc",
+    "5653544C494D316C312B20756C747261": "56929f2c",
+    "5653544C324D4D6C32206D6F6E6F0000": "1faa9b11",
+    "5653544C324D536C322073746572656F": "16c5411b",
+    "5653544C33504D6C33206D756C74696D": "08f30538",
+    "5653544C3350536C33206D756C74696D": "09098b38",
+    "5653544C33474D6C3320756C7472616D": "ef28f421",
+    "5653544C3347536C3320756C7472616D": "ef3f7a21",
+    "5653545233504D6C332D6C6C206D756C": "be81ab5a",
+    "565354523350536C332D6C6C206D756C": "be98315a",
+    "5653545233474D6C332D6C6C20756C74": "9cc0a262",
+    "565354523347536C332D6C6C20756C74": "9cd72862",
+    "5653544C51414D6C696E65712062726F": "b60315be",
+    "5653544C5141536C696E65712062726F": "b6199bbe",
+    "5653544C51534D6C696E6571206C6F77": "f99f12c6",
+    "5653544C5153536C696E6571206C6F77": "f9b598c6",
+    "5653544C43354D6C696E6D62206D6F6E": "fb0308ec",
+    "5653544C4335536C696E6D6220737465": "fb1f93e3",
+    "5653544C4F41426C6F61697220352E30": "ec1a029e",
+    "5653544C4F41366C6F61697220352E31": "ebecf69f",
+    "5653544C4F414D6C6F616972206D6F6E": "ec7b8edc",
+    "5653544C4F41536C6F61697220737465": "ec9819d3",
+    "4C6F75646E6573735761722E52766448": "30a77aa9",
+    "4D656C646170726F4D6167634D616763": "210b082b",
+    "4D656C646170726F4D416D704D416D70": "1d0bc9cb",
+    "4D656C646170726F4D4165624D416562": "1d0ac80b",
+    "4D656C646170726F4D4141614D414161": "1d0647eb",
+    "4D656C646170726F4D6479414D647941": "216d43eb",
+    "4D656C646170726F4D41657E4D41657E": "1d0acb8b",
+    "4D656C646170726F4D417E324D417E32": "1d0de20b",
+    "4D656C646170726F4D6175544D617554": "210cc64b",
+    "4D656C646170726F4D6173664D617366": "210c888b",
+    "4D656C646170726F4D4175764D417576": "1d0cca8b",
+    "4D656C646170726F4D4165304D416530": "1d0ac1cb",
+    "4D656C646170726F6778373467783734": "63e5024b",
+    "4D656C646170726F4D4261404D426140": "1d2a43cb",
+    "4D656C646170726F4D4261734D426173": "1d2a4a2b",
+    "4D656C646170726F4D4269464D426946": "1d2b448b",
+    "4D656C646170726F4D6242464D624246": "2126648b",
+    "4D656C646170726F4D4343474D434347": "1d4684ab",
+    "4D656C646170726F4D4361624D436162": "1d4a480b",
+    "4D656C646170726F4D43614D4D43614D": "1d4a456b",
+    "4D656C646170726F4D43684D4D43684D": "1d4b256b",
+    "4D656C646170726F4D4368724D436872": "1d4b2a0b",
+    "4D656C646170726F4D4368564D436856": "1d4b268b",
+    "4D656C646170726F4D4D63684D4D6368": "1e8a88cb",
+    "4D656C646170726F4D436F6D4D436F6D": "1d4c096b",
+    "4D656C646170726F4D4D436F4D4D436F": "1e8689ab",
+    "4D656C646170726F4D436D704D436D70": "1d4bc9cb",
+    "4D656C646170726F4D4165314D416531": "1d0ac1eb",
+    "4D656C646170726F4D43657A4D43657A": "1d4acb0b",
+    "4D656C646170726F4D4D434F4D4D434F": "1e8685ab",
+    "4D656C646170726F6778373567783735": "63e5026b",
+    "4D656C646170726F4D6469734D646973": "216b4a2b",
+    "4D656C646170726F4D446F544D446F54": "1d6c064b",
+    "4D656C646170726F4D446F4D4D446F4D": "1d6c056b",
+    "4D656C646170726F4D44456E4D44456E": "1d66c98b",
+    "4D656C646170726F4D44724C4D44724C": "1d6c654b",
+    "4D656C646170726F4D4472524D447252": "1d6c660b",
+    "4D656C646170726F4D6479514D647951": "216d45eb",
+    "4D656C646170726F4D4165244D416524": "1d0ac04b",
+    "4D656C646170726F4D4165284D416528": "1d0ac0cb",
+    "4D656C646170726F4D4165604D416560": "1d0ac7cb",
+    "4D656C646170726F4D4165334D416533": "1d0ac22b",
+    "4D656C646170726F4D41656A4D41656A": "1d0ac90b",
+    "4D656C646170726F4D4165664D416566": "1d0ac88b",
+    "4D656C646170726F4D4145264D414526": "1d06c08b",
+    "4D656C646170726F4D4D42464D4D4246": "1e86648b",
+    "4D656C646170726F4D4641654D464165": "1da6486b",
+    "4D656C646170726F4D4165514D416551": "1d0ac5eb",
+    "4D656C646170726F4D4166704D416670": "1d0ae9cb",
+    "4D656C646170726F4D4165464D416546": "1d0ac48b",
+    "4D656C646170726F4D414D464D414D46": "1d07c48b",
+    "4D656C646170726F4D4D47724D4D4772": "1e870a0b",
+    "4D656C646170726F4D4741724D474172": "1dc64a0b",
+    "4D656C646170726F4D6D72684D6D7268": "228c68cb",
+    "4D656C646170726F4D4165294D416529": "1d0ac0eb",
+    "4D656C646170726F4D4164794D416479": "1d0aaaeb",
+    "4D656C646170726F4D4C616E4D4C616E": "1e6a498b",
+    "4D656C646170726F4D4D65744D4D6574": "1e8aca4b",
+    "4D656C646170726F4D4D6F434D4D6F43": "1e8c042b",
+    "4D656C646170726F4D4D6F724D4D6F72": "1e8c0a0b",
+    "4D656C646170726F4D4D6F424D4D6F42": "1e8c040b",
+    "4D656C646170726F4D4D416E4D4D416E": "1e86498b",
+    "4D656C646170726F4D4E6F694D4E6F69": "1eac08eb",
+    "4D656C646170726F4D4E6F744D4E6F74": "1eac0a4b",
+    "4D656C646170726F4D4F732B4D4F732B": "1ecc812b",
+    "4D656C646170726F4D4F73534D4F7353": "1ecc862b",
+    "4D656C646170726F4D4165354D416535": "1d0ac26b",
+    "4D656C646170726F3131353731313537": "9b04c2ab",
+    "4D656C646170726F4D5068614D506861": "1eeb27eb",
+    "4D656C646170726F4D506F534D506F53": "1eec062b",
+    "4D656C646170726F4D5261744D526174": "1f2a4a4b",
+    "4D656C646170726F4D526D624D526D62": "1f2bc80b",
+    "4D656C646170726F4D5265634D526563": "1f2ac82b",
+    "4D656C646170726F4D4165724D416572": "1d0aca0b",
+    "4D656C646170726F3434643734346437": "fb6aa2ab",
+    "4D656C646170726F4D5268794D526879": "1f2b2aeb",
+    "4D656C646170726F4D5268214D526821": "1f2b1feb",
+    "4D656C646170726F4D4165364D416536": "1d0ac28b",
+    "4D656C646170726F4D6D726D4D6D726D": "228c696b",
+    "4D656C646170726F4D526F744D526F74": "1f2c0a4b",
+    "4D656C646170726F4D4165344D416534": "1d0ac24b",
+    "4D656C646170726F4D4D424C4D4D424C": "1e86654b",
+    "4D656C646170726F4D5370644D537064": "1f4c284b",
+    "4D656C646170726F4D4124394D412439": "1d02a2eb",
+    "4D656C646170726F4D4124714D412471": "1d02a9eb",
+    "4D656C646170726F4D5370504D537050": "1f4c25cb",
+    "4D656C646170726F4D4165614D416561": "1d0ac7eb",
+    "4D656C646170726F4D5374474D537447": "1f4ca4ab",
+    "4D656C646170726F4D4124244D412424": "1d02a04b",
+    "4D656C646170726F4D5353634D535363": "1f48882b",
+    "4D656C646170726F4D5374534D537453": "1f4ca62b",
+    "4D656C646170726F4D53754C4D53754C": "1f4cc54b",
+    "4D656C646170726F4D5375374D537537": "1f4cc2ab",
+    "4D656C646170726F4D5375364D537536": "1f4cc28b",
+    "4D656C646170726F4D4654724D465472": "1da8aa0b",
+    "4D656C646170726F4D5472614D547261": "1f6c67eb",
+    "4D656C646170726F4D4D74724D4D7472": "1e8caa0b",
+    "4D656C646170726F4D4165374D416537": "1d0ac2ab",
+    "4D656C646170726F4D6D746D4D6D746D": "228ca96b",
+    "4D656C646170726F4D54756E4D54756E": "1f6cc98b",
+    "4D656C646170726F4D5475414D547541": "1f6cc3eb",
+    "4D656C646170726F4D5475434D547543": "1f6cc42b",
+    "4D656C646170726F4D54436D4D54436D": "1f66896b",
+    "4D656C646170726F4D5475444D547544": "1f6cc44b",
+    "4D656C646170726F4D54446D4D54446D": "1f66a96b",
+    "4D656C646170726F4D5475454D547545": "1f6cc46b",
+    "4D656C646170726F4D5475464D547546": "1f6cc48b",
+    "4D656C646170726F4D7452654D745265": "2368686b",
+    "4D656C646170726F4D74526D4D74526D": "2368696b",
+    "4D656C646170726F4D416D784D416D78": "1d0bcacb",
+    "4D656C646170726F4D556E694D556E69": "1f8be8eb",
+    "4D656C646170726F4D7574694D757469": "238ca8eb",
+    "5653544D56324D6D7632206D6F6E6F00": "1d742ef3",
+    "5653544D5632536D7632207374657265": "2281b912",
+    "4D656C646170726F4D4165384D416538": "1d0ac2cb",
+    "4D656C646170726F4D6D56694D6D5669": "2288e8eb",
+    "4D656C646170726F4D56526F4D56526F": "1fa869ab",
+    "4D656C646170726F4D566F634D566F63": "1fac082b",
+    "4D656C646170726F4D5761464D576146": "1fca448b",
+    "4D656C646170726F4D6D57664D6D5766": "2289088b",
+    "4D656C646170726F4D4165394D416539": "1d0ac2eb",
+    "4D656C646170726F4D6D57734D6D5773": "22890a2b",
+    "4D656C646170726F4D576F624D576F62": "1fcc080b",
+    "4D656C646170726F4D4D576F4D4D576F": "1e8909ab",
+    "4D656C646170726F4D5858584D585858": "1fe926cb",
+    "4D656C646170726F4D5858314D585831": "1fe921eb",
+    "4D656C646170726F4D5836364D583636": "1fe4e28b",
+    "4D656C646170726F4D5858364D585836": "1fe9228b",
+    "5653544D58424D6D6178786261737320": "4b0dd9be",
+    "5653544D5842536D6178786261737320": "4b245fbe",
+    "56535449564C4D6D617878766F6C756D": "fc8f0cfb",
+    "56535449564C536D617878766F6C756D": "fca592fb",
+    "5653544D6C70676D656C6F64796E6520": "9ea34efc",
+    "565354534654586D65746166696C7465": "804617b9",
+    "5653545346544D6D65746166696C7465": "801cccb9",
+    "565354534654536D65746166696C7465": "803352b9",
+    "565354464C4E586D657461666C616E67": "f2af28e8",
+    "565354464C4E4D6D657461666C616E67": "f285dde8",
+    "565354464C4E536D657461666C616E67": "f29c63e8",
+    "751AFC3415434CBCAA73672A109BE0FF": "3583941d",
+    "5653544D4F44586D6F6E646F6D6F6420": "467cab51",
+    "5653544D4F444D6D6F6E646F6D6F6420": "46536051",
+    "5653544D4F44536D6F6E646F6D6F6420": "4669e651",
+    "565354564357586D6F7270686F646572": "84463721",
+    "5653545643574D6D6F7270686F646572": "841cec21",
+    "565354564357536D6F7270686F646572": "84337221",
+    "F2AEE70D00DE4F4E4D75736574507356": "67aac232",
+    "F2AEE70D00DE4F4E4D7573656F34527A": "628ea156",
+    "543F6CA4C0EE481F89EA57C17DC26443": "706361dd",
+    "5D260FD072FF41539A487413B7576704": "e69bcc14",
+    "565354534D534D6E6C73206275737320": "a83befb9",
+    "565354534D53536E6C73206275737320": "a85275b9",
+    "5653545353434D6E6C73206368616E6E": "e519eb26",
+    "565354535343536E6C73206368616E6E": "e5307126",
+    "565354586654546F7474000000000000": "07c12157",
+    "5653544F4B444D6F6E656B6E6F622064": "2430e5b6",
+    "5653544F4B44536F6E656B6E6F622064": "24476bb6",
+    "5653545253464D6F6E656B6E6F622066": "33b442d5",
+    "565354525346536F6E656B6E6F622066": "33cac8d5",
+    "5653545350314D6F6E656B6E6F622070": "a1dfb73e",
+    "565354535031536F6E656B6E6F622070": "a1f63d3e",
+    "5653545A6E59394F7A6F6E6520392044": "fbccb574",
+    "5653545A6E44394F7A6F6E6520392044": "acf7b574",
+    "5653545A4F39554F7A6F6E6520392045": "2515d175",
+    "5653545A4F39584F7A6F6E6520392045": "25211475",
+    "5653545A6E49394F7A6F6E6520392049": "bfbcb579",
+    "5653545A4F394C4F7A6F6E652039204C": "24f4087c",
+    "5653545A4F39524F7A6F6E652039204D": "250a8e7d",
+    "5653545A4F39484F7A6F6E652039204D": "24e5047d",
+    "5653545A4F394D4F7A6F6E652039204D": "24f7c97d",
+    "5653545A4F39534F7A6F6E6520392053": "250e4f83",
+    "5653545A4F39434F7A6F6E6520392056": "24d23f86",
+    "5653545A4F39514F7A6F6E6520392056": "2506cd86",
+    "5653545A4F39564F7A6F6E6520392056": "25199286",
+    "5653545A4F39544F7A6F6E6520392056": "25121086",
+    "5653545A6E4F394F7A6F6E6520390000": "d6429530",
+    "5653545741455370617A2D20616E616C": "ff9bc805",
+    "5653545741454D70617A2D2066726571": "0489460a",
+    "5653545741415370617A2D2066726571": "f59bcc0a",
+    "5653545756554D70617A2D206D657465": "1c8c54fe",
+    "5653545756555370617A2D206D657465": "1ca2dafe",
+    "5653545741505370617A2D20706F7369": "37e7da02",
+    "ABCDEF019182FAEB4C657665506C6163": "df1dc928",
+    "5653545053534D707332322073706C69": "fd5ab969",
+    "56535450535353707332322073706C69": "fd713f69",
+    "5653545053454D707332322073707265": "c8ccbf65",
+    "56535450534553707332322073707265": "c8e34565",
+    "5653545053384D707332322073707265": "97ffbf65",
+    "56535450533853707332322073707265": "98164565",
+    "5653545053584D70733232207873706C": "1522bd6c",
+    "5653545053585370733232207873706C": "1539436c",
+    "ABCDEF019182FAEB6C657665506C6E6B": "bf1dd630",
+    "ABCDEF019182FAEB4F7574705052544C": "3df37f66",
+    "79F415E3C8E74807AD5DA3CF7024F618": "763029ad",
+    "59E324D08EE811E1B8578101BBE59B18": "cba24108",
+    "9D1DCCF7918A436FA3CDD7115D8B193B": "5a6e43a2",
+    "AFD92F729A0447B7B5E8D1D568DEA985": "45398b95",
+    "C3B68142C79846F282B73CABDF139076": "49321b1b",
+    "72C4DB717A4D459AB97E51745D84B39D": "ba5f7ab2",
+    "036EB5302A5911E2A28170076288709B": "78c01fa6",
+    "5075626572747953696D2E2E52766448": "ca0fb3e8",
+    "5653545031414D707569677465632065": "4e6ae291",
+    "56535450314153707569677465632065": "4e816891",
+    "565354504D354D70756967746563206D": "3d5ee299",
+    "565354504D355370756967746563206D": "3d756899",
+    "5653545351544D712D63617074757265": "0c16daf3",
+    "5653545351314D712D636C6F6E65206D": "82a4dddc",
+    "56535453513153712D636C6F6E652073": "82bb63e2",
+    "5653544551314D7131206D6F6E6F0000": "f68b7f3d",
+    "5653544551315371312073746572656F": "eda62547",
+    "5653544551414D713130206D6F6E6F00": "35819aff",
+    "56535445514153713130207374657265": "3a8f251e",
+    "5653544551324D7132206D6F6E6F0000": "194c7f3d",
+    "5653544551325371322073746572656F": "10672547",
+    "5653544551334D7133206D6F6E6F0000": "3c0d7f3d",
+    "5653544551335371332073746572656F": "33282547",
+    "5653544551344D7134206D6F6E6F0000": "5ece7f3d",
+    "5653544551345371342073746572656F": "55e92547",
+    "5653544551364D7136206D6F6E6F0000": "a4507f3d",
+    "5653544551365371362073746572656F": "9b6b2547",
+    "5653544551384D7138206D6F6E6F0000": "e9d27f3d",
+    "5653544551385371382073746572656F": "e0ed2547",
+    "565354524E424D7262617373206D6F6E": "9c4095bb",
+    "565354524E4253726261737320737465": "9c5d20b2",
+    "565354524E5458726368616E6E656C20": "4dcaaed2",
+    "565354524E544D726368616E6E656C20": "4da163d2",
+    "565354524E5453726368616E6E656C20": "4db7e9d2",
+    "5653545552434D72636F6D7072657373": "16ac3c80",
+    "5653545552435372636F6D7072657373": "16c2c280",
+    "5653545244534D726465657373657220": "e383e66d",
+    "56535452445353726465657373657220": "e39a6c6d",
+    "5653545251324D7265712032206D6F6E": "021680dc",
+    "56535452513253726571203220737465": "02330bd3",
+    "5653545251344D7265712034206D6F6E": "0998811a",
+    "56535452513453726571203420737465": "09b50c11",
+    "5653545251364D7265712036206D6F6E": "111a8158",
+    "56535452513653726571203620737465": "11370c4f",
+    "565354525246587276657262206D6F6E": "1be9bfac",
+    "56535452524653727665726220737465": "1bdcffa3",
+    "5653544D58564D72766F78206D6F6E6F": "2c06dfd4",
+    "5653544D58565372766F782073746572": "32225cd7",
+    "5653545241584D72656E61697373616E": "d36d5885",
+    "5653545241585372656E61697373616E": "d383de85",
+    "5653544E534853733120696D61676572": "c1f50d4a",
+    "5653544D5358537331206D73206D6174": "bd0b11a7",
+    "5653544E49445373312073687566666C": "3cf143a9",
+    "5361666574794C696D7472527664482E": "0660b9c0",
+    "5653545052534D73617068697261206D": "14d40b87",
+    "56535450525353736170686972612073": "14ea918d",
+    "8D067533D8A0491DBAA36C064C6ABBFB": "5a67e07f",
+    "ABCDEF019182FAEB4361626C43474C33": "ba7a48d1",
+    "5653545349424D736962696C616E6365": "f15fcaf9",
+    "56535453494253736962696C616E6365": "f17650f9",
+    "56535453494C4D736962696C616E6365": "16e9caf9",
+    "56535453494C53736962696C616E6365": "170050f9",
+    "3317F47055E847E4896B59C21B843FAE": "0d2072a0",
+    "5653545453504D736D61636B20617474": "eac19648",
+    "56535454535053736D61636B20617474": "ead81c48",
+    "ABCDEF019182FAEB44777665536D6467": "ec4ccc2c",
+    "536F667456616375756D2E527664482E": "62f6d35d",
+    "ABCDEF019182FAEB536F6E6F4E427573": "b728e66e",
+    "5653545453524D736F756E6473686966": "85b7df61",
+    "56535454535253736F756E6473686966": "85ce6561",
+    "5653545370426C7370616365626C656E": "32b27129",
+    "5370656374726C436F6D707252766448": "d6e5e556",
+    "56535453424D4D7375626D6172696E65": "58a650a4",
+    "56535453424D537375626D6172696E65": "58bcd6a4",
+    "5653544D543258737570657274617020": "891aed34",
+    "5653544D54324D737570657274617020": "88f1a234",
+    "5653544D543253737570657274617020": "89082834",
+    "5653544D543658737570657274617020": "981eed34",
+    "5653544D54364D737570657274617020": "97f5a234",
+    "5653544D543653737570657274617020": "980c2834",
+    "ABCDEF019182FAEB44777665546E7461": "ed4ddc26",
+    "D2EE67F2C552402D902115931AFDAE6B": "96546ef3",
+    "5653545A424D32546F6E616C2042616C": "4d8f303a",
+    "5653545458344D7472616E7378206D75": "3965e902",
+    "565354545834537472616E7378206D75": "397c6f02",
+    "5653545458574D7472616E7378207769": "bcc8f2f6",
+    "565354545857537472616E7378207769": "bcdf78f6",
+    "56535454564D58747275657665726220": "0525120a",
+    "5653545456534D747275657665726220": "1b81c70a",
+    "56535454563453747275657665726220": "a7394d0a",
+    "ABCDEF019182FAEB5541447855334459": "f682a06b",
+    "ABCDEF019182FAEB554144785533444A": "f682a05c",
+    "56535453483358756C74726170697463": "66644424",
+    "5653545348334D756C74726170697463": "663af924",
+    "56535453483658756C74726170697463": "71a74424",
+    "5653545348364D756C74726170697463": "717df924",
+    "56535453485458756C74726170697463": "e2454424",
+    "5653545348544D756C74726170697463": "e21bf924",
+    "5653544E56434D76636F6D70206D6F6E": "c8b118e6",
+    "5653544E56435376636F6D7020737465": "c8cda3dd",
+    "5653544E45514D76657133206D6F6E6F": "b7780837",
+    "5653544E455153766571332073746572": "bd93853a",
+    "5653545645514D76657134206D6F6E6F": "b77bca2f",
+    "56535456455153766571342073746572": "bd974732",
+    "56535456554D4D7675206D6574657220": "a5a5bd3b",
+    "56535456554D537675206D6574657220": "a5bc433b",
+    "56535456544D4D766974616D696E206D": "6fd8f880",
+    "56535456544D53766974616D696E2073": "6fef7e86",
+    "5D923348ADF743B59F86EC29572B103E": "ae347b62",
+    "565354574C4D35776C6D206D65746572": "bfa4bea5",
+    "565354574C4D36776C6D206D65746572": "bfa87fa5",
+    "565354574C4D4D776C6D206D65746572": "bffed6a5",
+    "565354574C4D53776C6D206D65746572": "c0155ca5",
+    "56535457574C35776C6D20706C757320": "0de4ccb0",
+    "56535457574C36776C6D20706C757320": "0de88db0",
+    "56535457574C4D776C6D20706C757320": "0e3ee4b0",
+    "56535457574C53776C6D20706C757320": "0e556ab0",
+    "565354544E4C4D77617665732074756E": "a55be53e",
+    "565354544E4C5377617665732074756E": "a5726b3e",
+    "56535450765772776964657200000000": "cc8d8335",
+    "56535458434C4D782D636C69636B206D": "4f083d44",
+    "56535458434C53782D636C69636B2073": "4f1ec34a",
+    "5653545843524D782D637261636B6C65": "658f4244",
+    "56535458435253782D637261636B6C65": "65a5c844",
+    "56535458484D4D782D68756D206D6F6E": "d567a3c1",
+    "56535458484D53782D68756D20737465": "d5842eb8",
+    "565354584E534D782D6E6F697365206D": "c59e9a44",
+    "565354584E5353782D6E6F6973652073": "c5b5204a",
+    "F2AEE70D00DE4F4E6774755975726259": "8eadedc1",
+    "565354574E534D7A2D6E6F697365206D": "c59e2d67",
+    "565354574E53537A2D6E6F6973652073": "c5b4b36d",
+    "ABCDEF019182FAEB4F656B5353746842": "3f2478d9",
+    "D39D5B69D6AF42FA1234567844695661": "357abb5a",
+    "84E8DE5F9255222296FAE4133C935A18": "adb7ab48",
+    "4D656C646170726F4D44524D4D44524D": "1d68656b",
+    "4D656C646170726F4D4452364D445236": "1d68628b",
+    "4D656C646170726F4D4452314D445231": "1d6861eb",
+    "4D656C646170726F4D5475724D547572": "1f6cca0b",
+    "4D656C646170726F4D5959594D595959": "200946eb",
+    "4D656C646170726F4D5959364D595936": "2009428b",
+    "9240FC4010CD45A0B7DACECADDC2E97A": "ec3eed50",
+    "99725BEA837B4BDFB778CC6848C61F5A": "d554d3e7",
+    "5653544E6924446B6F6E74616B740000": "66188e5c",
+    "56535453616E746262632073796D7068": "ee332904",
+    "56535453664C626C6162730000000000": "9acb4b39",
+    "ABCDEF019182FAEB4447534244657864": "d7709eec",
+    "ABCDEF019182FAEB4D7573657A6F776B": "2a108230",
+    "5653545362586C7375626C6162786C00": "92748e3f",
+    "4172747541564953416C617650726F63": "a7b9b8ab",
+    "324755DF8FDF4788B4CE5B70A8037EC4": "9d8e009d",
+    "56535441524344617263616465000000": "d8a6335c",
+    "ABCDEF019182FAEB5541447855493036": "f6988c48",
+    "ABCDEF019182FAEB536F6E6F49427573": "b228e66e",
+    "56535447523853656C65637472696320": "033deeaa"
   }
 }

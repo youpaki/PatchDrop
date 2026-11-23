@@ -1,17 +1,17 @@
 # PatchLink
 
-A resizable VST3 and Standalone effect chainer by **leve**. Host VST3 effects (and Audio Units on macOS), arrange them in a 60fps drag-to-reorder serial rack or a pannable stereo node canvas, drop FL Studio `.fst` presets directly onto the window, share/stage in **Zero-Load** mode, and drag complete chains back out into your DAW natively.
+A resizable VST3 and Standalone multi-DAW effect chainer by **leve**. Host VST3 effects (and Audio Units on macOS), arrange them in a 60fps drag-to-reorder serial rack or a pannable stereo node canvas, drop FX chains from **REAPER** (`.RfxChain`, `.rpp`), **Ableton Live** (`.adg`, `.adv`), **FL Studio** (`.fst`), **Cubase / Studio One / Bitwig** (`.vstpreset`, `.fxchainpreset`, `.fxchain`, `.bwpreset`), share/stage in **Zero-Load** mode, and drag chains back out into any DAW natively.
 
-## Interface & v1.5.1 Features
+## Interface & v1.6.0 Features
 
 - **Chain** — ordered, smooth 60fps drag-to-reorder plugin cards with bypass, hosted-editor, per-slot single-preset DAW drag/save icons, and per-plugin actions. Audio runs from top to bottom.
 - **Patcher** — clipped-grid stereo routing canvas with left/middle-mouse drag panning, port/cable hover highlights, curved stereo cables, right-click actions, and Delete-key removal.
 - **Studio Color Themes** — live **Theme** switcher in the top bar with persistent selection (`%APPDATA%\PatchLink\ui_theme.txt`): *Obsidian Amber* (default), *Carbon Iris*, *Tape Vermilion*, and *Phosphor Console*.
-- **FL Studio → PatchLink** — drag single effects from FL Studio's *"Save preset as..."* menu or Plugin Database `.fst` files, or drop saved `.fst` mixer track states (*"Save mixer track state as..."*) to unpack all VST3 slots with bypass flags and binary preset states intact (FL-native plugins are noted cleanly without aborting).
-- **PatchLink → DAW (Auto-Detected Bidirectional Drag & Drop)** — PatchLink auto-detects the DAW hosting it (`FL Studio` → `.fst` single effect or 10-slot mixer track, `REAPER` → `.RfxChain`, `Ableton / Cubase / Studio One / Bitwig` → `.vstpreset`), and in **Standalone** asks your target format once via the toolbar button. Drag the toolbar button (or an individual slot's export icon) straight onto your DAW mixer, or save preset files to disk.
+- **Multi-DAW → PatchLink** — drop `.RfxChain` / `.rpp` (REAPER), `.adg` / `.adv` (Ableton Live Audio Effect Racks), `.fst` (FL Studio single plugin or full 10-slot Mixer track), or `.vstpreset` / `.fxchainpreset` / `.fxchain` / `.bwpreset` (Cubase, Nuendo, Studio One, Bitwig) straight onto PatchLink to unpack third-party VST3 chains with bypass flags and binary preset states intact.
+- **PatchLink → Any DAW (Auto-Detected Bidirectional Drag & Drop)** — PatchLink auto-detects the DAW hosting it (`FL Studio` → `.fst`, `REAPER` → `.RfxChain`, `Ableton Live` → `.adg` Audio Effect Rack, `Cubase / Nuendo / Studio One / Bitwig` → `.vstpreset`), and in **Standalone** asks your target format once via the toolbar button. Drag the toolbar button (or an individual slot's export icon) straight onto your DAW mixer/track, or save preset files to disk.
 - **Zero-Load Mode (Drop & Open Code)** — when PatchLink is empty and receives a drop, or when opening a 6-character PatchDrop code, you can choose **Share code**, **Stage only**, or **Drag to DAW** directly from RAM without loading or instantiating any plugin DLLs/GUIs inside PatchLink.
-- **Plugin Library & Scan Manager** — instant full-library search, DAW-aware folder proposals, live scan progress, cancellation, failure reporting, and blacklist recovery.
-- **PatchDrop Web & Browser Compatibility** — public/unlisted publishing, category and `#hashtag` filtering on the PatchDrop directory (`https://gg.trenas.fr/patchdrop/presets.html`), browser `.fst` drag-in publishing, and card `FL .fst` drag/download.
+- **Plugin Library & Scan Manager** — instant full-library search, DAW-aware folder proposals (FL Studio, REAPER, Ableton, Cubase, VST3 system paths), live scan progress, cancellation, failure reporting, and blacklist recovery.
+- **PatchDrop Web & Multi-DAW Cards** — public/unlisted publishing, category and `#hashtag` filtering on the PatchDrop directory (`https://gg.trenas.fr/patchdrop/presets.html`), browser drag-in publishing across all DAW formats, and per-card `.fst`, `.RfxChain`, `.adg`, and `.vstpreset` drag/download buttons.
 
 Double-click a chain card or patcher node to open its own editor. Double-click the patch title to rename it. `Ctrl/Cmd+F`, `Ctrl/Cmd+I`, and `Ctrl/Cmd+E` open the browser, import, and export respectively.
 

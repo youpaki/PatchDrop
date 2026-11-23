@@ -421,9 +421,13 @@ bool PatchLinkProcessor::resolvePluginDescription(int uniqueId, const juce::Stri
         juce::PluginDescription singleMatch;
         const auto normName = normalizePluginLookupKey(name);
         const auto normSlot = normalizePluginLookupKey(slotName);
+        const bool isLeafOnly = !fileOrId.containsAnyOf("\\/");
         for (const auto& t : types)
         {
-            if (t.fileOrIdentifier == fileOrId || t.fileOrIdentifier.equalsIgnoreCase(fileOrId))
+            const bool fileMatchesCandidate =
+                t.fileOrIdentifier == fileOrId || t.fileOrIdentifier.equalsIgnoreCase(fileOrId)
+                || (isLeafOnly && juce::File::createFileWithoutCheckingPath(t.fileOrIdentifier).getFileName().equalsIgnoreCase(fileOrId));
+            if (fileMatchesCandidate)
             {
                 if (format.isNotEmpty() && !t.pluginFormatName.equalsIgnoreCase(format))
                     continue;
@@ -607,7 +611,7 @@ bool PatchLinkProcessor::exportPatch(const juce::File& file, juce::String& err)
 void PatchLinkProcessor::importPatchAsync(const juce::File& file,
     std::function<void(juce::StringArray missing, juce::String err)> done)
 {
-    if (file.hasFileExtension(".fst"))
+    if (file.hasFileExtension(".fst;.rfxchain;.rpp;.adg;.adv;.als;.vstpreset;.bwpreset;.fxchainpreset;.fxchain;.multipreset"))
     {
         const auto index = static_cast<int>(getLoadedNodes().size());
         importFlStudioFstAsync(file, 282 + (index % 5) * 224, 208 + (index / 5) * 132, true,
@@ -628,7 +632,7 @@ void PatchLinkProcessor::importFlStudioFstAsync(const juce::File& file, int drop
     bool appendSingleToChain,
     std::function<void(bool isMixerTrack, int loadedCount, juce::StringArray skippedOrMissing, juce::String err)> done)
 {
-    importParsedFstAsync(flstudio::parseFstFile(file), dropX, dropY, appendSingleToChain, std::move(done));
+    importParsedFstAsync(flstudio::parseAnyDawFile(file), dropX, dropY, appendSingleToChain, std::move(done));
 }
 
 void PatchLinkProcessor::importParsedFstAsync(const flstudio::ParsedFst& parsed, int dropX, int dropY,
@@ -637,7 +641,7 @@ void PatchLinkProcessor::importParsedFstAsync(const flstudio::ParsedFst& parsed,
 {
     if (!parsed.valid)
     {
-        if (done) done(false, 0, {}, parsed.error.isNotEmpty() ? parsed.error : "Invalid .fst file");
+        if (done) done(false, 0, {}, parsed.error.isNotEmpty() ? parsed.error : "Invalid DAW preset file");
         return;
     }
 
@@ -645,7 +649,7 @@ void PatchLinkProcessor::importParsedFstAsync(const flstudio::ParsedFst& parsed,
     {
         if (done)
             done(parsed.isMixerTrack, 0, parsed.skipped,
-                 parsed.skipped.isEmpty() ? "No plugins found in this .fst file." : juce::String{});
+                 parsed.skipped.isEmpty() ? "No supported VST3 plugins found in this preset." : juce::String{});
         return;
     }
 
@@ -729,9 +733,19 @@ void PatchLinkProcessor::importParsedFstAsync(const flstudio::ParsedFst& parsed,
         auto nodeVar = chainformat::makeNodeVar(desc, entry.isVst2 ? juce::String{} : entry.stateBase64,
                                                 100 + idx, nx, ny, entry.bypass);
         nodeVar.getDynamicObject()->setProperty("order", idx);
-        if (desc.uniqueId != 0)
-            if (auto* ids = nodeVar.getDynamicObject()->getProperty("ids").getDynamicObject())
+        if (auto* ids = nodeVar.getDynamicObject()->getProperty("ids").getDynamicObject())
+        {
+            if (desc.uniqueId != 0)
                 ids->setProperty("uniqueId", desc.uniqueId);
+            if (entry.tuidHex.isNotEmpty())
+                ids->setProperty("tuidHex", entry.tuidHex);
+            if (entry.fuidHex.isNotEmpty())
+                ids->setProperty("fuidHex", entry.fuidHex);
+            if (entry.reaperHash != 0)
+                ids->setProperty("reaperHash", static_cast<juce::int64>(entry.reaperHash));
+            if (entry.pluginName.isNotEmpty())
+                ids->setProperty("flPluginName", entry.pluginName);
+        }
         jnodes.add(nodeVar);
         ++idx;
     }

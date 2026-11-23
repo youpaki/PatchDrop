@@ -637,6 +637,31 @@ main {
 .card .row button:hover, .card .row a.btn-fst:hover { background: var(--raised); border-color: var(--line); color: var(--accent); }
 .card .row a.btn-fst { border-color: rgba(240, 126, 62, 0.35); color: var(--accent); cursor: grab; }
 .card .row a.btn-fst:active { cursor: grabbing; }
+.card .daw-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+.card .daw-row a.btn-daw {
+  background: var(--bg);
+  color: var(--muted);
+  border: 1px solid var(--line-soft);
+  padding: 6px 4px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  border-radius: var(--small-radius);
+  text-decoration: none;
+  text-align: center;
+  white-space: nowrap;
+  cursor: grab;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.card .daw-row a.btn-daw:hover {
+  background: var(--raised);
+  border-color: rgba(240, 126, 62, 0.45);
+  color: var(--accent);
+}
+.card .daw-row a.btn-daw:active { cursor: grabbing; }
 
 .drop-hint-box {
   border: 1px dashed var(--line);

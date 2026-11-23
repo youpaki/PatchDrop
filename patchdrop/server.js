@@ -4,14 +4,19 @@
 // API:
 //   POST /api/publish {title,author,description,patch,isPublic,category,tags} -> {code}
 //   GET  /api/p/:code -> {title,author,description,patch,createdAt,downloads}
-//   GET  /api/p/:code/download -> fichier .patchlink
-//   GET  /api/p/:code/fst -> fichier .fst FL Studio
+//   GET  /api/p/:code/download -> .patchlink JSON
+//   GET  /api/p/:code/fst -> FL Studio .fst
+//   GET  /api/p/:code/rfxchain -> REAPER .RfxChain
+//   GET  /api/p/:code/adg -> Ableton Live .adg Audio Effect Rack
+//   GET  /api/p/:code/vstpreset -> Steinberg .vstpreset
+//   GET  /api/tuids -> multi-DAW VST3 FUID/UID lookup table
 //   GET  /api/list?q=&category=&tag=&sort=&limit= -> {presets,total,allTotal,categories,categoryLabels,popularTags}
 'use strict';
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const zlib = require('zlib');
 
 const PORT = Number(process.env.PORT) || 3250;
 const HOST = process.env.HOST || '127.0.0.1';
@@ -21,7 +26,7 @@ const DATA = path.join(ROOT, 'data');
 const PATCHES = path.join(DATA, 'patches');
 const DB_FILE = path.join(DATA, 'db.json');
 const TUID_FILE = path.join(ROOT, 'vst3_tuids.json');
-let TUID_DB = { byUniqueId: {}, byName: {} };
+let TUID_DB = { byUniqueId: {}, byName: {}, byFuid: {} };
 try { TUID_DB = JSON.parse(fs.readFileSync(TUID_FILE, 'utf8')); } catch {}
 // Quand Apache proxy /patchdrop/ -> /, le serveur doit générer des URLs relatives.
 // BASE_PATH sert uniquement au site (liens absolus). Laisse '' en local.
@@ -225,39 +230,86 @@ function extractRawVst3Chunks(stateBase64) {
   } catch { return { comp: Buffer.alloc(0), cont: Buffer.alloc(0) }; }
 }
 
+function tuidToFuid(tuidBuf) {
+  if (!tuidBuf || tuidBuf.length !== 16) return '';
+  const d1 = tuidBuf.readUInt32LE(0).toString(16).padStart(8, '0').toUpperCase();
+  const d2 = tuidBuf.readUInt16LE(4).toString(16).padStart(4, '0').toUpperCase();
+  const d3 = tuidBuf.readUInt16LE(6).toString(16).padStart(4, '0').toUpperCase();
+  return d1 + d2 + d3 + tuidBuf.slice(8, 16).toString('hex').toUpperCase();
+}
+
+function fuidToTuid(fuidHex) {
+  const clean = String(fuidHex || '').replace(/[^0-9a-fA-F]/g, '');
+  if (clean.length !== 32) return Buffer.alloc(16);
+  const b = Buffer.alloc(16);
+  b.writeUInt32LE(parseInt(clean.slice(0, 8), 16) >>> 0, 0);
+  b.writeUInt16LE(parseInt(clean.slice(8, 12), 16) & 0xffff, 4);
+  b.writeUInt16LE(parseInt(clean.slice(12, 16), 16) & 0xffff, 6);
+  Buffer.from(clean.slice(16, 32), 'hex').copy(b, 8);
+  return b;
+}
+
+function uidFromFuid(fuidHex) {
+  const clean = String(fuidHex || '').replace(/[^0-9a-fA-F]/g, '').toUpperCase();
+  if (clean.length !== 32) return 0;
+  let h = 0;
+  for (let i = 0; i < 4; i++) {
+    h = (Math.imul(h, 31) + (parseInt(clean.slice(i * 8, i * 8 + 8), 16) >>> 0)) >>> 0;
+  }
+  return h;
+}
+
 function resolveTuidEntry(node) {
   const ids = (node && node.ids) || {};
   const name = ids.name || (node && node.name) || '';
   let flPlugin = ids.flPluginName || name;
   let vendor = ids.manufacturer || (node && node.manufacturer) || '';
   let filePath = ids.fileOrId || (node && node.fileOrId) || '';
+  let fuid = String(ids.fuidHex || '').replace(/[^0-9a-fA-F]/g, '').toUpperCase();
+  let reaperHash = Number.isFinite(Number(ids.reaperHash)) ? (Number(ids.reaperHash) | 0) : 0;
   let tuid = Buffer.alloc(16);
 
   const rawTuidHex = String(ids.tuidHex || '').replace(/[^0-9a-fA-F]/g, '');
   if (rawTuidHex.length === 32) {
     tuid = Buffer.from(rawTuidHex, 'hex');
-  } else {
-    let uidHex = '';
-    if (typeof ids.uniqueId === 'number' && ids.uniqueId !== 0) uidHex = (ids.uniqueId >>> 0).toString(16).padStart(8, '0');
-    else if (typeof ids.identifier === 'string' && ids.identifier.includes('-')) {
-      const tail = ids.identifier.split('-').pop().toLowerCase();
-      if (/^[0-9a-f]{1,8}$/.test(tail)) uidHex = tail.padStart(8, '0');
-    }
-    let rec = uidHex && TUID_DB.byUniqueId ? TUID_DB.byUniqueId[uidHex] : null;
-    if (!rec && name && TUID_DB.byName) {
-      const nk = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const u = TUID_DB.byName[nk];
-      if (u && TUID_DB.byUniqueId) rec = TUID_DB.byUniqueId[u];
-    }
-    if (rec) {
-      if (rec.tuid && rec.tuid.length === 32) tuid = Buffer.from(rec.tuid, 'hex');
-      if (!ids.flPluginName && rec.flPlugin) flPlugin = rec.flPlugin;
-      if (!vendor && rec.vendor) vendor = rec.vendor;
-      if (!filePath && rec.file) filePath = rec.file;
-    }
+    if (!fuid) fuid = tuidToFuid(tuid);
+  } else if (fuid.length === 32) {
+    tuid = fuidToTuid(fuid);
   }
+
+  let uidHex = '';
+  if (typeof ids.uniqueId === 'number' && ids.uniqueId !== 0) uidHex = (ids.uniqueId >>> 0).toString(16).padStart(8, '0');
+  else if (typeof ids.identifier === 'string' && ids.identifier.includes('-')) {
+    const tail = ids.identifier.split('-').pop().toLowerCase();
+    if (/^[0-9a-f]{1,8}$/.test(tail)) uidHex = tail.padStart(8, '0');
+  } else if (fuid.length === 32) {
+    const u = uidFromFuid(fuid);
+    if (u) uidHex = u.toString(16).padStart(8, '0');
+  }
+
+  let rec = (fuid.length === 32 && TUID_DB.byFuid && TUID_DB.byFuid[fuid] && TUID_DB.byUniqueId)
+    ? TUID_DB.byUniqueId[TUID_DB.byFuid[fuid]]
+    : null;
+  if (!rec && uidHex && TUID_DB.byUniqueId) rec = TUID_DB.byUniqueId[uidHex];
+  if (!rec && name && TUID_DB.byName) {
+    const nk = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const u = TUID_DB.byName[nk];
+    if (u && TUID_DB.byUniqueId) rec = TUID_DB.byUniqueId[u];
+  }
+  if (rec) {
+    if (!rawTuidHex && !fuid && rec.tuid && rec.tuid.length === 32) tuid = Buffer.from(rec.tuid, 'hex');
+    if (!fuid && rec.fuid && rec.fuid.length === 32) fuid = rec.fuid.toUpperCase();
+    if (!reaperHash && rec.reaperHash) reaperHash = rec.reaperHash | 0;
+    if (!ids.flPluginName && rec.flPlugin) flPlugin = rec.flPlugin;
+    if (!vendor && rec.vendor) vendor = rec.vendor;
+    if ((!filePath || !/[\\/]/.test(filePath)) && rec.file) filePath = rec.file;
+  }
+
+  if (!fuid && tuid.some(Boolean)) fuid = tuidToFuid(tuid);
+  if (!tuid.some(Boolean) && fuid.length === 32) tuid = fuidToTuid(fuid);
+  if (!reaperHash && fuid.length === 32) reaperHash = uidFromFuid(fuid) | 0;
   if (!filePath && name) filePath = `C:\\Program Files\\Common Files\\VST3\\${name}.vst3`;
-  return { name, flPlugin, vendor, filePath, tuid, bypass: Boolean(node && node.bypass), stateBase64: (node && node.stateBase64) || '' };
+  return { name: name || flPlugin || 'VST3 Plugin', flPlugin, vendor, filePath, tuid, fuid: fuid || '0'.repeat(32), reaperHash, bypass: Boolean(node && node.bypass), stateBase64: (node && node.stateBase64) || '' };
 }
 
 function writeVarInt(chunks, len) {
@@ -328,14 +380,19 @@ function finalizeFl(hdType, hdTracks, hdPpq, dtChunks) {
   hdr.writeUInt32LE(dt.length, 18);
   return Buffer.concat([hdr, dt]);
 }
-function buildFlStudioFstBuffer(doc) {
+function collectVst3Nodes(doc) {
   const patch = (doc && doc.patch) || {};
   const rawNodes = Array.isArray(patch.nodes) ? patch.nodes.slice() : [];
   rawNodes.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-  const vstNodes = rawNodes.filter((n) => {
+  return rawNodes.filter((n) => {
     const fmt = (n && n.ids && n.ids.format) || (n && n.format) || 'VST3';
     return String(fmt).toUpperCase() === 'VST3';
   });
+}
+
+function buildFlStudioFstBuffer(doc) {
+  const patch = (doc && doc.patch) || {};
+  const vstNodes = collectVst3Nodes(doc);
   if (!vstNodes.length) return null;
 
   if (vstNodes.length === 1) {
@@ -387,6 +444,219 @@ function buildFlStudioFstBuffer(doc) {
   return finalizeFl(0x0040, 0x0006, 0x0060, chunks);
 }
 
+function buildSteinbergVstPresetBuffer(doc, slotIndex = 0) {
+  const vstNodes = collectVst3Nodes(doc);
+  if (!vstNodes.length) return null;
+  const idx = Math.max(0, Math.min(vstNodes.length - 1, slotIndex | 0));
+  const info = resolveTuidEntry(vstNodes[idx]);
+  const { comp, cont } = extractRawVst3Chunks(info.stateBase64);
+  if (!comp.length && !cont.length) return null;
+
+  const hdr = Buffer.alloc(48);
+  hdr.write('VST3', 0, 'ascii');
+  hdr.writeUInt32LE(1, 4);
+  hdr.write(String(info.fuid || '0'.repeat(32)).slice(0, 32), 8, 'ascii');
+  const compOffset = 48;
+  const contOffset = compOffset + comp.length;
+  const listOffset = contOffset + cont.length;
+  hdr.writeBigInt64LE(BigInt(listOffset), 40);
+
+  const parts = [hdr];
+  if (comp.length) parts.push(comp);
+  if (cont.length) parts.push(cont);
+
+  const entries = [];
+  if (comp.length) entries.push(['Comp', compOffset, comp.length]);
+  if (cont.length) entries.push(['Cont', contOffset, cont.length]);
+
+  const listHdr = Buffer.alloc(8);
+  listHdr.write('List', 0, 'ascii');
+  listHdr.writeUInt32LE(entries.length, 4);
+  parts.push(listHdr);
+  for (const [tag, off, sz] of entries) {
+    const row = Buffer.alloc(20);
+    row.write(tag, 0, 'ascii');
+    row.writeBigInt64LE(BigInt(off), 4);
+    row.writeBigInt64LE(BigInt(sz), 12);
+    parts.push(row);
+  }
+  return Buffer.concat(parts);
+}
+
+function buildReaperRfxChainString(doc) {
+  const vstNodes = collectVst3Nodes(doc);
+  if (!vstNodes.length) return null;
+
+  const out = [];
+  for (const node of vstNodes) {
+    const info = resolveTuidEntry(node);
+    const leaf = String(info.filePath || '').split(/[\\/]/).pop() || `${info.name}.vst3`;
+    const mfr = info.vendor ? ` (${info.vendor})` : '';
+    const fuid = info.fuid || '0'.repeat(32);
+    const rhash = info.reaperHash | 0;
+
+    out.push(`BYPASS ${info.bypass ? 1 : 0} 0 0`);
+    out.push(`<VST "VST3: ${info.name}${mfr}" "${leaf}" 0 "" ${rhash}{${fuid}} ""`);
+
+    const { comp, cont } = extractRawVst3Chunks(info.stateBase64);
+    if (comp.length || cont.length) {
+      const c1Parts = [];
+      const h1 = Buffer.alloc(8);
+      h1.writeUInt32LE(comp.length >>> 0, 0);
+      h1.writeUInt32LE(comp.length ? 1 : 0, 4);
+      c1Parts.push(h1);
+      if (comp.length) c1Parts.push(comp);
+      if (cont.length) {
+        const h2 = Buffer.alloc(8);
+        h2.writeUInt32LE(cont.length >>> 0, 0);
+        h2.writeUInt32LE(0, 4);
+        c1Parts.push(h2, cont);
+      }
+      const chunk1 = Buffer.concat(c1Parts);
+
+      const chunk0 = Buffer.alloc(60);
+      chunk0.writeUInt32LE(rhash >>> 0, 0);
+      chunk0.writeUInt32LE(0xfeed5eee, 4);
+      chunk0.writeUInt32LE(2, 8);
+      chunk0.writeBigUInt64LE(1n, 12);
+      chunk0.writeBigUInt64LE(2n, 20);
+      chunk0.writeUInt32LE(2, 28);
+      chunk0.writeBigUInt64LE(1n, 32);
+      chunk0.writeBigUInt64LE(2n, 40);
+      chunk0.writeUInt32LE(chunk1.length >>> 0, 48);
+      chunk0.writeUInt32LE(1, 52);
+      chunk0.writeUInt32LE(0x0010ffff, 56);
+
+      out.push(`  ${chunk0.toString('base64')}`);
+      const b64State = chunk1.toString('base64');
+      for (let i = 0; i < b64State.length; i += 128) {
+        out.push(`  ${b64State.slice(i, i + 128)}`);
+      }
+      out.push('  AAAQAAAA');
+    }
+    out.push('>');
+    out.push('PRESETNAME ""');
+    out.push('FLOATPOS 0 0 0 0');
+    out.push('WAK 0 0');
+  }
+  return out.join('\n') + '\n';
+}
+
+function escXml(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function buildAbletonAdgBuffer(doc) {
+  const vstNodes = collectVst3Nodes(doc);
+  if (!vstNodes.length) return null;
+  const rackName = (doc && doc.title) || (doc && doc.patch && doc.patch.name) || 'PatchLink Chain';
+
+  const devicesXml = vstNodes.map((node, idx) => {
+    const info = resolveTuidEntry(node);
+    const fuid = (info.fuid || '0'.repeat(32)).slice(0, 32);
+    const f = [0, 1, 2, 3].map((k) => (parseInt(fuid.slice(k * 8, k * 8 + 8), 16) | 0));
+    const { comp, cont } = extractRawVst3Chunks(info.stateBase64);
+    const compHex = comp.toString('hex').toUpperCase();
+    const contHex = cont.toString('hex').toUpperCase();
+    const uidXml = `<Uid><Fields.0 Value="${f[0]}" /><Fields.1 Value="${f[1]}" /><Fields.2 Value="${f[2]}" /><Fields.3 Value="${f[3]}" /></Uid>`;
+    const nameEsc = escXml(info.name);
+    return `\t\t\t\t\t<AbletonDevicePreset Id="${idx}">
+\t\t\t\t\t\t<OverwriteProtectionNumber Value="2817" />
+\t\t\t\t\t\t<Device>
+\t\t\t\t\t\t\t<PluginDevice Id="0">
+\t\t\t\t\t\t\t\t<LomId Value="0" />
+\t\t\t\t\t\t\t\t<LomIdView Value="0" />
+\t\t\t\t\t\t\t\t<IsExpanded Value="true" />
+\t\t\t\t\t\t\t\t<On><LomId Value="0" /><Manual Value="${info.bypass ? 'false' : 'true'}" /><AutomationTarget Id="0"><LockEnvelope Value="0" /></AutomationTarget><MidiCCOnOffThresholds><Min Value="64" /><Max Value="127" /></MidiCCOnOffThresholds></On>
+\t\t\t\t\t\t\t\t<IsFolded Value="false" />
+\t\t\t\t\t\t\t\t<ShouldShowPresetName Value="true" />
+\t\t\t\t\t\t\t\t<UserName Value="" />
+\t\t\t\t\t\t\t\t<Annotation Value="" />
+\t\t\t\t\t\t\t\t<OverwriteProtectionNumber Value="2817" />
+\t\t\t\t\t\t\t\t<PluginDesc>
+\t\t\t\t\t\t\t\t\t<Vst3PluginInfo Id="0">
+\t\t\t\t\t\t\t\t\t\t<WinPosX Value="0" />
+\t\t\t\t\t\t\t\t\t\t<WinPosY Value="0" />
+\t\t\t\t\t\t\t\t\t\t<Name Value="${nameEsc}" />
+\t\t\t\t\t\t\t\t\t\t<Preset>
+\t\t\t\t\t\t\t\t\t\t\t<Vst3Preset Id="0">
+\t\t\t\t\t\t\t\t\t\t\t\t<OverwriteProtectionNumber Value="2817" />
+\t\t\t\t\t\t\t\t\t\t\t\t${uidXml}
+\t\t\t\t\t\t\t\t\t\t\t\t<DeviceType Value="2" />
+\t\t\t\t\t\t\t\t\t\t\t\t<ProcessorState>${compHex}</ProcessorState>
+\t\t\t\t\t\t\t\t\t\t\t\t<ControllerState>${contHex}</ControllerState>
+\t\t\t\t\t\t\t\t\t\t\t\t<Name Value="${nameEsc}" />
+\t\t\t\t\t\t\t\t\t\t\t\t<PresetRef><Value /></PresetRef>
+\t\t\t\t\t\t\t\t\t\t\t</Vst3Preset>
+\t\t\t\t\t\t\t\t\t\t</Preset>
+\t\t\t\t\t\t\t\t\t\t${uidXml}
+\t\t\t\t\t\t\t\t\t\t<DeviceType Value="2" />
+\t\t\t\t\t\t\t\t\t</Vst3PluginInfo>
+\t\t\t\t\t\t\t\t</PluginDesc>
+\t\t\t\t\t\t\t\t<ParameterList />
+\t\t\t\t\t\t\t</PluginDevice>
+\t\t\t\t\t\t</Device>
+\t\t\t\t\t\t<PresetRef />
+\t\t\t\t\t</AbletonDevicePreset>`;
+  }).join('\n');
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<Ableton MajorVersion="5" MinorVersion="11.0_433" Creator="Ableton Live 11.0.1d1" Revision="9b647e316b473e011255bf37ec94f36700805423">
+\t<GroupDevicePreset>
+\t\t<OverwriteProtectionNumber Value="2817" />
+\t\t<Device>
+\t\t\t<AudioEffectGroupDevice Id="0">
+\t\t\t\t<LomId Value="0" />
+\t\t\t\t<IsExpanded Value="true" />
+\t\t\t\t<On><LomId Value="0" /><Manual Value="true" /><AutomationTarget Id="0"><LockEnvelope Value="0" /></AutomationTarget><MidiCCOnOffThresholds><Min Value="64" /><Max Value="127" /></MidiCCOnOffThresholds></On>
+\t\t\t\t<IsFolded Value="false" />
+\t\t\t\t<ShouldShowPresetName Value="true" />
+\t\t\t\t<UserName Value="${escXml(rackName)}" />
+\t\t\t\t<Annotation Value="Exported from PatchDrop" />
+\t\t\t\t<Branches />
+\t\t\t\t<IsBranchesListVisible Value="false" />
+\t\t\t\t<IsReturnBranchesListVisible Value="false" />
+\t\t\t\t<IsRangesEditorVisible Value="false" />
+\t\t\t\t<AreDevicesVisible Value="true" />
+\t\t\t\t<ReturnBranches />
+\t\t\t\t<AreMacroControlsVisible Value="false" />
+\t\t\t</AudioEffectGroupDevice>
+\t\t</Device>
+\t\t<PresetRef />
+\t\t<BranchPresets>
+\t\t\t<AudioEffectBranchPreset Id="0">
+\t\t\t\t<Name Value="${escXml(rackName)}" />
+\t\t\t\t<IsSoloed Value="false" />
+\t\t\t\t<DevicePresets>
+${devicesXml}
+\t\t\t\t</DevicePresets>
+\t\t\t\t<MixerPreset>
+\t\t\t\t\t<AbletonDevicePreset Id="0">
+\t\t\t\t\t\t<OverwriteProtectionNumber Value="2817" />
+\t\t\t\t\t\t<Device>
+\t\t\t\t\t\t\t<AudioBranchMixerDevice Id="0">
+\t\t\t\t\t\t\t\t<LomId Value="0" />
+\t\t\t\t\t\t\t\t<IsExpanded Value="true" />
+\t\t\t\t\t\t\t\t<On><LomId Value="0" /><Manual Value="true" /><AutomationTarget Id="0"><LockEnvelope Value="0" /></AutomationTarget></On>
+\t\t\t\t\t\t\t\t<Speaker><LomId Value="0" /><Manual Value="true" /><AutomationTarget Id="0"><LockEnvelope Value="0" /></AutomationTarget></Speaker>
+\t\t\t\t\t\t\t\t<Volume><LomId Value="0" /><Manual Value="1" /><MidiControllerRange><Min Value="0.0003162277571" /><Max Value="1.99526238" /></MidiControllerRange></Volume>
+\t\t\t\t\t\t\t\t<Panorama><LomId Value="0" /><Manual Value="0" /><MidiControllerRange><Min Value="-1" /><Max Value="1" /></MidiControllerRange></Panorama>
+\t\t\t\t\t\t\t\t<SendInfos />
+\t\t\t\t\t\t\t</AudioBranchMixerDevice>
+\t\t\t\t\t\t</Device>
+\t\t\t\t\t\t<PresetRef />
+\t\t\t\t\t</AbletonDevicePreset>
+\t\t\t\t</MixerPreset>
+\t\t\t\t<BranchSelectorRange><Min Value="0" /><Max Value="127" /><CrossfadeMin Value="0" /><CrossfadeMax Value="0" /></BranchSelectorRange>
+\t\t\t</AudioEffectBranchPreset>
+\t\t</BranchPresets>
+\t\t<ReturnBranchPresets />
+\t</GroupDevicePreset>
+</Ableton>
+`;
+  return zlib.gzipSync(Buffer.from(xml, 'utf8'));
+}
+
 const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'application/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.json': 'application/json; charset=utf-8' };
 function serveStatic(req, res, pathname) {
   let rel = decodeURIComponent(pathname);
@@ -405,6 +675,9 @@ async function handleApi(req, res, pathname) {
 
   if (pathname === '/api/health' && method === 'GET')
     return send(res, 200, { ok: true, service: 'patchdrop', base: BASE_PATH || '/' });
+
+  if (pathname === '/api/tuids' && method === 'GET')
+    return send(res, 200, TUID_DB, { 'Cache-Control': 'public, max-age=300' });
 
   if (pathname === '/api/publish' && method === 'POST') {
     const b = await readBody(req);
@@ -452,7 +725,7 @@ async function handleApi(req, res, pathname) {
     return send(res, 200, JSON.stringify(doc.patch, null, 2), { 'Content-Type': 'application/json; charset=utf-8', 'Content-Disposition': `attachment; filename="patchdrop-${code}.patchlink"` });
   }
 
-  const fstM = pathname.match(/^\/api\/p\/([A-Za-z0-9]+)\/(?:fst|[^/]+\.fst)$/);
+  const fstM = pathname.match(/^\/api\/p\/([A-Za-z0-9]+)\/(?:fst|[^/]+\.fst)$/i);
   if (fstM && (method === 'GET' || method === 'HEAD')) {
     const code = fstM[1].toUpperCase();
     if (!CODE_RE.test(code)) return send(res, 400, { error: 'Code invalide.' });
@@ -469,6 +742,66 @@ async function handleApi(req, res, pathname) {
       'X-Content-Type-Options': 'nosniff',
     });
     return res.end(method === 'HEAD' ? undefined : fstBuf);
+  }
+
+  const rfxM = pathname.match(/^\/api\/p\/([A-Za-z0-9]+)\/(?:rfxchain|[^/]+\.rfxchain)$/i);
+  if (rfxM && (method === 'GET' || method === 'HEAD')) {
+    const code = rfxM[1].toUpperCase();
+    if (!CODE_RE.test(code)) return send(res, 400, { error: 'Code invalide.' });
+    const f = path.join(PATCHES, code + '.json');
+    if (!fs.existsSync(f)) return send(res, 404, { error: 'Code introuvable.' });
+    const doc = JSON.parse(fs.readFileSync(f, 'utf8'));
+    const rfx = buildReaperRfxChainString(doc);
+    if (!rfx) return send(res, 400, { error: 'Aucun plugin VST3 exportable en .RfxChain dans ce preset.' });
+    const buf = Buffer.from(rfx, 'utf8');
+    res.writeHead(200, {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Content-Length': String(buf.length),
+      'Content-Disposition': `attachment; filename="patchdrop-${code}.RfxChain"`,
+      'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff',
+    });
+    return res.end(method === 'HEAD' ? undefined : buf);
+  }
+
+  const adgM = pathname.match(/^\/api\/p\/([A-Za-z0-9]+)\/(?:adg|[^/]+\.adg)$/i);
+  if (adgM && (method === 'GET' || method === 'HEAD')) {
+    const code = adgM[1].toUpperCase();
+    if (!CODE_RE.test(code)) return send(res, 400, { error: 'Code invalide.' });
+    const f = path.join(PATCHES, code + '.json');
+    if (!fs.existsSync(f)) return send(res, 404, { error: 'Code introuvable.' });
+    const doc = JSON.parse(fs.readFileSync(f, 'utf8'));
+    const adgBuf = buildAbletonAdgBuffer(doc);
+    if (!adgBuf) return send(res, 400, { error: 'Aucun plugin VST3 exportable en .adg dans ce preset.' });
+    res.writeHead(200, {
+      'Content-Type': 'application/gzip',
+      'Content-Length': String(adgBuf.length),
+      'Content-Disposition': `attachment; filename="patchdrop-${code}.adg"`,
+      'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff',
+    });
+    return res.end(method === 'HEAD' ? undefined : adgBuf);
+  }
+
+  const vpM = pathname.match(/^\/api\/p\/([A-Za-z0-9]+)\/(?:vstpreset|[^/]+\.vstpreset)$/i);
+  if (vpM && (method === 'GET' || method === 'HEAD')) {
+    const code = vpM[1].toUpperCase();
+    if (!CODE_RE.test(code)) return send(res, 400, { error: 'Code invalide.' });
+    const f = path.join(PATCHES, code + '.json');
+    if (!fs.existsSync(f)) return send(res, 404, { error: 'Code introuvable.' });
+    const doc = JSON.parse(fs.readFileSync(f, 'utf8'));
+    const u = new URL(req.url, 'http://x');
+    const slot = parseInt(u.searchParams.get('slot') || '0', 10) || 0;
+    const vpBuf = buildSteinbergVstPresetBuffer(doc, slot);
+    if (!vpBuf) return send(res, 400, { error: 'Aucun état VST3 exportable en .vstpreset dans ce preset.' });
+    res.writeHead(200, {
+      'Content-Type': 'application/octet-stream',
+      'Content-Length': String(vpBuf.length),
+      'Content-Disposition': `attachment; filename="patchdrop-${code}.vstpreset"`,
+      'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff',
+    });
+    return res.end(method === 'HEAD' ? undefined : vpBuf);
   }
 
   if (pathname === '/api/list' && method === 'GET') {
