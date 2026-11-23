@@ -34,6 +34,22 @@ function saveDb() {
   fs.writeFileSync(tmp, JSON.stringify(db, null, 2));
   fs.renameSync(tmp, DB_FILE);
 }
+(() => {
+  let changed = false;
+  for (const [code, p] of Object.entries(db.patches || {})) {
+    if (Array.isArray(p.plugins) && p.plugins.includes('?')) {
+      try {
+        const doc = JSON.parse(fs.readFileSync(path.join(PATCHES, code + '.json'), 'utf8'));
+        const next = pluginNames(doc.patch);
+        if (next.length && JSON.stringify(next) !== JSON.stringify(p.plugins)) {
+          p.plugins = next;
+          changed = true;
+        }
+      } catch {}
+    }
+  }
+  if (changed) saveDb();
+})();
 
 function send(res, status, body, headers = {}) {
   const isJson = typeof body !== 'string' && !Buffer.isBuffer(body);
@@ -67,7 +83,7 @@ function newCode() {
 function pluginNames(patch) {
   try {
     const nodes = patch.nodes || [];
-    return nodes.map((n) => n.name || n.fileOrId || '?').filter(Boolean).slice(0, 12);
+    return nodes.map((n) => (n && n.ids && (n.ids.name || n.ids.fileOrId)) || (n && (n.name || n.fileOrId)) || '?').filter(Boolean).slice(0, 12);
   } catch { return []; }
 }
 
