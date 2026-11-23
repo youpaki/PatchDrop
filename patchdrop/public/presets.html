@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Community Presets — PatchDrop by leve</title>
+<meta name="description" content="Browse PatchLink community effect chains filtered by category, #hashtag, and VST3 plugin names.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="nav">
+  <a class="logo" href="index.html">
+    <span class="logo-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2.5" y="7.5" width="11" height="9" rx="4.5"></rect>
+        <rect x="10.5" y="7.5" width="11" height="9" rx="4.5"></rect>
+      </svg>
+    </span>
+    <span class="logo-text">PATCHDROP</span>
+    <span class="logo-sub">BY LEVE</span>
+  </a>
+  <nav>
+    <a href="index.html#fl-drop">FL Studio Drop</a>
+    <a href="index.html#workflow">How it works</a>
+    <a href="index.html#download">Download</a>
+    <a href="presets.html" class="active">Presets</a>
+    <a href="#publish">Publish</a>
+  </nav>
+  <a class="btn small secondary" href="index.html#download">v1.4.4</a>
+</header>
+
+<main id="top">
+  <section class="section page-head">
+    <div class="hero-eyebrow">PATCHDROP // COMMUNITY PRESET DIRECTORY</div>
+    <h1>Community presets</h1>
+    <p class="sub">Browse chains shared by other producers. Filter by category, click any <span class="mono">#hashtag</span>, or search by VST3 plugin name. Paste a 6-character code into PatchLink → <i>Open code</i>, or download the <span class="mono">.patchlink</span> file.</p>
+
+    <div class="filter-bar">
+      <div class="search">
+        <input id="q" placeholder="Search title, plugin, author, or #tag…">
+        <select id="sort" aria-label="Sort presets">
+          <option value="newest">Newest first</option>
+          <option value="popular">Most downloaded</option>
+        </select>
+        <button id="qbtn" class="btn small secondary" type="button">Filter</button>
+        <button id="clear-filters" class="btn small ghost" type="button" hidden>Clear</button>
+      </div>
+    </div>
+
+    <div id="cat-tabs" class="cat-tabs" aria-label="Categories"></div>
+    <div id="tag-bar" class="tag-bar" aria-label="Hashtags"></div>
+    <div id="filter-status" class="filter-status">Loading directory…</div>
+
+    <div id="grid" class="grid"><div class="empty">Loading presets…</div></div>
+  </section>
+
+  <section id="publish" class="section">
+    <h2>Publish from file</h2>
+    <p class="sub">Exported a <span class="mono">.patchlink</span> file from Standalone or your DAW? Pick a category, add <span class="mono">#hashtags</span>, and generate a 6-character share code.</p>
+    <form id="pubform" class="pub">
+      <div class="pub-row">
+        <label>Title<input id="f-title" maxlength="80" placeholder="Lead vocal chain" required></label>
+        <label>Author<input id="f-author" maxlength="40" placeholder="leve"></label>
+      </div>
+      <div class="pub-row">
+        <label>Category
+          <select id="f-category">
+            <option value="">Auto-detect from title &amp; plugins</option>
+            <option value="vocals">Vocals</option>
+            <option value="master">Mix Bus &amp; Master</option>
+            <option value="drums">Drums &amp; 808</option>
+            <option value="synths">Synths &amp; Pads</option>
+            <option value="inst">Guitars &amp; Keys</option>
+            <option value="fx">FX &amp; Creative</option>
+          </select>
+        </label>
+        <label>Hashtags<input id="f-tags" maxlength="160" placeholder="#vocals #rap #autotune #warmth"></label>
+      </div>
+      <label>Description<input id="f-desc" maxlength="500" placeholder="Pro-Q 3 -> CLA-76 -> Pro-DS"></label>
+      <label>.patchlink file<input id="f-file" type="file" accept=".patchlink,.json,application/json" required></label>
+      <label class="check"><input id="f-public" type="checkbox" checked> List publicly in community presets above</label>
+      <button class="btn big" type="submit">Upload and generate code</button>
+      <div id="pubres"></div>
+    </form>
+  </section>
+</main>
+
+<footer>PATCHDROP · PatchLink v1.4.4 by leve · <a href="index.html">Back to main site</a> · <a href="#top">Top</a></footer>
+<script src="app.js"></script>
+</body>
+</html>

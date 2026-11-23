@@ -2,10 +2,10 @@
 // Port 3250 localhost, proxied via Apache at /patchdrop/ -> 127.0.0.1:3250/
 // Data: ./data/patches/<CODE>.json + ./data/db.json (index)
 // API:
-//   POST /api/publish {title,author,description,patch,isPublic} -> {code}
+//   POST /api/publish {title,author,description,patch,isPublic,category,tags} -> {code}
 //   GET  /api/p/:code -> {title,author,description,patch,createdAt,downloads}
 //   GET  /api/p/:code/download -> fichier .patchlink
-//   GET  /api/list?q= -> [{code,title,author,description,plugins,createdAt,downloads}]
+//   GET  /api/list?q=&category=&tag=&sort=&limit= -> {presets,total,allTotal,categories,categoryLabels,popularTags}
 'use strict';
 const http = require('http');
 const fs = require('fs');
@@ -28,6 +28,80 @@ function loadDb() {
   try { return JSON.parse(fs.readFileSync(DB_FILE, 'utf8')); }
   catch { return { patches: {} }; }
 }
+const CATEGORIES = {
+  vocals: 'Vocals',
+  master: 'Mix Bus & Master',
+  drums: 'Drums & 808',
+  synths: 'Synths & Pads',
+  inst: 'Guitars & Keys',
+  fx: 'FX & Creative',
+};
+
+function sanitizeTag(raw) {
+  const clean = String(raw || '').trim().toLowerCase().replace(/^#+/, '').replace(/[^a-z0-9_-]/g, '');
+  return clean.length >= 2 && clean.length <= 24 ? '#' + clean : '';
+}
+
+function parseExplicitTags(rawTags, title, description) {
+  const out = [];
+  const push = (t) => {
+    const s = sanitizeTag(t);
+    if (s && !out.includes(s)) out.push(s);
+  };
+  if (Array.isArray(rawTags)) {
+    for (const item of rawTags) push(item);
+  } else if (typeof rawTags === 'string' && rawTags.trim()) {
+    for (const token of rawTags.split(/[\s,;]+/)) push(token);
+  }
+  const text = `${title || ''} ${description || ''}`;
+  for (const m of text.matchAll(/#([a-zA-Z0-9_-]{2,24})/g)) push(m[1]);
+  return out;
+}
+
+function inferCategoryAndTags({ title, description, plugins, category, tags }) {
+  const hay = [title || '', description || '', ...(plugins || [])].join(' ').toLowerCase();
+  const explicitCat = typeof category === 'string' ? category.trim().toLowerCase() : '';
+  let resolvedCat = CATEGORIES[explicitCat] ? explicitCat : '';
+
+  if (!resolvedCat) {
+    if (/\b(drum|drums|808|kick|snare|perc|hihat|hat|transient)\b/.test(hay)) resolvedCat = 'drums';
+    else if (/\b(nappe|pad|synth|atmos|ambient|supermassive|shimmer)\b/.test(hay)) resolvedCat = 'synths';
+    else if (/\b(master|mastering|mix\s*bus|bus|glue|limiter|kotelnikov)\b/.test(hay)) resolvedCat = 'master';
+    else if (/\b(voix|vocal|vocals|couplet|adlib|auto-?tune|de-?esser|pro-ds)\b/.test(hay)) resolvedCat = 'vocals';
+    else if (/\b(guitar|gtr|amp|piano|keys|rhodes|bass)\b/.test(hay)) resolvedCat = 'inst';
+    else resolvedCat = 'fx';
+  }
+
+  const resolvedTags = parseExplicitTags(tags, title, description);
+  if (resolvedTags.length < 2) {
+    const rules = [
+      [/\b(voix|vocal|vocals|couplet|adlib)\b/, '#vocals'],
+      [/\b(rap|couplet|adlib|trap|drill)\b/, '#rap'],
+      [/\b(auto-?tune|pitch)\b/, '#autotune'],
+      [/\b(de-?esser|pro-ds)\b/, '#deesser'],
+      [/\b(warm|warmth|chaleur|tube|la-2a|saturn|drive)\b/, '#warmth'],
+      [/\b(comp|compressor|rcompressor|kotelnikov|la-2a|1176|pro-c)\b/, '#compression'],
+      [/\b(eq|pro-q|nova|q8)\b/, '#eq'],
+      [/\b(reverb|pro-r|vintageverb|supermassive|espace|nappe|space)\b/, '#space'],
+      [/\b(nappe|pad|synth)\b/, '#pads'],
+      [/\b(mix|master|bus)\b/, '#mix'],
+      [/\b(fabfilter|pro-q|pro-ds|pro-c|pro-r|saturn|pro-mb)\b/, '#fabfilter'],
+      [/\b(uad|uadx|teletronix|la-2a)\b/, '#uad'],
+      [/\b(waves|waveshell|rcompressor|q8|deesser)\b/, '#waves'],
+    ];
+    for (const [re, tag] of rules) {
+      if (resolvedTags.length >= 6) break;
+      if (re.test(hay) && !resolvedTags.includes(tag)) resolvedTags.push(tag);
+    }
+    const catTag = '#' + resolvedCat;
+    if (resolvedTags.length === 0 || (resolvedTags.length < 2 && !resolvedTags.includes(catTag))) {
+      if (!resolvedTags.includes(catTag)) resolvedTags.unshift(catTag);
+    }
+  }
+
+  return { category: resolvedCat, tags: resolvedTags.slice(0, 6) };
+}
+
 let db = loadDb();
 function saveDb() {
   const tmp = DB_FILE + '.tmp';
@@ -37,16 +111,31 @@ function saveDb() {
 (() => {
   let changed = false;
   for (const [code, p] of Object.entries(db.patches || {})) {
-    if (Array.isArray(p.plugins) && p.plugins.includes('?')) {
-      try {
-        const doc = JSON.parse(fs.readFileSync(path.join(PATCHES, code + '.json'), 'utf8'));
+    const needPlugins = !Array.isArray(p.plugins) || p.plugins.includes('?');
+    const needMeta = !p.category || !CATEGORIES[p.category] || !Array.isArray(p.tags) || p.tags.length === 0;
+    if (!needPlugins && !needMeta) continue;
+    try {
+      const doc = JSON.parse(fs.readFileSync(path.join(PATCHES, code + '.json'), 'utf8'));
+      if (needPlugins) {
         const next = pluginNames(doc.patch);
         if (next.length && JSON.stringify(next) !== JSON.stringify(p.plugins)) {
           p.plugins = next;
           changed = true;
         }
-      } catch {}
-    }
+      }
+      if (needMeta) {
+        const meta = inferCategoryAndTags({
+          title: p.title,
+          description: p.description,
+          plugins: p.plugins || [],
+          category: p.category || doc.category,
+          tags: p.tags || doc.tags,
+        });
+        p.category = meta.category;
+        p.tags = meta.tags;
+        changed = true;
+      }
+    } catch {}
   }
   if (changed) saveDb();
 })();
@@ -115,11 +204,19 @@ async function handleApi(req, res, pathname) {
     const author = String(b.author || 'Anonyme').slice(0, 40);
     const description = String(b.description || '').slice(0, 500);
     const isPublic = b.isPublic !== false;
+    const plugins = pluginNames(patch);
+    const { category, tags } = inferCategoryAndTags({
+      title, description, plugins, category: b.category, tags: b.tags,
+    });
     const code = newCode();
-    fs.writeFileSync(path.join(PATCHES, code + '.json'), JSON.stringify({ code, title, author, description, isPublic, patch, createdAt: new Date().toISOString(), downloads: 0 }, null, 2));
-    db.patches[code] = { code, title, author, description, isPublic, plugins: pluginNames(patch), createdAt: new Date().toISOString(), downloads: 0 };
+    const createdAt = new Date().toISOString();
+    fs.writeFileSync(
+      path.join(PATCHES, code + '.json'),
+      JSON.stringify({ code, title, author, description, category, tags, isPublic, patch, createdAt, downloads: 0 }, null, 2)
+    );
+    db.patches[code] = { code, title, author, description, category, tags, isPublic, plugins, createdAt, downloads: 0 };
     saveDb();
-    return send(res, 201, { code });
+    return send(res, 201, { code, category, tags });
   }
 
   const getM = pathname.match(/^\/api\/p\/([A-Za-z0-9]+)$/);
@@ -146,11 +243,64 @@ async function handleApi(req, res, pathname) {
 
   if (pathname === '/api/list' && method === 'GET') {
     const url = new URL(req.url, 'http://x');
-    const q = (url.searchParams.get('q') || '').toLowerCase();
-    let arr = Object.values(db.patches).filter((p) => p.isPublic);
-    if (q) arr = arr.filter((p) => (p.title + ' ' + p.author + ' ' + (p.description || '') + ' ' + (p.plugins || []).join(' ')).toLowerCase().includes(q));
-    arr.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
-    return send(res, 200, { presets: arr.slice(0, 100), total: arr.length });
+    const q = (url.searchParams.get('q') || '').trim().toLowerCase();
+    const cat = (url.searchParams.get('category') || '').trim().toLowerCase();
+    const tagRaw = (url.searchParams.get('tag') || '').trim().toLowerCase().replace(/^#+/, '');
+    const tagFilter = tagRaw ? '#' + tagRaw : '';
+    const sort = (url.searchParams.get('sort') || 'newest').trim().toLowerCase();
+    const limitParam = parseInt(url.searchParams.get('limit') || '100', 10);
+    const limit = Number.isFinite(limitParam) && limitParam > 0 ? Math.min(limitParam, 100) : 100;
+
+    const publicAll = Object.values(db.patches).filter((p) => p.isPublic);
+    const catCounts = {};
+    for (const key of Object.keys(CATEGORIES)) catCounts[key] = 0;
+    const tagCounts = {};
+    for (const p of publicAll) {
+      const c = p.category && CATEGORIES[p.category] ? p.category : 'fx';
+      catCounts[c] = (catCounts[c] || 0) + 1;
+      for (const t of (p.tags || [])) tagCounts[t] = (tagCounts[t] || 0) + 1;
+    }
+    const popularTags = Object.entries(tagCounts)
+      .map(([tag, count]) => ({ tag, count }))
+      .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag))
+      .slice(0, 24);
+
+    let arr = publicAll.slice();
+    if (cat && cat !== 'all') arr = arr.filter((p) => (p.category || 'fx') === cat);
+    if (tagFilter) arr = arr.filter((p) => (p.tags || []).includes(tagFilter));
+    if (q) {
+      arr = arr.filter((p) => [
+        p.code,
+        p.title,
+        p.author,
+        p.description || '',
+        CATEGORIES[p.category] || p.category || '',
+        ...(p.plugins || []),
+        ...(p.tags || []),
+      ].join(' ').toLowerCase().includes(q));
+    }
+
+    if (sort === 'popular') {
+      arr.sort((a, b) => (b.downloads || 0) - (a.downloads || 0) || (b.createdAt || '').localeCompare(a.createdAt || ''));
+    } else {
+      arr.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+    }
+
+    const presets = arr.slice(0, limit).map((p) => ({
+      ...p,
+      category: p.category && CATEGORIES[p.category] ? p.category : 'fx',
+      categoryLabel: CATEGORIES[p.category] || 'FX & Creative',
+      tags: p.tags || [],
+    }));
+
+    return send(res, 200, {
+      presets,
+      total: arr.length,
+      allTotal: publicAll.length,
+      categories: catCounts,
+      categoryLabels: CATEGORIES,
+      popularTags,
+    });
   }
 
   return send(res, 404, { error: 'Not found' });
