@@ -37,12 +37,12 @@
     <div>
       <div class="hero-eyebrow">VST3 + Standalone chainer · FL Studio / REAPER / Ableton / Browser</div>
       <h1>Pack your FX rack into 6 characters.</h1>
-      <p class="lede">Drag FL Studio <span class="mono">.fst</span> presets straight into PatchLink, share a 6-character code like <b class="code-inline">K7Q2XA</b>, or drag any chain <b>back out into your DAW</b> natively as <span class="mono">.fst</span>, <span class="mono">.RfxChain</span>, or <span class="mono">.vstpreset</span> — even in <b>Zero-Load</b> mode without loading plugin GUIs.</p>
+      <p class="lede">Drag FL Studio <span class="mono">.fst</span> presets into PatchLink to generate a 6-character code like <b class="code-inline">K7Q2XA</b>. To load a community chain into your mix: <b>1) drag any preset card from this website into PatchLink</b>, then <b>2) drag from PatchLink straight into your DAW</b> (<span class="mono">.fst</span>, <span class="mono">.RfxChain</span>, or <span class="mono">.vstpreset</span>) — even in <b>Zero-Load</b> mode without opening plugin GUIs.</p>
       <div class="hero-cta">
         <a class="btn big" href="#download">Download PatchLink 1.5.1</a>
         <a class="btn ghost big" href="presets.html">Browse community presets</a>
       </div>
-      <div class="spec-line">Windows 64-bit VST3 + Standalone · Host DAW auto-detection · Browser .fst drag &amp; drop</div>
+      <div class="spec-line">Windows 64-bit VST3 + Standalone · Host DAW auto-detection · Website → PatchLink → DAW drag &amp; drop</div>
     </div>
 
     <div class="rack-preview" aria-label="Example PatchLink chain manifest">
@@ -90,38 +90,38 @@
       </div>
 
       <div class="fl-card">
-        <div class="fl-card-tag">Direction 2 · PatchLink / Web → Any DAW</div>
-        <h3>Auto-Detected Drag Back to DAW</h3>
-        <p>PatchLink auto-detects the DAW it runs in and adapts its toolbar <b>Drag</b> handle automatically (and asks your format in Standalone).</p>
+        <div class="fl-card-tag">Direction 2 · Website → PatchLink → Any DAW</div>
+        <h3>Two-Step Drag: Website → PatchLink → DAW</h3>
+        <p>Browsers don't hand files directly onto DAW mixer tracks, so PatchLink bridges the drop cleanly: <b>1) drag any preset card from the website into PatchLink</b>, then <b>2) drag from PatchLink into your DAW</b>.</p>
         <div class="fl-diagram">
           <div class="fl-menu-mock">
-            <div class="fl-menu-item active">FL Studio → .fst track / slot</div>
-            <div class="fl-menu-item active">REAPER → .RfxChain</div>
-            <div class="fl-menu-item active">Ableton / Cubase → .vstpreset</div>
+            <div class="fl-menu-item active">1. Web card → PatchLink</div>
+            <div class="fl-menu-item active">2. PatchLink → FL (.fst)</div>
+            <div class="fl-menu-item active">2. PatchLink → REAPER / VST3</div>
           </div>
-          <div class="fl-arrow">drag →</div>
+          <div class="fl-arrow">2 steps →</div>
           <div class="fl-rack-mock">
             <div class="fl-rack-label">Unpacked Native Slots</div>
             <div class="fl-rack-chip">01 Pro-Q 3 (native slot)</div>
             <div class="fl-rack-chip">02 Auto-Tune Pro</div>
-            <div class="fl-rack-chip dim">Or drag FL .fst from web card</div>
+            <div class="fl-rack-chip dim">03 Zero-Load (no GUI needed)</div>
           </div>
         </div>
-        <p>Open any PatchDrop code and drag <b>Drag to DAW</b> right from the dialog, drag individual cards via their export icon, or drag any preset card on this site directly into <b>PatchLink</b> (or onto Desktop as <span class="mono">.fst</span>).</p>
+        <p>PatchLink auto-detects the host DAW (<span class="mono">.fst</span> in FL Studio, <span class="mono">.RfxChain</span> in REAPER, <span class="mono">.vstpreset</span> in other VST3 hosts, or prompts in Standalone). Works even in <b>Zero-Load</b> mode or via <i>Open code</i>.</p>
       </div>
     </div>
 
     <div class="fl-note">
-      <b>Browser workflow:</b> Drop <span class="mono">.fst</span> presets directly onto the <a href="#publish">Publish</a> area to create a share code. To move presets back out of your browser: drag any card or <b>FL .fst</b> button directly into <b>PatchLink</b> (or Desktop), or click <b>FL .fst</b> and drag the downloaded file from your browser's Downloads bar straight onto an FL Studio Mixer track.
+      <b>Browser workflow:</b> To publish a chain, drop an <span class="mono">.fst</span> or <span class="mono">.patchlink</span> file onto <a href="#publish">Publish</a> below. To load any preset from the website: <b>1)</b> drag its card (or <b>FL .fst</b> button) onto <b>PatchLink</b>, then <b>2)</b> drag from <b>PatchLink</b> straight into your DAW (or click <b>FL .fst</b> to download the <span class="mono">.fst</span> file directly).
     </div>
   </section>
 
   <section id="workflow" class="section">
     <h2>How PatchLink works</h2>
     <div class="steps">
-      <div class="step"><b>STEP 01</b><h3>Drop, build, or fetch</h3><p>Stack effects in <b>Chain</b> or <b>Patcher</b> mode, drop FL Studio <span class="mono">.fst</span> files, or paste a 6-character code. Choose Zero-Load mode anytime you only want to convert or share.</p></div>
+      <div class="step"><b>STEP 01</b><h3>Drop, build, or fetch</h3><p>Drag any preset card from this website into <b>PatchLink</b>, drop local <span class="mono">.fst</span> files, stack effects in <b>Chain</b> or <b>Patcher</b> mode, or paste a 6-character code.</p></div>
       <div class="step"><b>STEP 02</b><h3>Share code or file</h3><p>Click <i>Share</i> to review the plugin manifest and publish a 6-character code, or publish directly from your browser by dropping a <span class="mono">.fst</span> / <span class="mono">.patchlink</span> file below.</p></div>
-      <div class="step"><b>STEP 03</b><h3>Host or unpack in DAW</h3><p>Run the chain inside PatchLink, or drag the <b>Drag .fst / .RfxChain / .vstpreset</b> handle straight into your DAW's mixer slots. Missing plugins are flagged without crashing.</p></div>
+      <div class="step"><b>STEP 03</b><h3>Host or unpack in DAW</h3><p>Run the chain inside PatchLink, or drag PatchLink's <b>Drag</b> handle straight into your DAW (<span class="mono">.fst</span>, <span class="mono">.RfxChain</span>, or <span class="mono">.vstpreset</span>) — even in Zero-Load mode.</p></div>
     </div>
     <div class="warn">All VST3 state blobs stay intact even in Zero-Load mode, so you can convert codes into native FL Studio `.fst` racks without owning or opening the plugins on the converting machine.</div>
   </section>
@@ -169,7 +169,7 @@
     <div class="row-head">
       <div>
         <h2>Community presets</h2>
-        <p class="sub">Latest chains uploaded by users. Open the dedicated directory to filter by category, <span class="mono">#hashtag</span>, or plugin.</p>
+        <p class="sub">Latest chains uploaded by users. Drag any card below into <b>PatchLink</b>, then drag from <b>PatchLink</b> into your DAW — or open the full directory for categories &amp; <span class="mono">#tags</span>.</p>
       </div>
       <a class="btn small secondary" href="presets.html">Open full directory →</a>
     </div>
@@ -217,7 +217,7 @@
 
   <section class="section faq">
     <h2>Technical FAQ</h2>
-    <details open><summary>How does Drag-to-DAW &amp; Zero-Load mode work?</summary><p>PatchLink checks which DAW loaded it: FL Studio uses <span class="mono">.fst</span> (single-slot or full 10-slot Mixer track), REAPER uses <span class="mono">.RfxChain</span>, and other VST3 hosts use <span class="mono">.vstpreset</span> (Standalone asks you to choose). In Zero-Load mode (empty drop or <i>Open code</i>), PatchLink keeps the binary states in RAM so you can generate codes or drag straight into your DAW without loading any VST3 plugins inside PatchLink.</p></details>
+    <details open><summary>How do Website → PatchLink → DAW drag &amp; Zero-Load work?</summary><p><b>Step 1 (Website → PatchLink):</b> Drag any preset card or <b>FL .fst</b> button from this website onto PatchLink (or paste its 6-character code). <b>Step 2 (PatchLink → DAW):</b> Drag PatchLink's <b>Drag</b> handle onto your DAW — FL Studio receives <span class="mono">.fst</span> (single-slot or 10-slot Mixer track), REAPER receives <span class="mono">.RfxChain</span>, and other VST3 hosts receive <span class="mono">.vstpreset</span> (Standalone asks you to choose). In Zero-Load mode, PatchLink keeps the binary states in RAM so you can generate codes or drag straight into your DAW without loading any VST3 plugins inside PatchLink.</p></details>
     <details><summary>Why can't FL-native plugins like Fruity WaveShaper load inside PatchLink?</summary><p>FL-native plugins (WaveShaper, Chorus, Flanger, Blood Overdrive, etc.) only exist inside FL Studio's internal engine and aren't exported as standard VST3 binaries. When you drop an FL mixer <span class="mono">.fst</span> file, PatchLink loads or keeps all third-party VST3 slots with their exact settings and lists any skipped FL-native slots cleanly.</p></details>
     <details><summary>What happens if my friend doesn't own one of the VST3 plugins?</summary><p>PatchLink resolves each plugin by format, UID, and name. Everything installed on their system loads with full state; missing plugins are reported clearly without crashing the host or deleting saved data.</p></details>
     <details><summary>My plugin list inside PatchLink is empty after installing</summary><p>Open <b>Library</b> in the top bar and click <i>Scan selected</i>. Standard VST3 system paths and detected DAW folders are pre-listed automatically, and any unstable plugins are quarantined in the blacklist.</p></details>

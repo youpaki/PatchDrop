@@ -277,6 +277,7 @@ function buildPresetCard(p, { isPreview = false, activeTag = '', onTagSelect = n
   const el = document.createElement('div');
   el.className = 'card';
   el.draggable = true;
+  el.title = 'Step 1: Drag this card into PatchLink -> Step 2: Drag from PatchLink into your DAW';
   el.addEventListener('dragstart', (ev) => attachFstDragData(ev, p));
 
   const head = document.createElement('div');
@@ -365,7 +366,7 @@ function buildPresetCard(p, { isPreview = false, activeTag = '', onTagSelect = n
   fstLink.draggable = true;
   fstLink.href = `api/p/${p.code}/patchdrop-${p.code}.fst`;
   fstLink.setAttribute('download', `patchdrop-${p.code}.fst`);
-  fstLink.title = 'Drag onto PatchLink or Desktop, or click to download .fst for FL Studio';
+  fstLink.title = 'Step 1: Drag onto PatchLink, then Step 2: drag from PatchLink into your DAW (or click to download .fst)';
   fstLink.textContent = 'FL .fst';
   fstLink.addEventListener('dragstart', (ev) => {
     ev.stopPropagation();
@@ -722,7 +723,7 @@ if (pubForm) {
         body: JSON.stringify(body),
       });
       const tagsTxt = (j.tags || []).join(' ');
-      box.innerHTML = `<div class="ok">Code ready: <b>${j.code}</b><br>Category: ${(CATEGORY_LABELS[j.category] || j.category || 'FX')}${tagsTxt ? ' · ' + tagsTxt : ''}<br>Paste this code in PatchLink → <i>Open code</i>, or drag <b>FL .fst</b> directly from its card below.</div>`;
+      box.innerHTML = `<div class="ok">Code ready: <b>${j.code}</b><br>Category: ${(CATEGORY_LABELS[j.category] || j.category || 'FX')}${tagsTxt ? ' · ' + tagsTxt : ''}<br>Drag this preset card into <b>PatchLink</b> (then drag from PatchLink into your DAW), or paste <b>${j.code}</b> in PatchLink → <i>Open code</i>.</div>`;
       if (reloadActiveView) reloadActiveView();
     } catch (err) {
       box.textContent = 'Error: ' + err.message;
