@@ -160,16 +160,16 @@ inline ParsedFst parseFstData(const void* rawData, size_t totalSize)
     juce::String curPlugin;
     juce::String curSlotName;
     bool hasD4 = false;
-    uint32_t d4_0 = 0;
     uint32_t d4_2 = 0;
+    uint32_t d4_4 = 0;
 
     auto resetSlot = [&]()
     {
         curPlugin.clear();
         curSlotName.clear();
         hasD4 = false;
-        d4_0 = 0;
         d4_2 = 0;
+        d4_4 = 0;
     };
 
     while (pos < end)
@@ -243,8 +243,8 @@ inline ParsedFst parseFstData(const void* rawData, size_t totalSize)
                 if (length == 52)
                 {
                     hasD4 = true;
-                    d4_0 = juce::ByteOrder::littleEndianInt(payload);
                     d4_2 = juce::ByteOrder::littleEndianInt(payload + 8);
+                    d4_4 = juce::ByteOrder::littleEndianInt(payload + 16);
                 }
             }
             else if (ev == 213) // 0xD5: plugin state chunk
@@ -252,11 +252,11 @@ inline ParsedFst parseFstData(const void* rawData, size_t totalSize)
                 const bool isWrapper = curPlugin.isEmpty() || curPlugin.equalsIgnoreCase("Fruity Wrapper");
                 const uint32_t wrapperVersion = length >= 4 ? juce::ByteOrder::littleEndianInt(payload) : 0;
 
-                if (isWrapper && (wrapperVersion == 8u || wrapperVersion == 10u))
+                if (isWrapper && wrapperVersion >= 4u && wrapperVersion <= 32u)
                 {
                     FstPluginEntry entry;
                     entry.slotName = curSlotName;
-                    entry.bypass = hasD4 && (d4_0 >= 10u) && (d4_2 == 0u);
+                    entry.bypass = hasD4 && (d4_4 != 0u) && (d4_2 == 0u);
 
                     size_t spos = 4;
                     while (spos + 12 <= length)
