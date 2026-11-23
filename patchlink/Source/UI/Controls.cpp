@@ -335,8 +335,14 @@ ModalOverlay::~ModalOverlay() { stopTimer(); }
 void ModalOverlay::paint(juce::Graphics& g)
 {
     g.fillAll(juce::Colours::black.withAlpha(0.56f * reveal));
-    auto card = getCardBounds().toFloat();
-    juce::DropShadow(juce::Colours::black.withAlpha(0.45f * reveal), 28, { 0, 10 }).drawForRectangle(g, card.getSmallestIntegerContainer());
+    const auto card = getCardBounds().toFloat();
+    for (int i = 1; i <= 4; ++i)
+    {
+        const auto spread = (float)i * 3.5f;
+        g.setColour(juce::Colours::black.withAlpha(0.11f * reveal));
+        g.fillRoundedRectangle(card.expanded(spread, spread).translated(0.0f, (float)i * 2.0f),
+                               12.0f + spread * 0.4f);
+    }
     g.setColour(theme::surface.withAlpha(reveal));
     g.fillRoundedRectangle(card, 12.0f);
     g.setColour(theme::line.withAlpha(reveal));
@@ -347,8 +353,7 @@ juce::Rectangle<int> ModalOverlay::getCardBounds() const
 {
     const int w = juce::jmin(720, getWidth() - 48);
     const int h = juce::jmin(620, getHeight() - 48);
-    return juce::Rectangle<int>(w, h).withCentre(getLocalBounds().getCentre())
-                                      .translated(0, juce::roundToInt((1.0f - reveal) * 10.0f));
+    return juce::Rectangle<int>(w, h).withCentre(getLocalBounds().getCentre());
 }
 
 void ModalOverlay::resized() { layoutCard(getCardBounds()); }
@@ -370,8 +375,7 @@ bool ModalOverlay::keyPressed(const juce::KeyPress& key)
 
 void ModalOverlay::timerCallback()
 {
-    reveal += (1.0f - reveal) * 0.22f;
+    reveal += (1.0f - reveal) * 0.24f;
     if (reveal > 0.995f) { reveal = 1.0f; stopTimer(); }
     repaint();
-    resized();
 }

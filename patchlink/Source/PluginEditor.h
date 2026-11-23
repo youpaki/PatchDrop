@@ -39,6 +39,7 @@ private:
 
     PlButton simpleButton { "Chain", Icon::list, PlButton::Style::ghost };
     PlButton patcherButton { "Patcher", Icon::grid, PlButton::Style::ghost };
+    PlButton themeButton { "Theme", Icon::none, PlButton::Style::ghost };
     PlButton libraryButton { "Library", Icon::library, PlButton::Style::secondary };
     PlButton codeButton { "Open code", Icon::code, PlButton::Style::secondary };
     PlButton shareButton { "Share", Icon::share, PlButton::Style::secondary };
@@ -61,6 +62,8 @@ private:
     void cacheDraggedFiles(const juce::StringArray& files);
 
     void setMode(Mode);
+    void openThemeMenu();
+    void applyCurrentTheme(int index);
     void changeListenerCallback(juce::ChangeBroadcaster*) override;
     void refreshViews();
     void setStatus(const juce::String&);

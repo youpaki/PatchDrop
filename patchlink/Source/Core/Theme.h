@@ -6,24 +6,142 @@
 
 namespace theme
 {
-// A quiet, neutral surface system. Accent is reserved for signal and primary actions.
-inline const juce::Colour background  { 0xff101418 };
-inline const juce::Colour surface     { 0xff161b20 };
-inline const juce::Colour panel       { 0xff1a2026 };
-inline const juce::Colour card        { 0xff1d242b };
-inline const juce::Colour cardHover   { 0xff232c34 };
-inline const juce::Colour raised      { 0xff27313a };
-inline const juce::Colour line        { 0xff303a44 };
-inline const juce::Colour lineSoft    { 0xff252d35 };
-inline const juce::Colour text        { 0xffedf2f4 };
-inline const juce::Colour muted       { 0xff98a5af };
-inline const juce::Colour faint       { 0xff65737f };
-inline const juce::Colour accent      { 0xff79ddbd };
-inline const juce::Colour accentHover { 0xff9ae8d0 };
-inline const juce::Colour accentDark  { 0xff173c33 };
-inline const juce::Colour danger      { 0xffff837c };
-inline const juce::Colour warning     { 0xffe6b96f };
-inline const juce::Colour blue        { 0xff83aff5 };
+struct Palette
+{
+    const char* name;
+    juce::uint32 background;
+    juce::uint32 surface;
+    juce::uint32 panel;
+    juce::uint32 card;
+    juce::uint32 cardHover;
+    juce::uint32 raised;
+    juce::uint32 line;
+    juce::uint32 lineSoft;
+    juce::uint32 text;
+    juce::uint32 muted;
+    juce::uint32 faint;
+    juce::uint32 accent;
+    juce::uint32 accentHover;
+    juce::uint32 accentDark;
+    juce::uint32 danger;
+    juce::uint32 warning;
+    juce::uint32 blue;
+};
+
+inline constexpr int themeCount = 4;
+
+inline constexpr Palette kPalettes[themeCount] = {
+    {
+        "Obsidian Amber",
+        0xff0d0d0f, 0xff131316, 0xff17171b, 0xff1c1c22, 0xff23232b, 0xff292932,
+        0xff353540, 0xff24242c,
+        0xfff3f0ea, 0xff9e9b93, 0xff68655e,
+        0xfff07e3e, 0xffff9559, 0xff3a2012,
+        0xfff25f5c, 0xffe8b85a, 0xff68a8f8
+    },
+    {
+        "Carbon Iris",
+        0xff0a0b0e, 0xff101218, 0xff151820, 0xff191d27, 0xff202532, 0xff262c3b,
+        0xff323a4d, 0xff222836,
+        0xffeff1f7, 0xff949cb0, 0xff5f677a,
+        0xff7d8cff, 0xff9ca7ff, 0xff1c2147,
+        0xffff6b72, 0xffe8b968, 0xff63b3ff
+    },
+    {
+        "Tape Vermilion",
+        0xff111112, 0xff171719, 0xff1c1c1e, 0xff222225, 0xff29292d, 0xff303035,
+        0xff3d3d43, 0xff2c2c31,
+        0xfff5f4f0, 0xffa3a19a, 0xff6e6c66,
+        0xfff05444, 0xffff6f61, 0xff3d1815,
+        0xffff5c5c, 0xffebb85e, 0xff7ab0f5
+    },
+    {
+        "Phosphor Console",
+        0xff0c0e0d, 0xff121514, 0xff161a18, 0xff1b201e, 0xff222825, 0xff272f2b,
+        0xff333d38, 0xff232a26,
+        0xffedf2ee, 0xff95a39b, 0xff606e66,
+        0xff5ce08a, 0xff7eeaa4, 0xff143622,
+        0xfff26b66, 0xffe8bd66, 0xff72b2f5
+    }
+};
+
+inline int currentThemeIndex = 0;
+
+// Pro-audio hardware surface system. Defaults to Obsidian Amber.
+inline juce::Colour background  { 0xff0d0d0f };
+inline juce::Colour surface     { 0xff131316 };
+inline juce::Colour panel       { 0xff17171b };
+inline juce::Colour card        { 0xff1c1c22 };
+inline juce::Colour cardHover   { 0xff23232b };
+inline juce::Colour raised      { 0xff292932 };
+inline juce::Colour line        { 0xff353540 };
+inline juce::Colour lineSoft    { 0xff24242c };
+inline juce::Colour text        { 0xfff3f0ea };
+inline juce::Colour muted       { 0xff9e9b93 };
+inline juce::Colour faint       { 0xff68655e };
+inline juce::Colour accent      { 0xfff07e3e };
+inline juce::Colour accentHover { 0xffff9559 };
+inline juce::Colour accentDark  { 0xff3a2012 };
+inline juce::Colour danger      { 0xfff25f5c };
+inline juce::Colour warning     { 0xffe8b85a };
+inline juce::Colour blue        { 0xff68a8f8 };
+
+inline const char* themeName(int idx)
+{
+    return kPalettes[juce::jlimit(0, themeCount - 1, idx)].name;
+}
+
+inline juce::File themeConfigFile()
+{
+    return juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory)
+               .getChildFile("PatchLink")
+               .getChildFile("ui_theme.txt");
+}
+
+inline void applyTheme(int idx, bool persist = true)
+{
+    currentThemeIndex = (idx >= 0 && idx < themeCount) ? idx : 0;
+    const auto& p = kPalettes[currentThemeIndex];
+    background  = juce::Colour(p.background);
+    surface     = juce::Colour(p.surface);
+    panel       = juce::Colour(p.panel);
+    card        = juce::Colour(p.card);
+    cardHover   = juce::Colour(p.cardHover);
+    raised      = juce::Colour(p.raised);
+    line        = juce::Colour(p.line);
+    lineSoft    = juce::Colour(p.lineSoft);
+    text        = juce::Colour(p.text);
+    muted       = juce::Colour(p.muted);
+    faint       = juce::Colour(p.faint);
+    accent      = juce::Colour(p.accent);
+    accentHover = juce::Colour(p.accentHover);
+    accentDark  = juce::Colour(p.accentDark);
+    danger      = juce::Colour(p.danger);
+    warning     = juce::Colour(p.warning);
+    blue        = juce::Colour(p.blue);
+
+    if (persist)
+    {
+        const auto file = themeConfigFile();
+        file.getParentDirectory().createDirectory();
+        file.replaceWithText(juce::String(currentThemeIndex));
+    }
+}
+
+inline void loadSavedTheme()
+{
+    const auto file = themeConfigFile();
+    if (!file.existsAsFile())
+        return;
+
+    const auto raw = file.loadFileAsString().trim();
+    if (raw.isEmpty())
+        return;
+
+    const auto idx = raw.getIntValue();
+    if (idx >= 0 && idx < themeCount)
+        applyTheme(idx, false);
+}
 
 constexpr float radius = 8.0f;
 constexpr float smallRadius = 5.0f;
@@ -54,6 +172,11 @@ class LookAndFeel final : public juce::LookAndFeel_V4
 public:
     LookAndFeel()
     {
+        applyPalette();
+    }
+
+    void applyPalette()
+    {
         setColour(juce::DocumentWindow::backgroundColourId, background);
         setColour(juce::DialogWindow::backgroundColourId, background);
         setColour(juce::AlertWindow::backgroundColourId, surface);
@@ -67,6 +190,7 @@ public:
         setColour(juce::TextEditor::focusedOutlineColourId, accent.withAlpha(0.75f));
         setColour(juce::CaretComponent::caretColourId, accent);
         setColour(juce::Label::textColourId, text);
+        setColour(juce::Label::textWhenEditingColourId, text);
         setColour(juce::Label::backgroundWhenEditingColourId, background);
         setColour(juce::Label::outlineWhenEditingColourId, accent.withAlpha(0.65f));
         setColour(juce::ListBox::backgroundColourId, background);

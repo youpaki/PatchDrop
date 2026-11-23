@@ -128,8 +128,7 @@ juce::Rectangle<int> ShareDialog::getCardBounds() const
     const auto w = juce::jmin(720, getWidth() - 48);
     const auto desiredHeight = mode == Mode::publish ? 620 : 360;
     const auto h = juce::jmin(desiredHeight, getHeight() - 48);
-    return juce::Rectangle<int>(w, h).withCentre(getLocalBounds().getCentre())
-                                      .translated(0, juce::roundToInt((1.0f - reveal) * 10.0f));
+    return juce::Rectangle<int>(w, h).withCentre(getLocalBounds().getCentre());
 }
 
 void ShareDialog::submit()

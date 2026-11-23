@@ -1,13 +1,24 @@
 #include "ChainView.h"
+#include <cmath>
+#include <map>
 
-class ChainView::Slot final : public juce::Component
+class ChainView::Slot final : public juce::Component,
+                              private juce::Timer
 {
 public:
     Slot(Content& contentOwner, const PatchLinkProcessor::LoadedNode& node, int index);
+    ~Slot() override { stopTimer(); }
+
+    void setNodeAndIndex(const PatchLinkProcessor::LoadedNode& n, int index);
 
     PatchLinkProcessor::LoadedNode node;
+    float visualY = 0.0f;
+    bool hasVisualY = false;
+
     void resized() override;
     void paint(juce::Graphics&) override;
+    void mouseEnter(const juce::MouseEvent&) override;
+    void mouseExit(const juce::MouseEvent&) override;
     void mouseDown(const juce::MouseEvent&) override;
     void mouseDrag(const juce::MouseEvent&) override;
     void mouseUp(const juce::MouseEvent&) override;
@@ -22,21 +33,61 @@ private:
     bool enabled = true;
     bool dragCandidate = false;
     bool dragging = false;
+    float dragGrabOffsetY = 0.0f;
+    float hoverAmount = 0.0f;
+    float hoverTarget = 0.0f;
     int number = 0;
+
+    void timerCallback() override;
 };
 
-class ChainView::Content final : public juce::Component
+class ChainView::Content final : public juce::Component,
+                                 private juce::Timer
 {
 public:
     explicit Content(ChainView& view) : owner(view) { addAndMakeVisible(addButton); }
+    ~Content() override { stopTimer(); }
 
     void rebuild(const std::vector<PatchLinkProcessor::LoadedNode>& nodes)
     {
+        bool sameSequence = ((int)nodes.size() == slots.size());
+        if (sameSequence)
+        {
+            for (int i = 0; i < slots.size(); ++i)
+            {
+                if (slots[i]->node.id != nodes[(size_t)i].id)
+                {
+                    sameSequence = false;
+                    break;
+                }
+            }
+        }
+
+        if (sameSequence)
+        {
+            for (int i = 0; i < slots.size(); ++i)
+                slots[i]->setNodeAndIndex(nodes[(size_t)i], i);
+            addButton.setVisible(!nodes.empty());
+            layout();
+            return;
+        }
+
+        std::map<uint32_t, float> prevY;
+        for (auto* slot : slots)
+            if (slot->hasVisualY)
+                prevY[slot->node.id.uid] = slot->visualY;
+
+        dragged = nullptr;
         slots.clear();
         int index = 0;
         for (const auto& node : nodes)
         {
             auto* slot = new Slot(*this, node, index++);
+            if (const auto it = prevY.find(node.id.uid); it != prevY.end())
+            {
+                slot->visualY = it->second;
+                slot->hasVisualY = true;
+            }
             addAndMakeVisible(slot);
             slots.add(slot);
         }
@@ -44,20 +95,79 @@ public:
         layout();
     }
 
+    int displayIndexFor(Slot* targetSlot) const
+    {
+        if (dragged == nullptr)
+            return slots.indexOf(targetSlot);
+
+        int pos = 0;
+        for (auto* s : slots)
+        {
+            if (s == dragged) continue;
+            if (s == targetSlot)
+                return pos >= dropIndex ? pos + 1 : pos;
+            ++pos;
+        }
+        return slots.indexOf(targetSlot);
+    }
+
     void layout()
     {
-        int y = topSpace;
+        const int cardW = juce::jmax(220, getWidth() - cardX - 18);
+        bool needsAnim = false;
         for (auto* slot : slots)
         {
-            if (slot != dragged) slot->setBounds(cardX, y, juce::jmax(220, getWidth() - cardX - 18), rowHeight);
-            y += rowHeight + gap;
+            if (slot == dragged) continue;
+            const float targetY = (float)(topSpace + displayIndexFor(slot) * (rowHeight + gap));
+            if (!slot->hasVisualY)
+            {
+                slot->visualY = targetY;
+                slot->hasVisualY = true;
+            }
+            else if (std::abs(slot->visualY - targetY) > 0.6f)
+            {
+                needsAnim = true;
+            }
+            else
+            {
+                slot->visualY = targetY;
+            }
+            slot->setBounds(cardX, juce::roundToInt(slot->visualY), cardW, rowHeight);
         }
-        addButton.setBounds(cardX, y + 2, juce::jmax(220, getWidth() - cardX - 18), 42);
-        setSize(getWidth(), juce::jmax(owner.viewport.getHeight(), y + bottomSpace));
+        const int endY = topSpace + slots.size() * (rowHeight + gap);
+        addButton.setBounds(cardX, endY + 2, cardW, 42);
+        setSize(getWidth(), juce::jmax(owner.viewport.getHeight(), endY + bottomSpace));
+        if (needsAnim) startTimerHz(60);
         repaint();
     }
 
     void resized() override { layout(); }
+
+    void timerCallback() override
+    {
+        const int cardW = juce::jmax(220, getWidth() - cardX - 18);
+        bool anyMoving = false;
+        for (auto* slot : slots)
+        {
+            if (slot == dragged) continue;
+            const float targetY = (float)(topSpace + displayIndexFor(slot) * (rowHeight + gap));
+            const float delta = targetY - slot->visualY;
+            if (std::abs(delta) <= 0.6f)
+            {
+                slot->visualY = targetY;
+            }
+            else
+            {
+                slot->visualY += delta * 0.32f;
+                anyMoving = true;
+            }
+            slot->hasVisualY = true;
+            slot->setBounds(cardX, juce::roundToInt(slot->visualY), cardW, rowHeight);
+        }
+        if (!anyMoving)
+            stopTimer();
+        repaint();
+    }
 
     void paint(juce::Graphics& g) override
     {
@@ -79,29 +189,45 @@ public:
         }
         if (dragged != nullptr)
         {
-            const auto lineY = topSpace + dropIndex * (rowHeight + gap) - gap * 0.5f;
-            g.setColour(theme::accent);
-            g.drawLine((float)cardX, (float)lineY, (float)getWidth() - 18, (float)lineY, 2.0f);
+            const float cardW = (float)juce::jmax(220, getWidth() - cardX - 18);
+            const float slotY = (float)(topSpace + dropIndex * (rowHeight + gap));
+            const juce::Rectangle<float> placeholder((float)cardX, slotY, cardW, (float)rowHeight);
+            g.setColour(theme::accent.withAlpha(0.08f));
+            g.fillRoundedRectangle(placeholder, theme::radius);
+            g.setColour(theme::accent.withAlpha(0.55f));
+            g.drawRoundedRectangle(placeholder.reduced(0.5f), theme::radius, 1.5f);
         }
         g.setColour(theme::faint);
         g.setFont(theme::mono(9.0f));
         g.drawText("OUTPUT", 0, addButton.getBottom() + 8, cardX, 22, juce::Justification::centred);
     }
 
-    void dragStarted(Slot* slot)
+    void dragStarted(Slot* slot, float grabOffsetY)
     {
         dragged = slot;
+        dragGrabOffsetY = grabOffsetY;
         dragged->toFront(false);
         dropIndex = slots.indexOf(slot);
+        dragged->repaint();
+        repaint();
     }
 
     void dragMoved(const juce::MouseEvent& e)
     {
         if (dragged == nullptr) return;
         const auto p = e.getEventRelativeTo(this).position;
-        dragged->setCentrePosition(dragged->getBounds().getCentreX(), juce::roundToInt(p.y));
-        dropIndex = juce::jlimit(0, slots.size() - 1,
-                                 juce::roundToInt((p.y - topSpace - rowHeight * 0.5f) / (float)(rowHeight + gap)));
+        const int maxY = juce::jmax(topSpace, topSpace + (slots.size() - 1) * (rowHeight + gap) + 16);
+        const int newY = juce::jlimit(topSpace - 16, maxY, juce::roundToInt(p.y - dragGrabOffsetY));
+        dragged->setTopLeftPosition(cardX, newY);
+        const float centerY = (float)dragged->getBounds().getCentreY();
+        const int nextDrop = juce::jlimit(0, slots.size() - 1,
+                                          juce::roundToInt((centerY - (float)topSpace - (float)rowHeight * 0.5f)
+                                                           / (float)(rowHeight + gap)));
+        if (nextDrop != dropIndex)
+        {
+            dropIndex = nextDrop;
+            startTimerHz(60);
+        }
         repaint();
     }
 
@@ -110,14 +236,21 @@ public:
         if (dragged == nullptr) return;
         auto* slot = dragged;
         const auto target = dropIndex;
+        slot->visualY = (float)slot->getY();
+        slot->hasVisualY = true;
         dragged = nullptr;
-        if (owner.onReorder) owner.onReorder(slot->node.id, target);
+        slot->repaint();
+        if (owner.onReorder && slots.indexOf(slot) != target)
+            owner.onReorder(slot->node.id, target);
+        else
+            layout();
     }
 
     ChainView& owner;
     juce::OwnedArray<Slot> slots;
     PlButton addButton { "Add next plugin", Icon::plus, PlButton::Style::secondary };
     Slot* dragged = nullptr;
+    float dragGrabOffsetY = 0.0f;
     int dropIndex = 0;
 
     static constexpr int cardX = 48;
@@ -169,6 +302,14 @@ ChainView::Slot::Slot(Content& contentOwner, const PatchLinkProcessor::LoadedNod
     addAndMakeVisible(more);
 }
 
+void ChainView::Slot::setNodeAndIndex(const PatchLinkProcessor::LoadedNode& n, int index)
+{
+    node = n;
+    enabled = !n.bypass;
+    number = index + 1;
+    refreshEnabled();
+}
+
 void ChainView::Slot::refreshEnabled()
 {
     power.setSelected(enabled);
@@ -176,23 +317,61 @@ void ChainView::Slot::refreshEnabled()
     repaint();
 }
 
+void ChainView::Slot::mouseEnter(const juce::MouseEvent&)
+{
+    hoverTarget = 1.0f;
+    startTimerHz(60);
+}
+
+void ChainView::Slot::mouseExit(const juce::MouseEvent&)
+{
+    if (!isMouseOver(true))
+    {
+        hoverTarget = 0.0f;
+        startTimerHz(60);
+    }
+}
+
+void ChainView::Slot::timerCallback()
+{
+    if (hoverTarget > 0.5f && !isMouseOver(true) && !dragging)
+        hoverTarget = 0.0f;
+    const float delta = hoverTarget - hoverAmount;
+    hoverAmount += delta * 0.28f;
+    if (std::abs(delta) < 0.015f)
+    {
+        hoverAmount = hoverTarget;
+        stopTimer();
+    }
+    repaint();
+}
+
 void ChainView::Slot::paint(juce::Graphics& g)
 {
     auto r = getLocalBounds().toFloat().reduced(0.5f);
-    g.setColour(isMouseOver() ? theme::cardHover : theme::card);
+    const float amount = dragging ? 1.0f : hoverAmount;
+    const auto bg = theme::card.interpolatedWith(theme::cardHover, amount);
+    const auto border = dragging ? theme::accent.withAlpha(0.85f)
+                                 : theme::lineSoft.interpolatedWith(theme::line, amount);
+    g.setColour(bg);
     g.fillRoundedRectangle(r, theme::radius);
-    g.setColour(dragging ? theme::accent.withAlpha(0.8f) : theme::lineSoft);
+    g.setColour(border);
     g.drawRoundedRectangle(r, theme::radius, dragging ? 1.5f : 1.0f);
+
+    g.setColour(enabled ? theme::accent.withAlpha(0.75f + 0.25f * amount)
+                        : theme::faint.withAlpha(0.40f));
+    g.fillRoundedRectangle(r.getX() + 1.5f, r.getY() + 12.0f, 3.0f, r.getHeight() - 24.0f, 1.5f);
+
     if (!enabled)
     {
         g.setColour(theme::background.withAlpha(0.28f));
         g.fillRoundedRectangle(r, theme::radius);
     }
 
-    g.setColour(theme::faint);
+    g.setColour(theme::faint.interpolatedWith(theme::muted, amount * 0.6f));
     for (int row = 0; row < 3; ++row)
         for (int col = 0; col < 2; ++col)
-            g.fillEllipse(12.0f + col * 5, 36.0f + row * 7, 2.0f, 2.0f);
+            g.fillEllipse(14.0f + col * 5, 36.0f + row * 7, 2.0f, 2.0f);
 
     g.setColour(enabled ? theme::accent : theme::faint);
     g.setFont(theme::mono(10.5f));
@@ -225,27 +404,40 @@ void ChainView::Slot::resized()
 
 void ChainView::Slot::mouseDown(const juce::MouseEvent& e)
 {
-    dragCandidate = e.x < 29;
+    dragCandidate = e.mods.isLeftButtonDown();
     dragging = false;
+    dragGrabOffsetY = e.getEventRelativeTo(&owner).position.y - (float)getBounds().getY();
 }
 
 void ChainView::Slot::mouseDrag(const juce::MouseEvent& e)
 {
     if (!dragCandidate) return;
-    if (!dragging) { dragging = true; owner.dragStarted(this); }
+    if (!dragging)
+    {
+        if (e.getDistanceFromDragStart() < 5)
+            return;
+        dragging = true;
+        setMouseCursor(juce::MouseCursor::DraggingHandCursor);
+        owner.dragStarted(this, dragGrabOffsetY);
+    }
     owner.dragMoved(e);
 }
 
 void ChainView::Slot::mouseUp(const juce::MouseEvent&)
 {
-    if (dragging) owner.dragFinished();
+    if (dragging)
+    {
+        setMouseCursor(juce::MouseCursor::NormalCursor);
+        owner.dragFinished();
+    }
     dragCandidate = false;
     dragging = false;
 }
 
-void ChainView::Slot::mouseDoubleClick(const juce::MouseEvent& e)
+void ChainView::Slot::mouseDoubleClick(const juce::MouseEvent&)
 {
-    if (!dragCandidate && owner.owner.onOpen) owner.owner.onOpen(node.id);
+    if (!dragging && owner.owner.onOpen)
+        owner.owner.onOpen(node.id);
 }
 
 ChainView::ChainView()
@@ -271,7 +463,7 @@ ChainView::ChainView()
     addAndMakeVisible(emptySubtitle);
     addAndMakeVisible(emptyAdd);
 
-    hint.setText("Drag the handle to reorder  /  Double-click a card to edit", juce::dontSendNotification);
+    hint.setText("Drag anywhere on a card to reorder  /  Double-click to edit", juce::dontSendNotification);
     hint.setFont(theme::font(11.0f));
     hint.setColour(juce::Label::textColourId, theme::faint);
     addAndMakeVisible(hint);
@@ -280,6 +472,15 @@ ChainView::ChainView()
 }
 
 ChainView::~ChainView() = default;
+
+void ChainView::applyTheme()
+{
+    emptyTitle.setColour(juce::Label::textColourId, theme::text);
+    emptySubtitle.setColour(juce::Label::textColourId, theme::muted);
+    hint.setColour(juce::Label::textColourId, theme::faint);
+    repaint();
+    content->repaint();
+}
 
 void ChainView::refresh(const std::vector<PatchLinkProcessor::LoadedNode>& nodes)
 {

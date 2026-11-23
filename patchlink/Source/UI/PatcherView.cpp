@@ -12,9 +12,14 @@ public:
     void paint(juce::Graphics& g) override
     {
         g.fillAll(theme::background);
-        g.setColour(theme::lineSoft.withAlpha(0.40f));
-        for (int x = 0; x < getWidth(); x += gridSize)
-            for (int y = 0; y < getHeight(); y += gridSize)
+        g.setColour(theme::lineSoft.withAlpha(0.42f));
+        const auto clip = g.getClipBounds().expanded(gridSize);
+        const int startX = juce::jmax(0, (clip.getX() / gridSize) * gridSize);
+        const int endX   = juce::jmin(getWidth(), clip.getRight());
+        const int startY = juce::jmax(0, (clip.getY() / gridSize) * gridSize);
+        const int endY   = juce::jmin(getHeight(), clip.getBottom());
+        for (int x = startX; x <= endX; x += gridSize)
+            for (int y = startY; y <= endY; y += gridSize)
                 g.fillEllipse((float)x - 0.65f, (float)y - 0.65f, 1.3f, 1.3f);
 
         for (const auto& wire : wires)
@@ -23,11 +28,12 @@ public:
             const auto a = boxFor(wire.src);
             const auto b = boxFor(wire.dst);
             if (a.isEmpty() || b.isEmpty()) continue;
+            const bool wireHovered = (hoveredWire.src == wire.src && hoveredWire.dst == wire.dst && hoveredWire.src != 0);
             auto path = cablePath(outputPort(a), inputPort(b));
             g.setColour(juce::Colours::black.withAlpha(0.35f));
-            g.strokePath(path, juce::PathStrokeType(5.0f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
-            g.setColour(theme::accent.withAlpha(0.72f));
-            g.strokePath(path, juce::PathStrokeType(2.0f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+            g.strokePath(path, juce::PathStrokeType(wireHovered ? 6.0f : 5.0f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+            g.setColour(wireHovered ? theme::accentHover : theme::accent.withAlpha(0.75f));
+            g.strokePath(path, juce::PathStrokeType(wireHovered ? 2.8f : 2.0f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
         }
 
         if (cableSource.uid != 0)
@@ -61,6 +67,16 @@ public:
     {
         grabKeyboardFocus();
         const auto point = e.position;
+
+        if (e.mods.isMiddleButtonDown())
+        {
+            panning = true;
+            panStartMouseScreen = e.getScreenPosition();
+            panStartViewPos = owner.viewport.getViewPosition();
+            setMouseCursor(juce::MouseCursor::DraggingHandCursor);
+            return;
+        }
+
         const auto source = portAt(point, true);
         if (source.uid != 0 && e.mods.isLeftButtonDown())
         {
@@ -82,8 +98,11 @@ public:
                 if (node != nullptr && owner.onBypass) owner.onBypass(hit, !node->bypass);
                 return;
             }
-            dragId = hit;
-            dragOffset = point - boxFor(hit).getPosition().toFloat();
+            if (hit != inputId && hit != outputId)
+            {
+                dragId = hit;
+                dragOffset = point - boxFor(hit).getPosition().toFloat();
+            }
             repaint();
             return;
         }
@@ -104,14 +123,28 @@ public:
             }
         }
         selected = juce::AudioProcessorGraph::NodeID(0);
+        if (e.mods.isLeftButtonDown())
+        {
+            panning = true;
+            panStartMouseScreen = e.getScreenPosition();
+            panStartViewPos = owner.viewport.getViewPosition();
+            setMouseCursor(juce::MouseCursor::DraggingHandCursor);
+        }
         repaint();
     }
 
     void mouseDrag(const juce::MouseEvent& e) override
     {
+        if (panning)
+        {
+            const auto delta = e.getScreenPosition() - panStartMouseScreen;
+            owner.viewport.setViewPosition(panStartViewPos - delta);
+            return;
+        }
         if (cableSource.uid != 0)
         {
             cableEnd = e.position;
+            updateHover(e.position);
             repaint();
             return;
         }
@@ -128,12 +161,18 @@ public:
 
     void mouseUp(const juce::MouseEvent& e) override
     {
+        if (panning)
+        {
+            panning = false;
+            updateHover(e.position);
+        }
         if (cableSource.uid != 0)
         {
             const auto destination = portAt(e.position, false);
             if (destination.uid != 0 && destination != cableSource && owner.onConnect)
                 owner.onConnect(cableSource, destination);
             cableSource = juce::AudioProcessorGraph::NodeID(0);
+            updateHover(e.position);
             repaint();
         }
         if (dragId.uid != 0 && owner.onMoveFinished) owner.onMoveFinished();
@@ -156,10 +195,18 @@ public:
 
     void mouseMove(const juce::MouseEvent& e) override
     {
-        const auto overPort = portAt(e.position, true).uid != 0 || portAt(e.position, false).uid != 0;
-        setMouseCursor(overPort ? juce::MouseCursor::CrosshairCursor
-                                : (nodeAt(e.position).uid != 0 ? juce::MouseCursor::DraggingHandCursor
-                                                               : juce::MouseCursor::NormalCursor));
+        updateHover(e.position);
+    }
+
+    void mouseExit(const juce::MouseEvent&) override
+    {
+        if (hoveredNode.uid != 0 || hoveredPortNode.uid != 0 || hoveredWire.src != 0)
+        {
+            hoveredNode = {};
+            hoveredPortNode = {};
+            hoveredWire = {};
+            repaint();
+        }
     }
 
     bool keyPressed(const juce::KeyPress& key) override
@@ -179,7 +226,76 @@ public:
     std::vector<patchlink::Wire> wires;
     juce::AudioProcessorGraph::NodeID inputId { 10 }, outputId { 20 }, selected { 0 };
     juce::AudioProcessorGraph::NodeID dragId { 0 }, cableSource { 0 };
+    juce::AudioProcessorGraph::NodeID hoveredNode { 0 }, hoveredPortNode { 0 };
+    bool hoveredPortOutput = false;
+    patchlink::Wire hoveredWire {};
+    bool panning = false;
+    juce::Point<int> panStartMouseScreen, panStartViewPos;
     juce::Point<float> dragOffset, cableStart, cableEnd;
+
+    void updateHover(juce::Point<float> point)
+    {
+        juce::AudioProcessorGraph::NodeID nextNode { 0 }, nextPort { 0 };
+        bool nextOut = false;
+        patchlink::Wire nextWire {};
+
+        if (cableSource.uid != 0)
+        {
+            const auto dest = portAt(point, false);
+            if (dest.uid != 0 && dest != cableSource)
+            {
+                nextPort = dest;
+                nextOut = false;
+            }
+            setMouseCursor(juce::MouseCursor::CrosshairCursor);
+        }
+        else
+        {
+            const auto outPort = portAt(point, true);
+            const auto inPort = outPort.uid != 0 ? juce::AudioProcessorGraph::NodeID(0) : portAt(point, false);
+            if (outPort.uid != 0)
+            {
+                nextPort = outPort;
+                nextOut = true;
+                setMouseCursor(juce::MouseCursor::CrosshairCursor);
+            }
+            else if (inPort.uid != 0)
+            {
+                nextPort = inPort;
+                nextOut = false;
+                setMouseCursor(juce::MouseCursor::CrosshairCursor);
+            }
+            else
+            {
+                nextNode = nodeAt(point);
+                if (nextNode.uid != 0)
+                {
+                    const bool overPower = (nextNode != inputId && nextNode != outputId && powerRect(boxFor(nextNode)).contains(point));
+                    setMouseCursor(overPower ? juce::MouseCursor::PointingHandCursor
+                                             : (nextNode == inputId || nextNode == outputId
+                                                    ? juce::MouseCursor::NormalCursor
+                                                    : juce::MouseCursor::DraggingHandCursor));
+                }
+                else
+                {
+                    nextWire = wireAt(point);
+                    setMouseCursor(nextWire.src != 0 ? juce::MouseCursor::PointingHandCursor
+                                                     : juce::MouseCursor::NormalCursor);
+                }
+            }
+        }
+
+        if (hoveredNode != nextNode || hoveredPortNode != nextPort
+            || hoveredPortOutput != nextOut || hoveredWire.src != nextWire.src
+            || hoveredWire.dst != nextWire.dst)
+        {
+            hoveredNode = nextNode;
+            hoveredPortNode = nextPort;
+            hoveredPortOutput = nextOut;
+            hoveredWire = nextWire;
+            repaint();
+        }
+    }
 
     static constexpr int workspaceWidth = 1900;
     static constexpr int workspaceHeight = 1200;
@@ -303,10 +419,17 @@ public:
         g.setFont(theme::font(10.0f));
         g.drawText("STEREO", r.translated(0, 20).reduced(12, 0), juce::Justification::centred);
         const auto port = input ? outputPort(r) : inputPort(r);
+        const auto endpointId = input ? inputId : outputId;
+        const bool portHovered = (hoveredPortNode == endpointId && hoveredPortOutput == input);
+        if (portHovered)
+        {
+            g.setColour(theme::blue.withAlpha(0.24f));
+            g.fillEllipse(port.x - 11, port.y - 11, 22, 22);
+        }
         g.setColour(theme::background);
         g.fillEllipse(port.x - 7, port.y - 7, 14, 14);
         g.setColour(theme::blue);
-        g.drawEllipse(port.x - 5, port.y - 5, 10, 10, 1.5f);
+        g.drawEllipse(port.x - 5, port.y - 5, 10, 10, portHovered ? 2.2f : 1.5f);
     }
 
     void drawNode(juce::Graphics& g, const PatchLinkProcessor::LoadedNode& node)
@@ -314,11 +437,13 @@ public:
         const auto r = boxFor(node.id.uid);
         const auto rf = r.toFloat();
         const auto isSelected = selected == node.id;
+        const auto isHovered = hoveredNode == node.id;
         g.setColour(juce::Colours::black.withAlpha(0.20f));
         g.fillRoundedRectangle(rf.translated(0, 3), theme::radius);
-        g.setColour(isSelected ? theme::cardHover : theme::card);
+        g.setColour((isSelected || isHovered) ? theme::cardHover : theme::card);
         g.fillRoundedRectangle(rf, theme::radius);
-        g.setColour(isSelected ? theme::accent.withAlpha(0.70f) : theme::lineSoft);
+        g.setColour(isSelected ? theme::accent.withAlpha(0.80f)
+                               : (isHovered ? theme::line : theme::lineSoft));
         g.drawRoundedRectangle(rf.reduced(0.5f), theme::radius, isSelected ? 1.5f : 1.0f);
         if (node.bypass)
         {
@@ -340,10 +465,16 @@ public:
         for (bool output : { false, true })
         {
             const auto port = output ? outputPort(r) : inputPort(r);
+            const bool portHovered = (hoveredPortNode == node.id && hoveredPortOutput == output);
+            if (portHovered)
+            {
+                g.setColour(theme::accent.withAlpha(0.24f));
+                g.fillEllipse(port.x - 11, port.y - 11, 22, 22);
+            }
             g.setColour(theme::background);
             g.fillEllipse(port.x - 7, port.y - 7, 14, 14);
-            g.setColour(theme::accent.withAlpha(node.bypass ? 0.35f : 0.9f));
-            g.drawEllipse(port.x - 5, port.y - 5, 10, 10, 1.5f);
+            g.setColour(portHovered ? theme::accentHover : theme::accent.withAlpha(node.bypass ? 0.35f : 0.9f));
+            g.drawEllipse(port.x - 5, port.y - 5, 10, 10, portHovered ? 2.2f : 1.5f);
         }
     }
 };
@@ -357,7 +488,7 @@ PatcherView::PatcherView()
     viewport.setScrollBarThickness(10);
     addAndMakeVisible(viewport);
 
-    helpLabel.setText("Drag ports to connect  /  Right-click for actions  /  Double-click a node to edit",
+    helpLabel.setText("Drag empty canvas to pan  /  Drag ports to connect  /  Double-click to add or edit",
                       juce::dontSendNotification);
     helpLabel.setFont(theme::font(11.0f));
     helpLabel.setColour(juce::Label::textColourId, theme::faint);
@@ -367,6 +498,13 @@ PatcherView::PatcherView()
 }
 
 PatcherView::~PatcherView() = default;
+
+void PatcherView::applyTheme()
+{
+    helpLabel.setColour(juce::Label::textColourId, theme::faint);
+    repaint();
+    content->repaint();
+}
 
 void PatcherView::setEndpointIds(juce::AudioProcessorGraph::NodeID input, juce::AudioProcessorGraph::NodeID output)
 {

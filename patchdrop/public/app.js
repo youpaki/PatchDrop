@@ -11,7 +11,7 @@ async function loadList() {
   grid.innerHTML = '<div class="empty">Loading…</div>';
   try {
     const j = await api('api/list' + (q ? '?q=' + encodeURIComponent(q) : ''));
-    if (!j.presets.length) { grid.innerHTML = '<div class="empty">No presets yet. Be the first to publish 👇</div>'; return; }
+    if (!j.presets.length) { grid.innerHTML = '<div class="empty">No presets found.</div>'; return; }
     grid.innerHTML = '';
     for (const p of j.presets) {
       const el = document.createElement('div');

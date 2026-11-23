@@ -43,6 +43,8 @@ public:
 PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& processor)
     : AudioProcessorEditor(processor), proc(processor)
 {
+    theme::loadSavedTheme();
+    lookAndFeel.applyPalette();
     setLookAndFeel(&lookAndFeel);
     setSize(1120, 720);
     setResizeLimits(840, 540, 3200, 2200);
@@ -53,6 +55,8 @@ PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& processor)
     patcherButton.setTooltip("A free-form stereo routing canvas");
     simpleButton.onClick = [this] { setMode(Mode::simple); };
     patcherButton.onClick = [this] { setMode(Mode::patcher); };
+    themeButton.setTooltip("Switch interface color theme");
+    themeButton.onClick = [this] { openThemeMenu(); };
     addButton.setTooltip("Search your plugin library (Ctrl+F)");
     addButton.onClick = [this] {
         const auto index = (int)proc.getLoadedNodes().size();
@@ -64,7 +68,7 @@ PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& processor)
     codeButton.onClick = [this] { openShareDialog(false); };
     importButton.onClick = [this] { doImport(); };
     exportButton.onClick = [this] { doExport(); };
-    for (auto* button : { &simpleButton, &patcherButton, &libraryButton, &codeButton, &shareButton,
+    for (auto* button : { &simpleButton, &patcherButton, &themeButton, &libraryButton, &codeButton, &shareButton,
                           &importButton, &exportButton, &addButton })
         addAndMakeVisible(button);
 
@@ -153,6 +157,38 @@ void PatchLinkEditor::setMode(Mode newMode)
     resized();
 }
 
+void PatchLinkEditor::openThemeMenu()
+{
+    juce::PopupMenu menu;
+    for (int i = 0; i < theme::themeCount; ++i)
+        menu.addItem(i + 1, theme::themeName(i), true, i == theme::currentThemeIndex);
+
+    menu.showMenuAsync(juce::PopupMenu::Options().withTargetComponent(&themeButton),
+        [safe = juce::Component::SafePointer<PatchLinkEditor>(this)](int result) {
+            if (safe && result > 0)
+                safe->applyCurrentTheme(result - 1);
+        });
+}
+
+void PatchLinkEditor::applyCurrentTheme(int idx)
+{
+    theme::applyTheme(idx, true);
+    lookAndFeel.applyPalette();
+    statusLabel.setColour(juce::Label::textColourId, theme::muted);
+    chainInfo.setColour(juce::Label::textColourId, theme::faint);
+    systemInfo.setColour(juce::Label::textColourId, theme::faint);
+    patchName.setColour(juce::Label::textColourId, theme::text);
+    chainView.applyTheme();
+    patcherView.applyTheme();
+    for (auto* window : pluginWindows)
+        window->setBackgroundColour(theme::background);
+    if (scanWindow != nullptr && !proc.getScanManager().isScanning() && !scanWindow->isVisible())
+        scanWindow.reset();
+    sendLookAndFeelChange();
+    repaint();
+    showToast(juce::String("Theme: ") + theme::themeName(theme::currentThemeIndex));
+}
+
 void PatchLinkEditor::changeListenerCallback(juce::ChangeBroadcaster*)
 {
     refreshViews();
@@ -229,6 +265,8 @@ void PatchLinkEditor::resized()
     codeButton.setBounds(header.removeFromRight(108));
     header.removeFromRight(8);
     libraryButton.setBounds(header.removeFromRight(98));
+    header.removeFromRight(6);
+    themeButton.setBounds(header.removeFromRight(76));
 
     auto toolbar = r.removeFromTop(theme::toolbarHeight).reduced(22, 10);
     addButton.setBounds(toolbar.removeFromRight(132));

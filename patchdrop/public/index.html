@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PatchDrop — send your effect chain with a code</title>
-<meta name="description" content="PatchDrop: the PatchLink companion. Share your FL Studio / Ableton effect chain with a short code. VST3 + Standalone.">
+<title>PatchDrop — PatchLink FX Chain Sharing</title>
+<meta name="description" content="PatchLink and PatchDrop by leve: pack VST3/AU effect chains into a 6-character code or drop FL Studio .fst presets and mixer tracks straight into any DAW.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -23,108 +23,154 @@
     <span class="logo-sub">BY LEVE</span>
   </a>
   <nav>
-    <a href="#workflow">Workflow</a>
+    <a href="#fl-drop">FL Studio Drop</a>
+    <a href="#workflow">How it works</a>
     <a href="#download">Download</a>
-    <a href="#explorer">Community presets</a>
+    <a href="#explorer">Presets</a>
     <a href="#publish">Publish</a>
   </nav>
-  <a class="btn small secondary" href="#download">v1.4.3 · VST3 + Standalone</a>
+  <a class="btn small secondary" href="#download">v1.4.4</a>
 </header>
 
 <main id="top">
   <section class="hero">
-    <div class="hero-kicker"><span class="dot"></span> PatchLink companion · FL Studio ↔ Ableton Live</div>
-    <h1>Your effect chain,<br><em>portable</em> in a code.</h1>
-    <p class="lede">Dial in your vocal or mix bus in PatchLink, or drop FL Studio <span class="mono">.fst</span> presets straight onto it. Your collaborator pastes <b class="code-inline">K7Q2XA</b> into their instance and recalls the exact chain, routing, and plugin settings.</p>
-    <div class="hero-cta">
-      <a class="btn big" href="#download">Download PatchLink 1.4.3</a>
-      <a class="btn ghost big" href="#explorer">Browse community presets</a>
-    </div>
-    <div class="badges">
-      <span>VST3 Windows + macOS</span><span>Standalone</span><span>FL Studio .fst drop</span><span>.patchlink + 6-char code</span>
-    </div>
-    <div class="code-card">
-      <div class="code-card-head">
-        <span class="pill">Signal roundtrip</span>
-        <b>PatchLink → PatchDrop</b>
+    <div>
+      <div class="hero-eyebrow">VST3 + Standalone chainer · FL Studio / Ableton Live / REAPER</div>
+      <h1>Pack your FX rack into 6 characters.</h1>
+      <p class="lede">Build your vocal or mix chain in PatchLink, or drag FL Studio <span class="mono">.fst</span> presets directly onto the plugin window. Hit Share for a 6-character code like <b class="code-inline">K7Q2XA</b> — anyone with PatchLink recalls your exact plugin order, routing, and binary state.</p>
+      <div class="hero-cta">
+        <a class="btn big" href="#download">Download PatchLink 1.4.4</a>
+        <a class="btn ghost big" href="#explorer">Browse shared racks</a>
       </div>
-      <div class="code-card-body">
-        <div class="flow-row">
-          <small>YOU (FL STUDIO)</small>
-          <code><b>Share</b> → code <b>K7Q2XA</b> <span class="dim">· manifest verified</span></code>
-        </div>
-        <div class="arrow">↓</div>
-        <div class="flow-row">
-          <small>COLLABORATOR (ABLETON)</small>
-          <code><b>Open code</b> → <b>K7Q2XA</b> <span class="ok-txt">✓ Pro-Q, CLA-76, Pro-R recalled</span></code>
-        </div>
+      <div class="spec-line">Windows 64-bit VST3 + Standalone · macOS source (VST3 + AU) · No account required</div>
+    </div>
+
+    <div class="rack-preview" aria-label="Example PatchLink chain manifest">
+      <div class="rack-head">
+        <span>CHAIN // LEAD_VOX_26</span>
+        <span class="rack-code">K7Q2XA</span>
       </div>
+      <div class="rack-slots">
+        <div class="rack-slot"><div><span class="idx">01</span><b>FabFilter Pro-Q 3</b></div><span class="fmt">VST3</span></div>
+        <div class="rack-slot"><div><span class="idx">02</span><b>Auto-Tune Pro</b></div><span class="fmt">VST3</span></div>
+        <div class="rack-slot"><div><span class="idx">03</span><b>CLA-76 Stereo</b></div><span class="fmt">VST3</span></div>
+        <div class="rack-slot"><div><span class="idx">04</span><b>FabFilter Pro-R</b></div><span class="fmt">VST3</span></div>
+      </div>
+      <div class="rack-foot">
+        <span>4/4 VST3 blobs packed</span>
+        <span>STEREO SERIAL</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="fl-drop" class="section">
+    <h2>FL Studio Drag &amp; Drop</h2>
+    <p class="sub">Skip exporting plugins one by one. Grab presets straight from FL Studio's Mixer menus or your Browser and drop them onto PatchLink — even across DAWs later.</p>
+
+    <div class="fl-drop-grid">
+      <div class="fl-card">
+        <div class="fl-card-tag">Mode 1 · Single Effect</div>
+        <h3>Drag from "Save preset as…"</h3>
+        <p>Open any third-party VST3 wrapper menu in FL Studio's Mixer, click and hold <b>Save preset as…</b>, and drop directly inside PatchLink.</p>
+        <div class="fl-diagram">
+          <div class="fl-menu-mock">
+            <div class="fl-menu-item">Presets</div>
+            <div class="fl-menu-item active">Save preset as…</div>
+            <div class="fl-menu-item">Replace</div>
+          </div>
+          <div class="fl-arrow">drag →</div>
+          <div class="fl-rack-mock">
+            <div class="fl-rack-label">PatchLink Chain</div>
+            <div class="fl-rack-chip">+ Pro-Q 3 (preset state loaded)</div>
+          </div>
+        </div>
+        <p>Appends the plugin to your chain (or places it right under your cursor in <b>Patcher</b> mode) with all parameters preserved. Works for Plugin Database <span class="mono">.fst</span> files too.</p>
+      </div>
+
+      <div class="fl-card">
+        <div class="fl-card-tag">Mode 2 · Full Mixer Track</div>
+        <h3>Drag from "Save mixer track state as…"</h3>
+        <p>Right-click any FL Studio Mixer track → <b>File</b> → click and hold <b>Save mixer track state as…</b> (or drag any <span class="mono">.fst</span> from <i>Mixer presets</i>) and drop onto PatchLink.</p>
+        <div class="fl-diagram">
+          <div class="fl-menu-mock">
+            <div class="fl-menu-item">File ▸ Open mixer track state</div>
+            <div class="fl-menu-item active">Save mixer track state as…</div>
+            <div class="fl-menu-item">Reset selected track(s)</div>
+          </div>
+          <div class="fl-arrow">drag →</div>
+          <div class="fl-rack-mock">
+            <div class="fl-rack-label">Rebuilt Serial Chain</div>
+            <div class="fl-rack-chip">01 RCompressor Mono</div>
+            <div class="fl-rack-chip">02 FabFilter Pro-Q 3</div>
+            <div class="fl-rack-chip dim">bypass &amp; VST3 order kept</div>
+          </div>
+        </div>
+        <p>Unwraps every VST3 slot in order, keeps bypass states intact, and cleanly reports any FL-native effects (like Fruity WaveShaper or Chorus) without losing your VST3s.</p>
+      </div>
+    </div>
+
+    <div class="fl-note">
+      <b>Also supported:</b> Drop any saved <span class="mono">.patchlink</span> file from Explorer or Finder directly into PatchLink to open the full chain or custom Patcher cable layout.
     </div>
   </section>
 
   <section id="workflow" class="section">
-    <h2>The workflow in 30 seconds</h2>
+    <h2>How PatchLink works</h2>
     <div class="steps">
-      <div class="step"><b>01</b><h3>Build or drop from FL</h3><p>Stack effects in <b>Chain</b> mode, wire splits in <b>Patcher</b> mode, or drag FL Studio <span class="mono">.fst</span> effects and mixer tracks straight onto PatchLink.</p></div>
-      <div class="step"><b>02</b><h3>Share or export</h3><p>Click <i>Share</i> to inspect the dependency manifest and get a six-character code like <span class="mono">K7Q2XA</span>, or <i>Export</i> a <span class="mono">.patchlink</span> file.</p></div>
-      <div class="step"><b>03</b><h3>Recall safely</h3><p>They click <i>Open code</i> inside PatchLink. Unavailable plugins are reported clearly without crashing or dropping their saved settings.</p></div>
+      <div class="step"><b>STEP 01</b><h3>Stack or wire effects</h3><p>Use <b>Chain</b> mode for drag-to-reorder serial racks, or switch to <b>Patcher</b> mode for custom stereo parallel splits and manual cable routing.</p></div>
+      <div class="step"><b>STEP 02</b><h3>Share code or file</h3><p>Click <i>Share</i> to inspect the dependency list and generate a 6-character code via PatchDrop, or click <i>Export</i> to save a self-contained <span class="mono">.patchlink</span> file.</p></div>
+      <div class="step"><b>STEP 03</b><h3>Recall in any DAW</h3><p>Open the code inside PatchLink on another machine (Windows/macOS, FL Studio, Ableton Live, REAPER). Missing plugins are flagged without crashing the chain.</p></div>
     </div>
-    <div class="warn">Same plugins and matching versions yield 100% recall. If anything is missing, PatchLink loads everything available and reports the missing plugin names, formats, and versions.</div>
+    <div class="warn">All VST3 state blobs are stored untouched inside the patch. If a collaborator is missing a plugin on their system, PatchLink loads everything else and lists the missing names cleanly.</div>
   </section>
 
   <section id="download" class="section">
     <h2>Download</h2>
-    <p class="sub">The <b>PatchLink</b> plugin (VST3 + Standalone) and this <b>PatchDrop</b> service work together: the plugin creates share codes and files, and PatchDrop hosts them.</p>
+    <p class="sub">Install PatchLink on both computers, scan your VST3 folder once under <b>Library</b>, and start trading presets by code or file.</p>
     <div class="dl-grid">
       <div class="dl-card featured">
-        <div class="dl-tag">Windows 64-bit · v1.4.3</div>
+        <div class="dl-tag">Windows 64-bit · v1.4.4</div>
         <h3>Windows Installer</h3>
-        <p>Includes both the VST3 plugin and Standalone app. Tested in FL Studio 21+ and Ableton Live 11+.</p>
-        <a class="btn" href="releases/PatchLink-Setup-1.4.3.exe" data-dl>PatchLink-Setup-1.4.3.exe</a>
+        <p>Includes both the VST3 plugin and Standalone executable. Close your DAW before running so Windows can update the VST3 cleanly.</p>
+        <a class="btn" href="releases/PatchLink-Setup-1.4.4.exe" data-dl>PatchLink-Setup-1.4.4.exe</a>
         <ol class="how">
-          <li>Run setup (requests admin to write to the shared VST3 folder)</li>
-          <li>Select <b>VST3 plugin</b> and/or <b>Standalone app</b></li>
+          <li>Run setup (admin needed for the shared VST3 directory)</li>
           <li>VST3 installs to <span class="mono">C:\Program Files\Common Files\VST3\</span></li>
-          <li>Rescan plugins in your DAW and load PatchLink on any track</li>
+          <li>Open your DAW, rescan plugins, and load <b>PatchLink</b> on an insert slot</li>
         </ol>
       </div>
       <div class="dl-card">
         <div class="dl-tag">macOS · Source / CMake</div>
         <h3>macOS (VST3 + AU)</h3>
-        <p>Universal CMake project supporting VST3 and Audio Unit hosting in Ableton Live and Logic Pro.</p>
+        <p>JUCE 8 CMake project supporting VST3 and native Audio Unit hosting for Ableton Live and Logic Pro.</p>
         <a class="btn secondary" href="releases/PatchLink-macOS.zip" data-dl>PatchLink-macOS.zip</a>
         <ol class="how">
-          <li>Open the archive and install VST3 + AU components</li>
-          <li>VST3 → <span class="mono">/Library/Audio/Plug-Ins/VST3</span></li>
-          <li>Rescan in your DAW and click <i>Open code</i></li>
+          <li>Build via CMake or extract prebuilt components when posted</li>
+          <li>Copy VST3 → <span class="mono">/Library/Audio/Plug-Ins/VST3</span></li>
+          <li>Rescan in your DAW and open any PatchDrop code</li>
         </ol>
       </div>
       <div class="dl-card alt">
-        <div class="dl-tag">DAW Quick Setup</div>
-        <h3>Ableton Live</h3>
+        <div class="dl-tag">DAW Tips</div>
+        <h3>First Launch</h3>
         <ol class="how">
-          <li>Create an Audio track → set <span class="mono">Monitor: IN</span></li>
-          <li>Insert PatchLink and click <i>Open code</i></li>
-          <li>Arm track and record through the active chain</li>
-        </ol>
-        <h3 style="margin-top:18px">FL Studio</h3>
-        <ol class="how">
-          <li>Add PatchLink to any Mixer insert slot</li>
-          <li>Drag presets via <i>Save preset as…</i> or full mixer track <span class="mono">.fst</span> files directly into PatchLink</li>
+          <li>Click <b>Library</b> in the top bar → <b>Scan selected</b> to index your VST3 plugins</li>
+          <li>Double-click a card or node anytime to open that plugin's GUI</li>
+          <li>Use <b>Theme</b> in the top bar to switch between Obsidian Amber, Carbon Iris, Tape Vermilion, and Phosphor Console</li>
         </ol>
       </div>
     </div>
-    <p class="tiny" id="dl-note">Windows setup above is the official v1.4.3 release. macOS archive drops here when built on macOS. Source + installer script: <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.</p>
+    <p class="tiny" id="dl-note">Current official Windows release: v1.4.4. Source code, FL .fst parser, and installer script on GitHub: <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.</p>
   </section>
 
   <section id="explorer" class="section">
     <div class="row-head">
       <div>
         <h2>Community presets</h2>
-        <p class="sub">Click <i>Copy code</i> and paste into PatchLink → <i>Open code</i>, or download the <span class="mono">.patchlink</span> file.</p>
+        <p class="sub">Copy any 6-character code into PatchLink → <i>Open code</i>, or download the <span class="mono">.patchlink</span> file.</p>
       </div>
       <div class="search">
-        <input id="q" placeholder="Search presets: vocal, 808, wide…">
+        <input id="q" placeholder="Search presets: vocal, bus, 808…">
         <button id="qbtn" class="btn small secondary">Filter</button>
       </div>
     </div>
@@ -133,30 +179,30 @@
 
   <section id="publish" class="section">
     <h2>Publish from file</h2>
-    <p class="sub">Already exported a <span class="mono">.patchlink</span> file? Upload it here to generate a shareable six-character PatchDrop code.</p>
+    <p class="sub">Exported a <span class="mono">.patchlink</span> file from Standalone or your DAW? Upload it here to get a 6-character code.</p>
     <form id="pubform" class="pub">
       <div class="pub-row">
-        <label>Title<input id="f-title" maxlength="80" placeholder="Rap vocal — warmth + air" required></label>
+        <label>Title<input id="f-title" maxlength="80" placeholder="Lead vocal chain" required></label>
         <label>Author<input id="f-author" maxlength="40" placeholder="leve"></label>
       </div>
-      <label>Description<input id="f-desc" maxlength="500" placeholder="CLA-76 → Pro-Q → Pro-R, tuned for condenser vocals"></label>
+      <label>Description<input id="f-desc" maxlength="500" placeholder="Pro-Q 3 -> CLA-76 -> Pro-DS"></label>
       <label>.patchlink file<input id="f-file" type="file" accept=".patchlink,.json,application/json" required></label>
-      <label class="check"><input id="f-public" type="checkbox" checked> List in the community preset explorer</label>
-      <button class="btn big" type="submit">Publish and get code</button>
+      <label class="check"><input id="f-public" type="checkbox" checked> List publicly in community presets above</label>
+      <button class="btn big" type="submit">Upload and generate code</button>
       <div id="pubres"></div>
     </form>
   </section>
 
   <section class="section faq">
-    <h2>Compatibility &amp; FAQ</h2>
-    <details open><summary>What happens if a collaborator doesn't own every plugin?</summary><p>PatchLink resolves each plugin by format, identifier, and name. Available plugins and their exact binary states are recalled; missing ones are listed cleanly in a report without crashing or stripping settings from the patch.</p></details>
-    <details><summary>Is there any audio difference between a share code and a .patchlink file?</summary><p>None — both carry the exact same JSON schema and base64 plugin state blobs. Share codes travel through <span class="mono">gg.trenas.fr/patchdrop</span>, while exported <span class="mono">.patchlink</span> files can be sent anywhere directly.</p></details>
-    <details><summary>My plugin list is empty inside PatchLink</summary><p>Click <b>Library</b> in the top bar to open the Scan Manager. System folders and detected DAW folders (FL Studio, Ableton Live, REAPER, Cubase, Nuendo) are pre-configured automatically. Click <i>Scan selected</i> — any unstable plugin is safely isolated in the blacklist.</p></details>
-    <details><summary>What is the maximum patch size?</summary><p>Up to 12 MB per shared preset, which easily covers complex multi-plugin chains and their binary state data.</p></details>
+    <h2>Technical FAQ</h2>
+    <details open><summary>Why can't FL-native plugins like Fruity WaveShaper load inside PatchLink?</summary><p>FL-native plugins (WaveShaper, Chorus, Flanger, Blood Overdrive, etc.) only exist inside FL Studio's internal engine and aren't exported as standard VST3 binaries. When you drop an FL mixer <span class="mono">.fst</span> file, PatchLink loads all third-party VST3 slots with their exact settings and lists any skipped FL-native slots in the import summary.</p></details>
+    <details><summary>What happens if my friend doesn't own one of the VST3 plugins?</summary><p>PatchLink resolves each plugin by format, UID, and name. Everything installed on their system loads with full state; missing plugins are reported clearly without crashing the host or deleting saved data.</p></details>
+    <details><summary>My plugin list inside PatchLink is empty after installing</summary><p>Open <b>Library</b> in the top bar and click <i>Scan selected</i>. Standard VST3 system paths and detected DAW folders are pre-listed automatically, and any unstable plugins are quarantined in the blacklist.</p></details>
+    <details><summary>Max preset size?</summary><p>Up to 12 MB per uploaded patch, covering multi-plugin chains and binary VST3 preset states.</p></details>
   </section>
 </main>
 
-<footer>PATCHDROP · Companion for <b>PatchLink v1.4.3</b> by leve · <a href="#top">Back to top ↑</a></footer>
+<footer>PATCHDROP · PatchLink v1.4.4 by leve · <a href="#top">Top</a></footer>
 <script src="app.js"></script>
 </body>
 </html>

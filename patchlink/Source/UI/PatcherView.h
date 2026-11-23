@@ -13,6 +13,7 @@ public:
     void setEndpointIds(juce::AudioProcessorGraph::NodeID input, juce::AudioProcessorGraph::NodeID output);
     void refresh(const std::vector<PatchLinkProcessor::LoadedNode>&,
                  const std::vector<patchlink::Wire>&);
+    void applyTheme();
     void resized() override;
     juce::Point<int> getScrollOffset() const { return viewport.getViewPosition(); }
 

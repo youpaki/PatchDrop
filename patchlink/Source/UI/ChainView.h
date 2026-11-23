@@ -10,6 +10,7 @@ public:
     ChainView();
     ~ChainView() override;
     void refresh(const std::vector<PatchLinkProcessor::LoadedNode>&);
+    void applyTheme();
     void resized() override;
 
     std::function<void(juce::AudioProcessorGraph::NodeID, bool)> onBypass;
