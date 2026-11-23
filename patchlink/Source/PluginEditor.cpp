@@ -569,15 +569,40 @@ bool PatchLinkEditor::isInterestedInFileDrag(const juce::StringArray& files)
     return false;
 }
 
+void PatchLinkEditor::cacheDraggedFiles(const juce::StringArray& files)
+{
+    for (const auto& path : files)
+    {
+        const juce::File file(path);
+        if (!isSupportedDropFile(file) || !file.existsAsFile())
+            continue;
+
+        const auto fileSize = file.getSize();
+        if (fileSize <= 0)
+            continue;
+
+        const auto key = file.getFullPathName();
+        auto& cached = droppedFileCache[key];
+        if (static_cast<juce::int64>(cached.getSize()) != fileSize)
+        {
+            juce::MemoryBlock mb;
+            if (file.loadFileAsData(mb) && mb.getSize() > 0)
+                cached = std::move(mb);
+        }
+    }
+}
+
 void PatchLinkEditor::fileDragEnter(const juce::StringArray& files, int, int)
 {
     isDraggingFile = true;
     dragDropHint = describeDraggedFiles(files);
+    cacheDraggedFiles(files);
     repaint();
 }
 
 void PatchLinkEditor::fileDragMove(const juce::StringArray& files, int, int)
 {
+    cacheDraggedFiles(files);
     const auto nextHint = describeDraggedFiles(files);
     if (!isDraggingFile || dragDropHint != nextHint)
     {
@@ -589,6 +614,7 @@ void PatchLinkEditor::fileDragMove(const juce::StringArray& files, int, int)
 
 void PatchLinkEditor::fileDragExit(const juce::StringArray&)
 {
+    droppedFileCache.clear();
     if (!isDraggingFile) return;
     isDraggingFile = false;
     repaint();
@@ -603,6 +629,9 @@ void PatchLinkEditor::filesDropped(const juce::StringArray& files, int x, int y)
 
 void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
 {
+    auto cachedFiles = std::move(droppedFileCache);
+    droppedFileCache.clear();
+
     struct PendingItem
     {
         juce::String displayName;
@@ -627,7 +656,7 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
     };
 
     auto state = std::make_shared<BatchState>();
-    // Parse dropped .fst / .patchlink files into RAM immediately before temporary drag files are cleaned up.
+    // Decode cached / dropped .fst and .patchlink data into RAM immediately.
     for (const auto& path : files)
     {
         const juce::File file(path);
@@ -637,20 +666,28 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
         PendingItem item;
         item.displayName = file.getFileNameWithoutExtension();
 
-        if (!file.existsAsFile())
+        juce::MemoryBlock rawBlock;
+        if (const auto it = cachedFiles.find(file.getFullPathName()); it != cachedFiles.end() && it->second.getSize() > 0)
+            rawBlock = it->second;
+        else if (file.existsAsFile())
+            file.loadFileAsData(rawBlock);
+
+        if (rawBlock.getSize() == 0)
         {
             item.error = "File not found: " + file.getFileName();
         }
         else if (file.hasFileExtension(".fst"))
         {
             item.isFst = true;
-            item.fst = flstudio::parseFstFile(file);
+            item.fst = flstudio::parseFstData(rawBlock.getData(), rawBlock.getSize());
+            if (item.fst.valid && item.fst.trackName.isEmpty())
+                item.fst.trackName = file.getFileNameWithoutExtension();
             if (item.fst.trackName.isNotEmpty())
                 item.displayName = item.fst.trackName;
         }
         else
         {
-            const auto txt = file.loadFileAsString();
+            const auto txt = rawBlock.toString();
             if (txt.isEmpty())
             {
                 item.error = "Empty file: " + file.getFileName();

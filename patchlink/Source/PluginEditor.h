@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include <map>
 #include "Core/Theme.h"
 #include "UI/Controls.h"
 #include "UI/ChainView.h"
@@ -55,6 +56,9 @@ private:
     juce::String lastShareCode;
     bool isDraggingFile = false;
     juce::String dragDropHint;
+    std::map<juce::String, juce::MemoryBlock> droppedFileCache;
+
+    void cacheDraggedFiles(const juce::StringArray& files);
 
     void setMode(Mode);
     void changeListenerCallback(juce::ChangeBroadcaster*) override;
