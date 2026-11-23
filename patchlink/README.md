@@ -1,14 +1,15 @@
 # PatchLink
 
-A resizable VST3 and Standalone effect chainer by **leve**. Host VST3 effects (and Audio Units on macOS), arrange them in a serial chain or a stereo routing canvas, then share the complete chain and plugin states as a `.patchlink` file or a six-character PatchDrop code.
+A resizable VST3 and Standalone effect chainer by **leve**. Host VST3 effects (and Audio Units on macOS), arrange them in a serial chain or a stereo routing canvas, drop FL Studio `.fst` presets or mixer tracks directly onto the window, and share the complete chain and plugin states as a `.patchlink` file or a six-character PatchDrop code.
 
 ## Interface
 
 - **Chain** — ordered, drag-to-reorder plugin cards with bypass, hosted-editor, and per-plugin actions. Audio runs from top to bottom.
 - **Patcher** — scrollable node canvas with curved stereo cables. Drag from a right-hand port to a left-hand port, right-click nodes or cables for actions, and press Delete to remove the selected plugin.
+- **FL Studio drag & drop** — drag single effects from FL Studio's *"Save preset as..."* menu or Plugin Database `.fst` files to append them with full VST3 state, or drop a saved `.fst` mixer track state to rebuild the full rack.
 - **Plugin library** — instant full-library search by name, developer, format, or category. No fixed result limit.
 - **Scan Manager** — opt-in folder scanning, DAW-aware folder proposals, subfolder controls, live progress, cancellation, failure reporting, and blacklist management.
-- **Sharing** — public or unlisted PatchDrop publishing, dependency manifest, open-by-code, and file import/export. Network work is asynchronous.
+- **Sharing** — public or unlisted PatchDrop publishing, dependency manifest, open-by-code, and file import/export (`.patchlink` and `.fst`). Network work is asynchronous.
 
 Double-click a chain card or patcher node to open its own editor. Double-click the patch title to rename it. `Ctrl/Cmd+F`, `Ctrl/Cmd+I`, and `Ctrl/Cmd+E` open the browser, import, and export respectively.
 

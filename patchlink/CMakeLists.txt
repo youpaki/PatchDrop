@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(PatchLink VERSION 1.3.0)
+project(PatchLink VERSION 1.4.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -33,6 +33,7 @@ target_sources(PatchLink PRIVATE
   Source/PluginEditor.cpp
   Source/PluginEditor.h
   Source/Chain/PatchFormat.h
+  Source/Chain/FlStudioFstParser.h
   Source/Chain/ShareClient.h
   Source/Core/ChainFormat.h
   Source/Core/Theme.h
@@ -85,6 +86,7 @@ target_sources(ScanTest PRIVATE
   Source/Scan/test_main.cpp
   Source/Scan/PluginScanManager.h
   Source/Scan/PluginScanManager.cpp
+  Source/Chain/FlStudioFstParser.h
 )
 target_compile_definitions(ScanTest PRIVATE
   JUCE_WEB_BROWSER=0

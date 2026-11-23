@@ -14,6 +14,7 @@ public:
     void refresh(const std::vector<PatchLinkProcessor::LoadedNode>&,
                  const std::vector<patchlink::Wire>&);
     void resized() override;
+    juce::Point<int> getScrollOffset() const { return viewport.getViewPosition(); }
 
     std::function<void(int, int)> onAddAt;
     std::function<void(juce::AudioProcessorGraph::NodeID)> onOpen;

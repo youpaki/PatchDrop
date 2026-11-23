@@ -386,26 +386,14 @@ void PatchLinkEditor::openShareDialog(bool publish)
 
 void PatchLinkEditor::doImport()
 {
-    auto chooser = std::make_shared<juce::FileChooser>("Open a PatchLink chain", juce::File(), "*.patchlink");
+    auto chooser = std::make_shared<juce::FileChooser>("Open a PatchLink chain or FL Studio preset",
+                                                      juce::File(), "*.patchlink;*.fst");
     chooser->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
         [safe = juce::Component::SafePointer<PatchLinkEditor>(this), chooser](const juce::FileChooser&) mutable {
             if (!safe) return;
             const auto file = chooser->getResult();
             if (!file.existsAsFile()) return;
-            safe->pluginWindows.clear();
-            safe->setStatus("Opening " + file.getFileNameWithoutExtension() + "...");
-            safe->proc.importPatchAsync(file, [safe](juce::StringArray missing, juce::String error) {
-                if (!safe) return;
-                if (error.isNotEmpty())
-                {
-                    safe->setStatus("Import failed");
-                    juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "Cannot open chain", error);
-                    return;
-                }
-                safe->setStatus("Chain imported");
-                safe->refreshViews();
-                safe->showMissingPlugins(missing, "Chain imported");
-            });
+            safe->importFiles({ file.getFullPathName() }, -1, -1);
         });
 }
 
@@ -504,4 +492,340 @@ void PatchLinkEditor::showMissingPlugins(const juce::StringArray& missing, const
                          + missing.joinIntoString("\n- ")
                          + "\n\nYour patch file keeps their original settings.";
     juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, title, message);
+}
+
+namespace
+{
+bool isSupportedDropFile(const juce::File& file)
+{
+    return file.hasFileExtension(".fst;.patchlink");
+}
+
+juce::String describeDraggedFiles(const juce::StringArray& files)
+{
+    int fstCount = 0;
+    int patchCount = 0;
+    for (const auto& path : files)
+    {
+        const juce::File f(path);
+        if (f.hasFileExtension(".fst")) ++fstCount;
+        else if (f.hasFileExtension(".patchlink")) ++patchCount;
+    }
+    if (fstCount > 0 && patchCount == 0)
+        return fstCount > 1
+            ? "Drop FL Studio .fst presets to add to PatchLink"
+            : "Drop FL Studio .fst preset (single effect or mixer track)";
+    if (patchCount > 0 && fstCount == 0)
+        return "Drop .patchlink file to open chain";
+    return "Drop .fst presets or .patchlink files";
+}
+} // namespace
+
+void PatchLinkEditor::paintOverChildren(juce::Graphics& g)
+{
+    if (!isDraggingFile) return;
+
+    g.setColour(theme::background.withAlpha(0.68f));
+    g.fillRect(getLocalBounds());
+
+    const auto area = juce::Rectangle<int>(
+        16, theme::headerHeight + theme::toolbarHeight + 6,
+        juce::jmax(120, getWidth() - 32),
+        juce::jmax(100, getHeight() - theme::headerHeight - theme::toolbarHeight - theme::footerHeight - 12));
+    const auto rf = area.toFloat();
+
+    g.setColour(theme::panel.withAlpha(0.94f));
+    g.fillRoundedRectangle(rf, theme::radius);
+
+    juce::Path borderPath;
+    borderPath.addRoundedRectangle(rf.reduced(2.0f), theme::radius);
+    juce::Path dashed;
+    const float dashes[] = { 8.0f, 6.0f };
+    juce::PathStrokeType(1.8f).createDashedStroke(dashed, borderPath, dashes, 2);
+    g.setColour(theme::accent);
+    g.fillPath(dashed);
+
+    const auto cx = area.getCentreX();
+    const auto cy = area.getCentreY();
+    drawIcon(g, Icon::importFile, juce::Rectangle<float>((float)cx - 18.0f, (float)cy - 44.0f, 36.0f, 36.0f),
+             theme::accent, 1.8f);
+
+    g.setColour(theme::text);
+    g.setFont(theme::font(17.0f, true));
+    g.drawText("Drop into PatchLink", area.getX() + 20, cy + 2, area.getWidth() - 40, 26,
+               juce::Justification::centred);
+
+    g.setColour(theme::muted);
+    g.setFont(theme::font(12.5f));
+    g.drawText(dragDropHint, area.getX() + 20, cy + 30, area.getWidth() - 40, 22,
+               juce::Justification::centred);
+}
+
+bool PatchLinkEditor::isInterestedInFileDrag(const juce::StringArray& files)
+{
+    for (const auto& path : files)
+        if (isSupportedDropFile(juce::File(path)))
+            return true;
+    return false;
+}
+
+void PatchLinkEditor::fileDragEnter(const juce::StringArray& files, int, int)
+{
+    isDraggingFile = true;
+    dragDropHint = describeDraggedFiles(files);
+    repaint();
+}
+
+void PatchLinkEditor::fileDragMove(const juce::StringArray& files, int, int)
+{
+    const auto nextHint = describeDraggedFiles(files);
+    if (!isDraggingFile || dragDropHint != nextHint)
+    {
+        isDraggingFile = true;
+        dragDropHint = nextHint;
+        repaint();
+    }
+}
+
+void PatchLinkEditor::fileDragExit(const juce::StringArray&)
+{
+    if (!isDraggingFile) return;
+    isDraggingFile = false;
+    repaint();
+}
+
+void PatchLinkEditor::filesDropped(const juce::StringArray& files, int x, int y)
+{
+    isDraggingFile = false;
+    repaint();
+    importFiles(files, x, y);
+}
+
+void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
+{
+    struct PendingItem
+    {
+        juce::String displayName;
+        bool isFst = false;
+        flstudio::ParsedFst fst;
+        juce::var patchVar;
+        juce::String error;
+    };
+
+    struct BatchState
+    {
+        std::vector<PendingItem> items;
+        size_t index = 0;
+        int effectOffset = 0;
+        int loadedEffects = 0;
+        int loadedChains = 0;
+        int loadedMixerTracks = 0;
+        bool anyReplaced = false;
+        juce::String lastLabel;
+        juce::StringArray notes;
+        juce::StringArray errors;
+    };
+
+    auto state = std::make_shared<BatchState>();
+    // Parse dropped .fst / .patchlink files into RAM immediately before temporary drag files are cleaned up.
+    for (const auto& path : files)
+    {
+        const juce::File file(path);
+        if (!isSupportedDropFile(file))
+            continue;
+
+        PendingItem item;
+        item.displayName = file.getFileNameWithoutExtension();
+
+        if (!file.existsAsFile())
+        {
+            item.error = "File not found: " + file.getFileName();
+        }
+        else if (file.hasFileExtension(".fst"))
+        {
+            item.isFst = true;
+            item.fst = flstudio::parseFstFile(file);
+            if (item.fst.trackName.isNotEmpty())
+                item.displayName = item.fst.trackName;
+        }
+        else
+        {
+            const auto txt = file.loadFileAsString();
+            if (txt.isEmpty())
+            {
+                item.error = "Empty file: " + file.getFileName();
+            }
+            else
+            {
+                item.patchVar = juce::JSON::parse(txt);
+                if (!item.patchVar.isObject())
+                    item.error = "Invalid JSON: " + file.getFileName();
+            }
+        }
+
+        state->items.push_back(std::move(item));
+    }
+
+    if (state->items.empty())
+        return;
+
+    auto safe = juce::Component::SafePointer<PatchLinkEditor>(this);
+    auto step = std::make_shared<std::function<void()>>();
+
+    *step = [safe, state, step, x, y]() mutable {
+        if (!safe) return;
+
+        if (state->index >= state->items.size())
+        {
+            if (state->anyReplaced)
+                safe->lastShareCode.clear();
+            safe->refreshViews();
+
+            if (!state->errors.isEmpty() && state->loadedEffects == 0
+                && state->loadedChains == 0 && state->loadedMixerTracks == 0)
+            {
+                safe->setStatus("Import failed");
+                juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
+                                                       "Cannot import file",
+                                                       state->errors.joinIntoString("\n"));
+                return;
+            }
+
+            if (!state->notes.isEmpty())
+            {
+                const juce::String status = (state->loadedEffects > 0 || state->loadedChains > 0 || state->loadedMixerTracks > 0)
+                    ? "Imported with missing or skipped plugins"
+                    : "Nothing loaded";
+                safe->setStatus(status);
+                safe->showMissingPlugins(state->notes,
+                                         state->loadedMixerTracks > 0 ? "FL Studio mixer track imported"
+                                         : state->loadedChains > 0   ? "Chain imported"
+                                                                     : "FL Studio preset import");
+                return;
+            }
+
+            if (state->loadedEffects == 1 && state->loadedChains == 0 && state->loadedMixerTracks == 0)
+            {
+                safe->setStatus("Added " + state->lastLabel);
+                safe->showToast("Added " + state->lastLabel + " preset");
+            }
+            else if (state->loadedEffects > 1 && state->loadedChains == 0 && state->loadedMixerTracks == 0)
+            {
+                const auto msg = "Added " + juce::String(state->loadedEffects) + " FL Studio presets";
+                safe->setStatus(msg);
+                safe->showToast(msg);
+            }
+            else if (state->loadedMixerTracks > 0)
+            {
+                const auto msg = "Loaded FL track \"" + state->lastLabel + "\"";
+                safe->setStatus(msg);
+                safe->showToast(msg);
+            }
+            else
+            {
+                safe->setStatus("Chain imported");
+                safe->showToast("Chain imported");
+            }
+            return;
+        }
+
+        const auto item = state->items[state->index++];
+        if (item.error.isNotEmpty())
+        {
+            state->errors.add(item.error);
+            (*step)();
+            return;
+        }
+
+        if (!item.isFst)
+        {
+            safe->pluginWindows.clear();
+            state->anyReplaced = true;
+            state->lastLabel = item.displayName;
+            safe->setStatus("Opening " + item.displayName + "...");
+            safe->proc.loadFromVarAsync(item.patchVar,
+                [safe, state, step](juce::StringArray missing, juce::String err) {
+                    if (!safe) return;
+                    if (err.isNotEmpty()) state->errors.add(err);
+                    else ++state->loadedChains;
+                    for (const auto& m : missing) state->notes.add(m);
+                    (*step)();
+                });
+            return;
+        }
+
+        if (!item.fst.valid)
+        {
+            state->errors.add(item.fst.error.isNotEmpty() ? item.fst.error : ("Invalid .fst: " + item.displayName));
+            (*step)();
+            return;
+        }
+
+        if (item.fst.plugins.empty())
+        {
+            if (item.fst.skipped.isEmpty())
+                state->errors.add("No plugins found in " + item.displayName);
+            else
+                for (const auto& s : item.fst.skipped) state->notes.add(s);
+            (*step)();
+            return;
+        }
+
+        const bool isMixerOrMulti = item.fst.isMixerTrack || item.fst.plugins.size() > 1;
+        int dropX = 282;
+        int dropY = 208;
+        if (!isMixerOrMulti && x >= 0 && y >= 0 && safe->mode == Mode::patcher)
+        {
+            const auto localPt = safe->patcherView.getLocalPoint(safe.getComponent(), juce::Point<int>(x, y))
+                               + safe->patcherView.getScrollOffset();
+            dropX = juce::jlimit(60, 1620, localPt.x - 98 + state->effectOffset * 36);
+            dropY = juce::jlimit(40, 1060, localPt.y - 46 + state->effectOffset * 28);
+            ++state->effectOffset;
+        }
+        else
+        {
+            const int count = static_cast<int>(safe->proc.getLoadedNodes().size());
+            dropX = 282 + (count % 5) * 224;
+            dropY = 208 + (count / 5) * 132;
+        }
+
+        if (isMixerOrMulti)
+        {
+            safe->pluginWindows.clear();
+            safe->setStatus("Loading FL Studio mixer track...");
+        }
+        else
+        {
+            safe->setStatus("Loading FL Studio preset " + item.displayName + "...");
+        }
+
+        safe->proc.importParsedFstAsync(item.fst, dropX, dropY, true,
+            [safe, state, step, isMixerOrMulti, label = item.displayName](bool isMixerTrack, int loadedCount,
+                                                                           juce::StringArray skippedOrMissing, juce::String err) {
+                if (!safe) return;
+                if (err.isNotEmpty())
+                {
+                    state->errors.add(err);
+                }
+                else if (loadedCount > 0)
+                {
+                    state->lastLabel = label;
+                    if (isMixerTrack || isMixerOrMulti)
+                    {
+                        state->anyReplaced = true;
+                        ++state->loadedMixerTracks;
+                    }
+                    else
+                    {
+                        ++state->loadedEffects;
+                    }
+                }
+                for (const auto& m : skippedOrMissing)
+                    state->notes.add(m);
+                safe->refreshViews();
+                (*step)();
+            });
+    };
+
+    (*step)();
 }

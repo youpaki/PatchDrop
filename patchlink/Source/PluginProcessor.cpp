@@ -1,6 +1,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "Core/ChainFormat.h"
+#include "Chain/FlStudioFstParser.h"
 
 PatchLinkProcessor::PatchLinkProcessor()
     : scanManager(formatManager, knownList)
@@ -87,11 +88,17 @@ std::vector<PatchLinkProcessor::LoadedNode> PatchLinkProcessor::getLoadedNodes()
 
 void PatchLinkProcessor::addPluginAsync(const juce::PluginDescription& desc, int x, int y, DoneFn done)
 {
+    addPluginAsync(desc, x, y, {}, false, std::move(done));
+}
+
+void PatchLinkProcessor::addPluginAsync(const juce::PluginDescription& desc, int x, int y,
+                                        const juce::String& stateBase64, bool bypass, DoneFn done)
+{
     // AUv3-safe: never sync-instantiate on the message thread.
     formatManager.createPluginInstanceAsync(
         desc, getSampleRate() > 0 ? getSampleRate() : 44100.0,
         getBlockSize() > 0 ? getBlockSize() : 512,
-        [this, x, y, done](std::unique_ptr<juce::AudioPluginInstance> inst, const juce::String& err) {
+        [this, x, y, stateBase64, bypass, done](std::unique_ptr<juce::AudioPluginInstance> inst, const juce::String& err) {
             if (inst == nullptr) { if (done) done(err.isNotEmpty() ? err : "Could not load plugin"); return; }
             inst->enableAllBuses();
             graph.suspendProcessing(true);
@@ -101,6 +108,9 @@ void PatchLinkProcessor::addPluginAsync(const juce::PluginDescription& desc, int
                 node->properties.set("x", x);
                 node->properties.set("y", y);
                 node->properties.set("order", nextOrder++);
+                node->setBypassed(bypass);
+                if (stateBase64.isNotEmpty())
+                    patchlink::base64ToState(node->getProcessor(), stateBase64);
                 if (autoConnectSerial) rebuildSerialIfNeeded();
             }
             graph.suspendProcessing(false);
@@ -312,6 +322,100 @@ struct PatchLoadState
     juce::StringArray missing;
 };
 
+static juce::String normalizePluginLookupKey(const juce::String& text)
+{
+    juce::String out;
+    for (int i = 0; i < text.length(); ++i)
+    {
+        const auto ch = juce::CharacterFunctions::toLowerCase(text[i]);
+        if (juce::CharacterFunctions::isLetterOrDigit(ch))
+            out << ch;
+    }
+    return out;
+}
+
+bool PatchLinkProcessor::resolvePluginDescription(int uniqueId, const juce::String& identifier,
+                                                  const juce::String& fileOrId, const juce::String& name,
+                                                  const juce::String& format, const juce::String& slotName,
+                                                  juce::PluginDescription& out) const
+{
+    const auto types = knownList.getTypes();
+
+    if (identifier.isNotEmpty())
+    {
+        for (const auto& t : types)
+            if (t.createIdentifierString() == identifier) { out = t; return true; }
+    }
+
+    if (uniqueId != 0)
+    {
+        for (const auto& t : types)
+            if (t.uniqueId == uniqueId && (format.isEmpty() || t.pluginFormatName.equalsIgnoreCase(format)))
+                { out = t; return true; }
+        for (const auto& t : types)
+            if (t.uniqueId == uniqueId) { out = t; return true; }
+    }
+
+    if (fileOrId.isNotEmpty())
+    {
+        int fileMatches = 0;
+        juce::PluginDescription singleMatch;
+        const auto normName = normalizePluginLookupKey(name);
+        const auto normSlot = normalizePluginLookupKey(slotName);
+        for (const auto& t : types)
+        {
+            if (t.fileOrIdentifier == fileOrId || t.fileOrIdentifier.equalsIgnoreCase(fileOrId))
+            {
+                if (format.isNotEmpty() && !t.pluginFormatName.equalsIgnoreCase(format))
+                    continue;
+                const auto tn = normalizePluginLookupKey(t.name);
+                const auto tvn = normalizePluginLookupKey(t.manufacturerName + " " + t.name);
+                if ((normSlot.isNotEmpty() && (tn == normSlot || tvn == normSlot))
+                    || (normName.isNotEmpty() && (tn == normName || tvn == normName)))
+                {
+                    out = t;
+                    return true;
+                }
+                singleMatch = t;
+                ++fileMatches;
+            }
+        }
+        if (fileMatches == 1)
+        {
+            out = singleMatch;
+            return true;
+        }
+    }
+
+    juce::StringArray candidates;
+    if (slotName.isNotEmpty()) candidates.add(slotName);
+    if (name.isNotEmpty() && !candidates.contains(name)) candidates.add(name);
+
+    for (const auto& candidate : candidates)
+    {
+        for (const auto& t : types)
+            if (t.name.equalsIgnoreCase(candidate) && (format.isEmpty() || t.pluginFormatName.equalsIgnoreCase(format)))
+                { out = t; return true; }
+
+        const auto normCandidate = normalizePluginLookupKey(candidate);
+        if (normCandidate.isEmpty()) continue;
+
+        for (const auto& t : types)
+        {
+            if (format.isNotEmpty() && !t.pluginFormatName.equalsIgnoreCase(format))
+                continue;
+            if (normalizePluginLookupKey(t.name) == normCandidate
+                || normalizePluginLookupKey(t.manufacturerName + " " + t.name) == normCandidate)
+            {
+                out = t;
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 void PatchLinkProcessor::loadFromVarAsync(const juce::var& root,
     std::function<void(juce::StringArray missing, juce::String err)> done)
 {
@@ -331,6 +435,8 @@ void PatchLinkProcessor::loadFromVarAsync(const juce::var& root,
             auto* no = jn.getDynamicObject();
             if (no == nullptr) continue;
             PatchLoadState::NodeSpec spec;
+            juce::String identifier;
+            int uniqueId = 0;
             // v2 stores ids.* ; v1 stores flat fields — read both.
             if (auto* ids = no->getProperty("ids").getDynamicObject())
             {
@@ -339,6 +445,9 @@ void PatchLinkProcessor::loadFromVarAsync(const juce::var& root,
                 spec.desc.version = ids->getProperty("version").toString();
                 spec.desc.pluginFormatName = ids->getProperty("format").toString();
                 spec.desc.fileOrIdentifier = ids->getProperty("fileOrId").toString();
+                identifier = ids->getProperty("identifier").toString();
+                const auto uidVar = ids->getProperty("uniqueId");
+                if (!uidVar.isVoid()) uniqueId = static_cast<int>(uidVar);
             }
             else
             {
@@ -349,13 +458,12 @@ void PatchLinkProcessor::loadFromVarAsync(const juce::var& root,
                 spec.desc.fileOrIdentifier = no->getProperty("fileOrId").toString();
             }
             // resolve against the scanned list (tolerates version drift)
-            bool resolved = false;
-            for (auto& t : knownList.getTypes())
-                if (t.fileOrIdentifier == spec.desc.fileOrIdentifier) { spec.desc = t; resolved = true; break; }
-            if (!resolved)
-                for (auto& t : knownList.getTypes())
-                    if (t.name == spec.desc.name && t.pluginFormatName == spec.desc.pluginFormatName) { spec.desc = t; resolved = true; break; }
-            juce::ignoreUnused(resolved);
+            juce::PluginDescription resolvedDesc;
+            if (resolvePluginDescription(uniqueId, identifier, spec.desc.fileOrIdentifier,
+                                         spec.desc.name, spec.desc.pluginFormatName, {}, resolvedDesc))
+            {
+                spec.desc = resolvedDesc;
+            }
             spec.stateB64 = no->getProperty("stateBase64").toString();
             spec.oldUid = (int)no->getProperty("uid");
             spec.x = (int)no->getProperty("x");
@@ -439,12 +547,153 @@ bool PatchLinkProcessor::exportPatch(const juce::File& file, juce::String& err)
 void PatchLinkProcessor::importPatchAsync(const juce::File& file,
     std::function<void(juce::StringArray missing, juce::String err)> done)
 {
+    if (file.hasFileExtension(".fst"))
+    {
+        const auto index = static_cast<int>(getLoadedNodes().size());
+        importFlStudioFstAsync(file, 282 + (index % 5) * 224, 208 + (index / 5) * 132, true,
+            [done](bool, int, juce::StringArray skippedOrMissing, juce::String err) {
+                if (done) done(std::move(skippedOrMissing), std::move(err));
+            });
+        return;
+    }
     auto txt = file.loadFileAsString();
     if (txt.isEmpty()) { if (done) done({}, "Empty file"); return; }
     auto v = juce::JSON::parse(txt);
     if (!v.isObject()) { if (done) done({}, "Invalid JSON"); return; }
     // v1 files carry "version" instead of "chainFormat" — still readable (see loader).
     loadFromVarAsync(v, done);
+}
+
+void PatchLinkProcessor::importFlStudioFstAsync(const juce::File& file, int dropX, int dropY,
+    bool appendSingleToChain,
+    std::function<void(bool isMixerTrack, int loadedCount, juce::StringArray skippedOrMissing, juce::String err)> done)
+{
+    importParsedFstAsync(flstudio::parseFstFile(file), dropX, dropY, appendSingleToChain, std::move(done));
+}
+
+void PatchLinkProcessor::importParsedFstAsync(const flstudio::ParsedFst& parsed, int dropX, int dropY,
+    bool appendSingleToChain,
+    std::function<void(bool isMixerTrack, int loadedCount, juce::StringArray skippedOrMissing, juce::String err)> done)
+{
+    if (!parsed.valid)
+    {
+        if (done) done(false, 0, {}, parsed.error.isNotEmpty() ? parsed.error : "Invalid .fst file");
+        return;
+    }
+
+    if (parsed.plugins.empty())
+    {
+        if (done)
+            done(parsed.isMixerTrack, 0, parsed.skipped,
+                 parsed.skipped.isEmpty() ? "No plugins found in this .fst file." : juce::String{});
+        return;
+    }
+
+    if (!parsed.isMixerTrack && parsed.plugins.size() == 1 && appendSingleToChain)
+    {
+        const auto& entry = parsed.plugins.front();
+        const auto displayName = entry.slotName.isNotEmpty() ? entry.slotName : entry.pluginName;
+        juce::PluginDescription desc;
+
+        if (entry.isVst2)
+        {
+            if (resolvePluginDescription(0, {}, {}, entry.pluginName, "VST3", entry.slotName, desc))
+            {
+                addPluginAsync(desc, dropX, dropY, {}, entry.bypass, [done, displayName](const juce::String& err) {
+                    juce::StringArray notes;
+                    if (err.isEmpty())
+                        notes.add(displayName + " (loaded VST3; VST2 preset state cannot transfer)");
+                    if (done) done(false, err.isEmpty() ? 1 : 0, std::move(notes), err);
+                });
+            }
+            else if (done)
+            {
+                done(false, 0, { displayName + " (VST2 - VST3 required)" }, {});
+            }
+            return;
+        }
+
+        if (!resolvePluginDescription(entry.juceUniqueId, {}, entry.filePath, entry.pluginName,
+                                      "VST3", entry.slotName, desc))
+        {
+            if (done) done(false, 0, { displayName }, {});
+            return;
+        }
+
+        addPluginAsync(desc, dropX, dropY, entry.stateBase64, entry.bypass, [done, displayName](const juce::String& err) {
+            juce::StringArray notes;
+            if (err.isNotEmpty()) notes.add(displayName);
+            if (done) done(false, err.isEmpty() ? 1 : 0, std::move(notes), err);
+        });
+        return;
+    }
+
+    juce::DynamicObject::Ptr root = new juce::DynamicObject();
+    root->setProperty("app", "PatchLink");
+    root->setProperty("chainFormat", chainformat::kFormatVersion);
+    root->setProperty("name", parsed.trackName.isNotEmpty() ? parsed.trackName : "FL Mixer Chain");
+
+    juce::Array<juce::var> jnodes;
+    juce::StringArray extraNotes = parsed.skipped;
+    int idx = 0;
+
+    for (const auto& entry : parsed.plugins)
+    {
+        const auto displayName = entry.slotName.isNotEmpty() ? entry.slotName : entry.pluginName;
+        juce::PluginDescription desc;
+
+        if (entry.isVst2)
+        {
+            if (resolvePluginDescription(0, {}, {}, entry.pluginName, "VST3", entry.slotName, desc))
+            {
+                extraNotes.add(displayName + " (loaded VST3 without VST2 state)");
+            }
+            else
+            {
+                extraNotes.add(displayName + " (VST2 - VST3 required)");
+                continue;
+            }
+        }
+        else if (!resolvePluginDescription(entry.juceUniqueId, {}, entry.filePath, entry.pluginName,
+                                           "VST3", entry.slotName, desc))
+        {
+            desc.name = displayName;
+            desc.manufacturerName = entry.vendor;
+            desc.pluginFormatName = "VST3";
+            desc.fileOrIdentifier = entry.filePath;
+            desc.uniqueId = entry.juceUniqueId;
+        }
+
+        const int nx = 280 + (idx % 4) * 230;
+        const int ny = 200 + (idx / 4) * 140;
+        auto nodeVar = chainformat::makeNodeVar(desc, entry.isVst2 ? juce::String{} : entry.stateBase64,
+                                                100 + idx, nx, ny, entry.bypass);
+        nodeVar.getDynamicObject()->setProperty("order", idx);
+        if (desc.uniqueId != 0)
+            if (auto* ids = nodeVar.getDynamicObject()->getProperty("ids").getDynamicObject())
+                ids->setProperty("uniqueId", desc.uniqueId);
+        jnodes.add(nodeVar);
+        ++idx;
+    }
+
+    if (jnodes.isEmpty())
+    {
+        if (done) done(parsed.isMixerTrack, 0, extraNotes, {});
+        return;
+    }
+
+    root->setProperty("nodes", jnodes);
+    root->setProperty("connections", juce::Array<juce::var>());
+
+    const int attempted = jnodes.size();
+    const bool isMixer = parsed.isMixerTrack;
+    loadFromVarAsync(juce::var(root.get()),
+        [done, extraNotes, attempted, isMixer](juce::StringArray missing, juce::String err) mutable {
+            for (const auto& note : extraNotes)
+                missing.add(note);
+            const int loaded = err.isEmpty() ? juce::jmax(0, attempted - (missing.size() - extraNotes.size())) : 0;
+            if (done) done(isMixer, loaded, std::move(missing), std::move(err));
+        });
 }
 
 void PatchLinkProcessor::getStateInformation(juce::MemoryBlock& dest)

@@ -1,6 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "Chain/PatchFormat.h"
+#include "Chain/FlStudioFstParser.h"
 #include "Scan/PluginScanManager.h"
 
 // PatchLink engine: hosts third-party plugins in an AudioProcessorGraph.
@@ -55,6 +56,8 @@ public:
     // Async hosting (message-thread callbacks). err empty = ok.
     using DoneFn = std::function<void(const juce::String& err)>;
     void addPluginAsync(const juce::PluginDescription& desc, int x, int y, DoneFn done);
+    void addPluginAsync(const juce::PluginDescription& desc, int x, int y,
+                        const juce::String& stateBase64, bool bypass, DoneFn done);
     void removeNode(juce::AudioProcessorGraph::NodeID id);
     void moveNode(juce::AudioProcessorGraph::NodeID id, int newIndex);
     juce::AudioProcessor* getNodeProcessor(juce::AudioProcessorGraph::NodeID id);
@@ -76,9 +79,19 @@ public:
     void setPatchName(const juce::String& name);
 
     // Sharing: files are sync (small JSON), patch recall is async (plugin load).
+    bool resolvePluginDescription(int uniqueId, const juce::String& identifier,
+                                  const juce::String& fileOrId, const juce::String& name,
+                                  const juce::String& format, const juce::String& slotName,
+                                  juce::PluginDescription& out) const;
     bool exportPatch(const juce::File& file, juce::String& err);
     void importPatchAsync(const juce::File& file,
                           std::function<void(juce::StringArray missing, juce::String err)> done);
+    void importFlStudioFstAsync(const juce::File& file, int dropX, int dropY, bool appendSingleToChain,
+                                std::function<void(bool isMixerTrack, int loadedCount,
+                                                   juce::StringArray skippedOrMissing, juce::String err)> done);
+    void importParsedFstAsync(const flstudio::ParsedFst& parsed, int dropX, int dropY, bool appendSingleToChain,
+                              std::function<void(bool isMixerTrack, int loadedCount,
+                                                 juce::StringArray skippedOrMissing, juce::String err)> done);
     juce::var graphToVar();
     void loadFromVarAsync(const juce::var& root,
                           std::function<void(juce::StringArray missing, juce::String err)> done);
