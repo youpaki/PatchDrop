@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=1.6.3">
+<link rel="stylesheet" href="style.css?v=1.6.4">
 </head>
 <body>
 <header class="nav">
@@ -23,68 +23,72 @@
     <span class="logo-sub">BY LEVE</span>
   </a>
   <nav>
-    <a href="index.html">Overview</a>
-    <a href="guide.html" class="active">How it works</a>
-    <a href="presets.html">Presets</a>
-    <a href="publish.html">Publish</a>
+    <a href="index.html" data-i18n="nav.overview">Overview</a>
+    <a href="guide.html" class="active" data-i18n="nav.guide">How it works</a>
+    <a href="presets.html" data-i18n="nav.presets">Presets</a>
+    <a href="publish.html" data-i18n="nav.publish">Publish</a>
   </nav>
-  <a class="btn small secondary" href="index.html#download">v1.6.1</a>
+  <div class="lang-switch" role="group" aria-label="Language">
+    <button type="button" data-lang="en">EN</button>
+    <button type="button" data-lang="fr">FR</button>
+  </div>
+  <a class="btn small secondary" href="index.html#download">v1.6.2</a>
 </header>
 
 <main id="top">
   <section class="section page-head">
-    <div class="hero-eyebrow">PATCHDROP // WORKFLOW &amp; GUIDE</div>
-    <h1>How PatchLink works</h1>
-    <p class="sub">Translate third-party VST3 chains across DAWs without rebuilding racks by hand.</p>
+    <div class="hero-eyebrow" data-i18n="guide.eyebrow">PATCHDROP // WORKFLOW &amp; FAQ</div>
+    <h1 data-i18n="guide.h1">How PatchLink works</h1>
+    <p class="sub" data-i18n="guide.sub">Translate third-party VST3 chains across DAWs without rebuilding racks by hand.</p>
 
     <div class="fl-drop-grid">
       <div class="fl-card">
-        <div class="fl-card-tag">Direction 1 · Any DAW → PatchLink</div>
-        <h3>Import &amp; Share Racks</h3>
-        <p>Drop a saved mixer chain or rack file from your DAW or Explorer straight into PatchLink:</p>
+        <div class="fl-card-tag" data-i18n="guide.c1.tag">Direction 1 · Any DAW → PatchLink</div>
+        <h3 data-i18n="guide.c1.h3">Import &amp; Share Racks</h3>
+        <p data-i18n="guide.c1.p1">Drop a saved mixer chain or rack file from your DAW or Explorer straight into PatchLink:</p>
         <div class="fl-diagram">
           <div class="fl-menu-mock">
             <div class="fl-menu-item active">REAPER (.RfxChain / .rpp)</div>
             <div class="fl-menu-item active">Ableton Live (.adg / .adv)</div>
             <div class="fl-menu-item active">FL (.fst) · VST3 (.vstpreset)</div>
           </div>
-          <div class="fl-arrow">drop →</div>
+          <div class="fl-arrow" data-i18n="guide.c1.arrow">drop →</div>
           <div class="fl-rack-mock">
-            <div class="fl-rack-label">Zero-Load or Live</div>
-            <div class="fl-rack-chip">Share 6-char code</div>
-            <div class="fl-rack-chip">Convert to another DAW</div>
-            <div class="fl-rack-chip dim">Or host live in PatchLink</div>
+            <div class="fl-rack-label" data-i18n="guide.c1.r0">Zero-Load or Live</div>
+            <div class="fl-rack-chip" data-i18n="guide.c1.r1">Share 6-char code</div>
+            <div class="fl-rack-chip" data-i18n="guide.c1.r2">Convert to another DAW</div>
+            <div class="fl-rack-chip dim" data-i18n="guide.c1.r3">Or host live in PatchLink</div>
           </div>
         </div>
-        <p><b>Zero-Load mode</b> lets you share a code or convert formats without instantiating plugins first.</p>
+        <p data-i18n-html="guide.c1.p2"><b>Zero-Load mode</b> lets you share a code or convert formats without instantiating plugins first.</p>
       </div>
 
       <div class="fl-card">
-        <div class="fl-card-tag">Direction 2 · Website → PatchLink → DAW</div>
-        <h3>Two-Step Drag into Your Mix</h3>
-        <p>Browsers can't drop native files straight onto DAW tracks — PatchLink bridges the drop in two quick moves:</p>
+        <div class="fl-card-tag" data-i18n="guide.c2.tag">Direction 2 · Website → PatchLink → DAW</div>
+        <h3 data-i18n="guide.c2.h3">Two-Step Drag into Your Mix</h3>
+        <p data-i18n="guide.c2.p1">Browsers can't drop native files straight onto DAW tracks — PatchLink bridges the drop in two quick moves:</p>
         <div class="fl-diagram">
           <div class="fl-menu-mock">
-            <div class="fl-menu-item active">1. Web card → PatchLink</div>
-            <div class="fl-menu-item active">2. PatchLink → Mixer track</div>
-            <div class="fl-menu-item active">Auto-detects host DAW</div>
+            <div class="fl-menu-item active" data-i18n="guide.c2.m1">1. Web card → PatchLink</div>
+            <div class="fl-menu-item active" data-i18n="guide.c2.m2">2. PatchLink → Mixer track</div>
+            <div class="fl-menu-item active" data-i18n="guide.c2.m3">Auto-detects host DAW</div>
           </div>
-          <div class="fl-arrow">unpacks →</div>
+          <div class="fl-arrow" data-i18n="guide.c2.arrow">unpacks →</div>
           <div class="fl-rack-mock">
-            <div class="fl-rack-label">Native DAW Slots</div>
+            <div class="fl-rack-label" data-i18n="guide.c2.r0">Native DAW Slots</div>
             <div class="fl-rack-chip">01 Pro-Q 3</div>
             <div class="fl-rack-chip">02 Auto-Tune Pro</div>
-            <div class="fl-rack-chip dim">03 Preserves states + bypass</div>
+            <div class="fl-rack-chip dim" data-i18n="guide.c2.r3">03 Preserves states + bypass</div>
           </div>
         </div>
-        <p>PatchLink auto-detects REAPER, Ableton Live, FL Studio, Cubase, Studio One, and Bitwig (or asks in Standalone).</p>
+        <p data-i18n="guide.c2.p2">PatchLink auto-detects REAPER, Ableton Live, FL Studio, Cubase, Studio One, and Bitwig (or asks in Standalone).</p>
       </div>
     </div>
   </section>
 
   <section class="section">
-    <h2>Supported DAW formats</h2>
-    <p class="sub">Every VST3 plugin state blob is preserved across conversions.</p>
+    <h2 data-i18n="guide.daws.h2">Supported DAW formats</h2>
+    <p class="sub" data-i18n="guide.daws.sub">Every VST3 plugin state blob is preserved across conversions.</p>
     <div class="daw-grid">
       <div class="daw-tile">
         <img src="daws/reaper.png" alt="REAPER logo" width="44" height="44">
@@ -120,27 +124,28 @@
   </section>
 
   <section class="section faq" id="faq">
-    <h2>Technical FAQ</h2>
+    <h2 data-i18n="faq.h2">Technical FAQ</h2>
     <details open>
-      <summary>Why drag Website → PatchLink → DAW instead of straight into my DAW?</summary>
-      <p>Web browsers cannot drop native binary files directly onto desktop DAW mixer tracks. PatchLink accepts drops from your browser (preset cards or 6-character codes) and writes the native DAW chain file on disk when you drag from PatchLink's toolbar into your DAW.</p>
+      <summary data-i18n="faq.q1">Why drag Website → PatchLink → DAW instead of straight into my DAW?</summary>
+      <p data-i18n="faq.a1">Web browsers cannot drop native binary files directly onto desktop DAW mixer tracks. PatchLink accepts drops from your browser (preset cards or 6-character codes) and writes the native DAW chain file on disk when you drag from PatchLink's toolbar into your DAW.</p>
     </details>
     <details>
-      <summary>Which DAW stock plugins don't transfer across DAWs?</summary>
-      <p>Host-exclusive stock effects (Ableton EQ Eight, REAPER JSFX, FL WaveShaper, etc.) only exist inside their own DAW. PatchLink transfers all third-party VST3 plugins with exact binary states and bypass flags, and skips host-only slots cleanly.</p>
+      <summary data-i18n="faq.q2">Which DAW stock plugins don't transfer across DAWs?</summary>
+      <p data-i18n="faq.a2">Host-exclusive stock effects (Ableton EQ Eight, REAPER JSFX, FL WaveShaper, etc.) only exist inside their own DAW. PatchLink transfers all third-party VST3 plugins with exact binary states and bypass flags, and skips host-only slots cleanly.</p>
     </details>
     <details>
-      <summary>What if I don't own one of the plugins in a shared chain?</summary>
-      <p>Installed plugins load with their saved preset state; missing plugins are listed clearly without crashing your DAW. In Zero-Load mode, you can even convert or re-share a chain without owning any of its plugins.</p>
+      <summary data-i18n="faq.q3">What if I don't own one of the plugins in a shared chain?</summary>
+      <p data-i18n="faq.a3">Installed plugins load with their saved preset state; missing plugins are listed clearly without crashing your DAW. In Zero-Load mode, you can even convert or re-share a chain without owning any of its plugins.</p>
     </details>
     <details>
-      <summary>My plugin list inside PatchLink is empty after installing</summary>
-      <p>Open <b>Library</b> in PatchLink's top bar and click <i>Scan selected</i>. Standard VST3 folders and DAW caches are detected automatically.</p>
+      <summary data-i18n="faq.q4">My plugin list inside PatchLink is empty after installing</summary>
+      <p data-i18n-html="faq.a4">On first launch PatchLink asks you to pick your VST3 folders and scan. You can add custom paths anytime from <b>Library</b> → <i>Add folder</i> → <i>Scan selected</i>.</p>
     </details>
   </section>
 </main>
 
-<footer>PATCHDROP · PatchLink v1.6.1 by leve · <a href="index.html">Overview</a> · <a href="presets.html">Presets</a> · <a href="publish.html">Publish</a></footer>
-<script src="app.js?v=1.6.3"></script>
+<footer><span data-i18n="footer.credit">PATCHDROP · PatchLink v1.6.2 by leve · </span><a href="index.html" data-i18n="nav.overview">Overview</a> · <a href="presets.html" data-i18n="nav.presets">Presets</a> · <a href="publish.html" data-i18n="nav.publish">Publish</a></footer>
+<script src="i18n.js?v=1.6.4"></script>
+<script src="app.js?v=1.6.4"></script>
 </body>
 </html>

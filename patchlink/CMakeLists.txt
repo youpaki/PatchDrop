@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 3.22)
-project(PatchLink VERSION 1.6.1)
+project(PatchLink VERSION 1.6.2)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+if(MSVC)
+  add_compile_options(/utf-8)
+endif()
 
 include(FetchContent)
 FetchContent_Declare(
@@ -37,6 +40,7 @@ target_sources(PatchLink PRIVATE
   Source/Chain/DawExport.h
   Source/Chain/ShareClient.h
   Source/Core/ChainFormat.h
+  Source/Core/I18n.h
   Source/Core/Theme.h
   Source/Core/Fonts.h
   Source/Scan/DawDetector.h

@@ -1,9 +1,11 @@
 #include "ScanDialog.h"
+#include "../Core/I18n.h"
 
 ScanDialog::SourceRow::SourceRow(ScanDialog& dialog, std::size_t rowIndex)
     : owner(dialog), index(rowIndex)
 {
-    enabledButton.setTooltip("Include this folder when scanning");
+    enabledButton.setTooltip(i18n::tr("Include this folder when scanning",
+                                      "Inclure ce dossier lors du scan"));
     pathLabel.setFont(theme::font(12.5f));
     pathLabel.setColour(juce::Label::textColourId, theme::text);
     pathLabel.setMinimumHorizontalScale(0.55f);
@@ -15,8 +17,10 @@ ScanDialog::SourceRow::SourceRow(ScanDialog& dialog, std::size_t rowIndex)
     originLabel.setMinimumHorizontalScale(0.65f);
     originLabel.setInterceptsMouseClicks(false, false);
 
-    recursiveButton.setTooltip("Also scan folders inside this folder");
-    deleteButton.setTooltip("Remove this folder from scan sources");
+    recursiveButton.setTooltip(i18n::tr("Also scan folders inside this folder",
+                                        "Scanner aussi les sous-dossiers"));
+    deleteButton.setTooltip(i18n::tr("Remove this folder from scan sources",
+                                     "Retirer ce dossier de la liste"));
 
     addAndMakeVisible(enabledButton);
     addAndMakeVisible(pathLabel);
@@ -49,7 +53,7 @@ void ScanDialog::SourceRow::refresh(const PluginScanManager::Source& source)
     pathLabel.setText(source.path, juce::dontSendNotification);
     pathLabel.setTooltip(source.path);
     pathLabel.setColour(juce::Label::textColourId, source.enabled ? theme::text : theme::muted);
-    const auto origin = source.origin.isNotEmpty() ? source.origin : juce::String("Custom folder");
+    const auto origin = source.origin.isNotEmpty() ? source.origin : i18n::tr("Custom folder", "Dossier personnalisé");
     originLabel.setText(origin, juce::dontSendNotification);
     originLabel.setTooltip(origin);
 }
@@ -96,10 +100,11 @@ void ScanDialog::SourceRow::resized()
 ScanDialog::ScanDialog(PluginScanManager& manager)
     : mgr(manager), progressBar(progressValue)
 {
-    titleLabel.setText("Scan Manager", juce::dontSendNotification);
+    titleLabel.setText(i18n::tr("Scan Manager", "Gestionnaire de scan"), juce::dontSendNotification);
     titleLabel.setFont(theme::font(22.0f, true));
     titleLabel.setColour(juce::Label::textColourId, theme::text);
-    subtitleLabel.setText("Choose the folders to include. Only enabled sources are scanned; your DAW configuration is never changed.",
+    subtitleLabel.setText(i18n::tr("Choose the folders to include. Only enabled sources are scanned; your DAW configuration is never changed.",
+                                   "Choisissez les dossiers VST à analyser. Seules les sources cochées sont scannées ; votre DAW reste intact."),
                           juce::dontSendNotification);
     subtitleLabel.setFont(theme::font(12.5f));
     subtitleLabel.setColour(juce::Label::textColourId, theme::muted);
@@ -107,13 +112,15 @@ ScanDialog::ScanDialog(PluginScanManager& manager)
     addAndMakeVisible(titleLabel);
     addAndMakeVisible(subtitleLabel);
 
-    sourcesLabel.setText("SCAN SOURCES", juce::dontSendNotification);
+    sourcesLabel.setText(i18n::tr("SCAN SOURCES", "DOSSIERS À SCANNER"), juce::dontSendNotification);
     sourcesLabel.setFont(theme::font(11.0f, true));
     sourcesLabel.setColour(juce::Label::textColourId, theme::muted);
     sourceCountLabel.setFont(theme::mono(10.0f));
     sourceCountLabel.setColour(juce::Label::textColourId, theme::faint);
     sourceCountLabel.setJustificationType(juce::Justification::centredRight);
-    emptySourcesLabel.setText("No scan sources yet.\nAdd a plugin folder to get started.", juce::dontSendNotification);
+    emptySourcesLabel.setText(i18n::tr("No scan sources yet.\nAdd a plugin folder to get started.",
+                                       "Aucun dossier configuré.\nAjoutez un dossier de plugins pour commencer."),
+                              juce::dontSendNotification);
     emptySourcesLabel.setFont(theme::font(12.5f));
     emptySourcesLabel.setColour(juce::Label::textColourId, theme::muted);
     emptySourcesLabel.setJustificationType(juce::Justification::centred);
@@ -139,7 +146,7 @@ ScanDialog::ScanDialog(PluginScanManager& manager)
     addAndMakeVisible(progressBar);
     addAndMakeVisible(currentFileLabel);
 
-    resultsHeading.setText("SCAN RESULTS", juce::dontSendNotification);
+    resultsHeading.setText(i18n::tr("SCAN RESULTS", "RÉSULTATS DU SCAN"), juce::dontSendNotification);
     resultsHeading.setFont(theme::font(11.0f, true));
     resultsHeading.setColour(juce::Label::textColourId, theme::muted);
     resultsSummary.setFont(theme::font(12.0f, true));
@@ -150,13 +157,14 @@ ScanDialog::ScanDialog(PluginScanManager& manager)
     addAndMakeVisible(resultsSummary);
     addAndMakeVisible(failedFilesLabel);
 
-    blacklistHeading.setText("BLACKLIST", juce::dontSendNotification);
+    blacklistHeading.setText(i18n::tr("BLACKLIST", "LISTE NOIRE"), juce::dontSendNotification);
     blacklistHeading.setFont(theme::font(11.0f, true));
     blacklistHeading.setColour(juce::Label::textColourId, theme::muted);
     blacklistCountLabel.setFont(theme::mono(10.0f));
     blacklistCountLabel.setColour(juce::Label::textColourId, theme::faint);
     blacklistCountLabel.setJustificationType(juce::Justification::centredRight);
-    blacklistHelpLabel.setText("Crashed or failed plugins are skipped.\nSelect complete lines, then remove them to retry.",
+    blacklistHelpLabel.setText(i18n::tr("Crashed or failed plugins are skipped.\nSelect complete lines, then remove them to retry.",
+                                        "Les plugins en erreur sont ignorés.\nSélectionnez une ligne puis retirez-la pour réessayer."),
                                juce::dontSendNotification);
     blacklistHelpLabel.setFont(theme::font(10.5f));
     blacklistHelpLabel.setColour(juce::Label::textColourId, theme::muted);
@@ -176,8 +184,8 @@ ScanDialog::ScanDialog(PluginScanManager& manager)
         editor.setColour(juce::TextEditor::textColourId, theme::muted);
         editor.setTextToShowWhenEmpty(emptyText, theme::faint);
     };
-    setupEditor(resultsBox, "No failures reported by the last scan.");
-    setupEditor(blacklistBox, "No blacklisted plugins.");
+    setupEditor(resultsBox, i18n::tr("No failures reported by the last scan.", "Aucune erreur lors du dernier scan."));
+    setupEditor(blacklistBox, i18n::tr("No blacklisted plugins.", "Aucun plugin en liste noire."));
     addAndMakeVisible(resultsBox);
     addAndMakeVisible(blacklistBox);
 
@@ -209,11 +217,15 @@ ScanDialog::ScanDialog(PluginScanManager& manager)
         }
     };
 
-    scanButton.setTooltip("Scan new or changed plugins in enabled folders");
-    rescanButton.setTooltip("Rescan every plugin in enabled folders");
-    cancelButton.setTooltip("Stop after the current file");
-    removeBlacklistButton.setTooltip("Remove selected entries so they can be scanned again");
-    closeButton.setTooltip("Close Scan Manager");
+    addFolderButton.setButtonText(i18n::tr("Add folder", "Ajouter dossier"));
+    scanButton.setButtonText(i18n::tr("Scan selected", "Scanner"));
+    rescanButton.setButtonText(i18n::tr("Full rescan", "Tout rescanner"));
+    removeBlacklistButton.setButtonText(i18n::tr("Remove selected", "Retirer"));
+    scanButton.setTooltip(i18n::tr("Scan new or changed plugins in enabled folders", "Analyser les nouveaux plugins des dossiers cochés"));
+    rescanButton.setTooltip(i18n::tr("Rescan every plugin in enabled folders", "Réanalyser tous les plugins des dossiers cochés"));
+    cancelButton.setTooltip(i18n::tr("Stop after the current file", "Arrêter après le fichier en cours"));
+    removeBlacklistButton.setTooltip(i18n::tr("Remove selected entries so they can be scanned again", "Retirer les entrées pour les rescanner"));
+    closeButton.setTooltip(i18n::tr("Close Scan Manager", "Fermer le gestionnaire de scan"));
 
     addAndMakeVisible(addFolderButton);
     addAndMakeVisible(scanButton);
@@ -471,7 +483,8 @@ void ScanDialog::addFolder()
         return;
 
     auto chooser = std::make_shared<juce::FileChooser>(
-        "Add plugin folder", juce::File::getSpecialLocation(juce::File::userHomeDirectory));
+        i18n::tr("Add plugin folder", "Ajouter un dossier de plugins"),
+        juce::File::getSpecialLocation(juce::File::userHomeDirectory));
     chooser->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectDirectories,
                          [safe = juce::Component::SafePointer<ScanDialog>(this), chooser](const juce::FileChooser&)
     {
@@ -482,10 +495,11 @@ void ScanDialog::addFolder()
         if (!folder.isDirectory())
             return;
 
-        safe->mgr.addSource({ folder.getFullPathName(), "My folder", true, true });
+        safe->mgr.addSource({ folder.getFullPathName(), i18n::tr("My folder", "Mon dossier"), true, true });
         safe->rebuildRows();
         safe->sourcesViewport.setViewPosition(0, safe->sourceListContent.getHeight());
-        safe->statusLabel.setText("Folder added. Ready to scan.", juce::dontSendNotification);
+        safe->statusLabel.setText(i18n::tr("Folder added. Ready to scan.", "Dossier ajouté. Prêt à scanner."),
+                                  juce::dontSendNotification);
         safe->currentFileLabel.setText({}, juce::dontSendNotification);
     });
 }
@@ -522,24 +536,26 @@ void ScanDialog::refreshScanProgress()
 {
     progressValue = juce::jlimit(0.0, 1.0, static_cast<double>(mgr.getProgress()));
     const auto found = scanning ? mgr.getNumFound() : mgr.getList().getNumTypes();
-    scanFoundLabel.setText(juce::String(found) + (found == 1 ? " plugin indexed" : " plugins indexed"),
+    scanFoundLabel.setText(juce::String(found)
+                           + (found == 1 ? i18n::tr(" plugin indexed", " plugin indexé")
+                                         : i18n::tr(" plugins indexed", " plugins indexés")),
                            juce::dontSendNotification);
 
     if (scanning)
     {
-        statusLabel.setText(cancelRequested ? "Cancelling after the current file..."
-                                             : (fullScanRequested ? "Full rescan in progress"
-                                                                  : "Scanning selected folders"),
+        statusLabel.setText(cancelRequested ? i18n::tr("Cancelling after the current file...", "Annulation après le fichier en cours...")
+                                             : (fullScanRequested ? i18n::tr("Full rescan in progress", "Réanalyse complète en cours...")
+                                                                  : i18n::tr("Scanning selected folders", "Analyse des dossiers en cours...")),
                             juce::dontSendNotification);
         const auto currentFile = mgr.getCurrentFile();
-        currentFileLabel.setText(currentFile.isNotEmpty() ? currentFile : "Preparing plugin scanner...",
+        currentFileLabel.setText(currentFile.isNotEmpty() ? currentFile : i18n::tr("Preparing plugin scanner...", "Préparation du scanner..."),
                                  juce::dontSendNotification);
         currentFileLabel.setTooltip(currentFile);
     }
     else
     {
         if (statusLabel.getText().isEmpty())
-            statusLabel.setText("Ready to scan", juce::dontSendNotification);
+            statusLabel.setText(i18n::tr("Ready to scan", "Prêt à scanner"), juce::dontSendNotification);
     }
 
     progressBar.repaint();
@@ -557,10 +573,11 @@ void ScanDialog::handleScanFinished()
 
     refreshResults();
     refreshBlacklist();
-    scanFoundLabel.setText(juce::String(mgr.getList().getNumTypes()) + " plugins indexed",
+    scanFoundLabel.setText(juce::String(mgr.getList().getNumTypes()) + i18n::tr(" plugins indexed", " plugins indexés"),
                            juce::dontSendNotification);
-    statusLabel.setText(wasCancelled ? "Scan cancelled"
-                                     : (wasFullScan ? "Full rescan complete" : "Scan complete"),
+    statusLabel.setText(wasCancelled ? i18n::tr("Scan cancelled", "Scan annulé")
+                                     : (wasFullScan ? i18n::tr("Full rescan complete", "Réanalyse complète terminée")
+                                                    : i18n::tr("Scan complete", "Scan terminé")),
                         juce::dontSendNotification);
     currentFileLabel.setText({}, juce::dontSendNotification);
     progressBar.repaint();
@@ -581,8 +598,8 @@ void ScanDialog::updateActionStates()
     });
 
     sourceCountLabel.setText(juce::String(static_cast<int>(sources.size()))
-                                 + (sources.size() == 1 ? " source / " : " sources / ")
-                                 + juce::String(enabledCount) + " enabled",
+                                 + (sources.size() == 1 ? i18n::tr(" source / ", " dossier / ") : i18n::tr(" sources / ", " dossiers / "))
+                                 + juce::String(enabledCount) + i18n::tr(" enabled", " actif(s)"),
                              juce::dontSendNotification);
     addFolderButton.setEnabled(!scanning);
     scanButton.setEnabled(!scanning && hasEnabledSource);
@@ -591,12 +608,13 @@ void ScanDialog::updateActionStates()
     rescanButton.setVisible(!scanning);
     cancelButton.setVisible(scanning);
     cancelButton.setEnabled(scanning && !cancelRequested);
-    cancelButton.setButtonText(cancelRequested ? "Cancelling..." : "Cancel");
-    closeButton.setButtonText(scanning ? "Close" : "Done");
-    closeButton.setTooltip(scanning ? "Close this window; scanning continues in the background"
-                                    : "Close Scan Manager");
-    scanButton.setTooltip(hasEnabledSource ? "Scan new or changed plugins in enabled folders"
-                                           : "Enable at least one folder before scanning");
+    cancelButton.setButtonText(cancelRequested ? i18n::tr("Cancelling...", "Annulation...") : i18n::tr("Cancel", "Annuler"));
+    closeButton.setButtonText(scanning ? i18n::tr("Close", "Fermer") : i18n::tr("Done", "Terminé"));
+    closeButton.setTooltip(scanning ? i18n::tr("Close this window; scanning continues in the background",
+                                               "Fermer cette fenêtre ; le scan continue en arrière-plan")
+                                    : i18n::tr("Close Scan Manager", "Fermer le gestionnaire de scan"));
+    scanButton.setTooltip(hasEnabledSource ? i18n::tr("Scan new or changed plugins in enabled folders", "Analyser les nouveaux plugins")
+                                           : i18n::tr("Enable at least one folder before scanning", "Activez au moins un dossier avant de scanner"));
 
     for (auto* row : rows)
     {
@@ -611,9 +629,10 @@ void ScanDialog::refreshResults()
 {
     const auto pluginCount = mgr.getList().getNumTypes();
     const auto failedFiles = mgr.getFailedFiles();
-    resultsSummary.setText(juce::String(pluginCount) + (pluginCount == 1 ? " plugin indexed" : " plugins indexed"),
+    resultsSummary.setText(juce::String(pluginCount) + (pluginCount == 1 ? i18n::tr(" plugin indexed", " plugin indexé")
+                                                                         : i18n::tr(" plugins indexed", " plugins indexés")),
                            juce::dontSendNotification);
-    failedFilesLabel.setText("FAILED FILES (" + juce::String(failedFiles.size()) + ")",
+    failedFilesLabel.setText(i18n::tr("FAILED FILES (", "ÉCHECS (") + juce::String(failedFiles.size()) + ")",
                              juce::dontSendNotification);
     failedFilesLabel.setColour(juce::Label::textColourId, failedFiles.isEmpty() ? theme::faint : theme::danger);
     resultsBox.setText(failedFiles.joinIntoString("\n"), false);
@@ -623,7 +642,7 @@ void ScanDialog::refreshBlacklist()
 {
     const auto blacklisted = mgr.getList().getBlacklistedFiles();
     blacklistCountLabel.setText(juce::String(blacklisted.size())
-                                    + (blacklisted.size() == 1 ? " entry" : " entries"),
+                                    + (blacklisted.size() == 1 ? i18n::tr(" entry", " entrée") : i18n::tr(" entries", " entrées")),
                                 juce::dontSendNotification);
     blacklistBox.setText(blacklisted.joinIntoString("\n"), false);
 }
@@ -636,8 +655,9 @@ void ScanDialog::removeSelectedBlacklistEntries()
     const auto selectedText = blacklistBox.getHighlightedText();
     if (selectedText.trim().isEmpty())
     {
-        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, "Blacklist",
-                                               "Select one or more complete entries in the blacklist first.");
+        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, i18n::tr("Blacklist", "Liste noire"),
+                                               i18n::tr("Select one or more complete entries in the blacklist first.",
+                                                        "Sélectionnez d'abord une ou plusieurs lignes complètes."));
         return;
     }
 
@@ -653,8 +673,9 @@ void ScanDialog::removeSelectedBlacklistEntries()
 
     if (entriesToRemove.isEmpty())
     {
-        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, "Blacklist",
-                                               "Select complete blacklist entries, including the full path on each line.");
+        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, i18n::tr("Blacklist", "Liste noire"),
+                                               i18n::tr("Select complete blacklist entries, including the full path on each line.",
+                                                        "Sélectionnez des lignes complètes avec le chemin entier."));
         return;
     }
 
@@ -664,8 +685,9 @@ void ScanDialog::removeSelectedBlacklistEntries()
     refreshBlacklist();
     updateActionStates();
     statusLabel.setText(juce::String(entriesToRemove.size())
-                            + (entriesToRemove.size() == 1 ? " blacklist entry removed" : " blacklist entries removed")
-                            + ". Scan again to retry.",
+                            + (entriesToRemove.size() == 1 ? i18n::tr(" blacklist entry removed", " entrée retirée")
+                                                           : i18n::tr(" blacklist entries removed", " entrées retirées"))
+                            + i18n::tr(". Scan again to retry.", ". Relancez un scan pour réessayer."),
                         juce::dontSendNotification);
 }
 

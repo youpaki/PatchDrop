@@ -1,4 +1,5 @@
 #include "PatcherView.h"
+#include "../Core/I18n.h"
 
 class PatcherView::Content final : public juce::Component
 {
@@ -55,10 +56,12 @@ public:
             auto r = juce::Rectangle<int>(330, 240, 500, 120);
             g.setColour(theme::muted);
             g.setFont(theme::font(20.0f, true));
-            g.drawText("A blank canvas for your signal", r.removeFromTop(38), juce::Justification::centred);
+            g.drawText(i18n::tr("A blank canvas for your signal", "Un espace libre pour votre signal"),
+                       r.removeFromTop(38), juce::Justification::centred);
             g.setColour(theme::faint);
             g.setFont(theme::font(13.0f));
-            g.drawText("Double-click anywhere to add a plugin.\nDrag from a right port to a left port to connect.",
+            g.drawText(i18n::tr("Double-click anywhere to add a plugin.\nDrag from a right port to a left port to connect.",
+                                "Double-cliquez n'importe où pour ajouter un plugin.\nGlissez d'un port droit vers un port gauche pour relier."),
                        r, juce::Justification::centredTop);
         }
     }
@@ -113,7 +116,7 @@ public:
             if (wire.src != 0)
             {
                 juce::PopupMenu menu;
-                menu.addItem(1, "Delete connection");
+                menu.addItem(1, i18n::tr("Delete connection", "Supprimer le câble"));
                 menu.showMenuAsync(juce::PopupMenu::Options(), [this, wire](int result) {
                     if (result == 1 && owner.onDisconnect)
                         owner.onDisconnect(juce::AudioProcessorGraph::NodeID(wire.src),
@@ -387,11 +390,11 @@ public:
         const auto* node = findNode(id);
         if (node == nullptr) return;
         juce::PopupMenu menu;
-        menu.addItem(1, "Open interface");
-        menu.addItem(2, node->bypass ? "Enable" : "Bypass");
-        menu.addItem(3, "Disconnect all");
+        menu.addItem(1, i18n::tr("Open interface", "Ouvrir l'interface"));
+        menu.addItem(2, i18n::tr(node->bypass ? "Enable" : "Bypass", node->bypass ? "Activer" : "Désactiver"));
+        menu.addItem(3, i18n::tr("Disconnect all", "Tout déconnecter"));
         menu.addSeparator();
-        menu.addItem(4, "Remove plugin");
+        menu.addItem(4, i18n::tr("Remove plugin", "Retirer le plugin"));
         menu.showMenuAsync(juce::PopupMenu::Options(), [this, id](int result) {
             switch (result)
             {
@@ -414,10 +417,11 @@ public:
         g.drawRoundedRectangle(r.toFloat().reduced(0.5f), theme::radius, 1.0f);
         g.setColour(theme::blue);
         g.setFont(theme::mono(11.0f));
-        g.drawText(input ? "AUDIO IN" : "AUDIO OUT", r.reduced(12, 0), juce::Justification::centred);
+        g.drawText(input ? i18n::tr("AUDIO IN", "ENTRÉE AUDIO") : i18n::tr("AUDIO OUT", "SORTIE AUDIO"),
+                   r.reduced(12, 0), juce::Justification::centred);
         g.setColour(theme::faint);
         g.setFont(theme::font(10.0f));
-        g.drawText("STEREO", r.translated(0, 20).reduced(12, 0), juce::Justification::centred);
+        g.drawText(i18n::tr("STEREO", "STÉRÉO"), r.translated(0, 20).reduced(12, 0), juce::Justification::centred);
         const auto port = input ? outputPort(r) : inputPort(r);
         const auto endpointId = input ? inputId : outputId;
         const bool portHovered = (hoveredPortNode == endpointId && hoveredPortOutput == input);
@@ -457,7 +461,9 @@ public:
         g.drawText(name, r.getX() + 14, r.getY() + 8, r.getWidth() - 58, 28, juce::Justification::centredLeft, true);
         g.setColour(theme::muted);
         g.setFont(theme::font(10.5f));
-        auto details = node.desc.manufacturerName.isNotEmpty() ? node.desc.manufacturerName : "Unknown developer";
+        auto details = node.desc.manufacturerName.isNotEmpty()
+                           ? node.desc.manufacturerName
+                           : i18n::tr("Unknown developer", "Développeur inconnu");
         details += "  /  " + node.desc.pluginFormatName;
         g.drawText(details, r.getX() + 14, r.getBottom() - 30, r.getWidth() - 28, 20, juce::Justification::centredLeft, true);
 
@@ -495,9 +501,20 @@ PatcherView::PatcherView()
     addAndMakeVisible(helpLabel);
     resetView.onClick = [this] { viewport.setViewPosition(0, 160); };
     addAndMakeVisible(resetView);
+    applyLanguage();
 }
 
 PatcherView::~PatcherView() = default;
+
+void PatcherView::applyLanguage()
+{
+    helpLabel.setText(i18n::tr("Drag empty canvas to pan  /  Drag ports to connect  /  Double-click to add or edit",
+                               "Glisser le fond pour déplacer  /  Relier les ports  /  Double-clic pour ajouter ou ouvrir"),
+                      juce::dontSendNotification);
+    resetView.setButtonText(i18n::tr("Reset view", "Centrer la vue"));
+    repaint();
+    content->repaint();
+}
 
 void PatcherView::applyTheme()
 {

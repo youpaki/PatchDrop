@@ -1,4 +1,5 @@
 #include "ChainView.h"
+#include "../Core/I18n.h"
 #include <cmath>
 #include <map>
 
@@ -175,7 +176,7 @@ public:
         if (slots.isEmpty()) return;
         g.setColour(theme::faint);
         g.setFont(theme::mono(9.0f));
-        g.drawText("INPUT", 0, 8, cardX, 22, juce::Justification::centred);
+        g.drawText(i18n::tr("INPUT", "ENTRÉE"), 0, 8, cardX, 22, juce::Justification::centred);
         g.setColour(theme::accent.withAlpha(0.30f));
         const auto railX = (float)cardX * 0.5f;
         g.drawLine(railX, 34.0f, railX, (float)addButton.getY() + 8, 1.0f);
@@ -200,7 +201,7 @@ public:
         }
         g.setColour(theme::faint);
         g.setFont(theme::mono(9.0f));
-        g.drawText("OUTPUT", 0, addButton.getBottom() + 8, cardX, 22, juce::Justification::centred);
+        g.drawText(i18n::tr("OUTPUT", "SORTIE"), 0, addButton.getBottom() + 8, cardX, 22, juce::Justification::centred);
     }
 
     void dragStarted(Slot* slot, float grabOffsetY)
@@ -264,7 +265,8 @@ public:
 ChainView::Slot::Slot(Content& contentOwner, const PatchLinkProcessor::LoadedNode& n, int index)
     : owner(contentOwner), node(n), enabled(!n.bypass), number(index + 1)
 {
-    power.setTooltip(n.bypass ? "Enable plugin" : "Bypass plugin");
+    power.setTooltip(i18n::tr(n.bypass ? "Enable plugin" : "Bypass plugin",
+                              n.bypass ? "Activer le plugin" : "Désactiver le plugin"));
     power.setSelected(enabled);
     power.onClick = [this] {
         enabled = !enabled;
@@ -273,23 +275,26 @@ ChainView::Slot::Slot(Content& contentOwner, const PatchLinkProcessor::LoadedNod
         owner.repaint();
         if (owner.owner.onBypass) owner.owner.onBypass(node.id, !enabled);
     };
-    dragPreset.setTooltip("Drag this preset directly to your DAW (or click to save)");
+    dragPreset.setTooltip(i18n::tr("Drag this preset directly to your DAW (or click to save)",
+                                   "Glisser ce preset vers votre DAW (ou cliquer pour enregistrer)"));
     dragPreset.onDragStart = [this] { if (owner.owner.onDragSlot) owner.owner.onDragSlot(owner.slots.indexOf(this)); };
     dragPreset.onClick = [this] { if (owner.owner.onExportSlot) owner.owner.onExportSlot(owner.slots.indexOf(this)); };
-    open.setTooltip("Open the plugin interface (double-click the card)");
+    open.setButtonText(i18n::tr("Open", "Ouvrir"));
+    open.setTooltip(i18n::tr("Open the plugin interface (double-click the card)",
+                             "Ouvrir l'interface du plugin (double-clic sur la carte)"));
     open.onClick = [this] { if (owner.owner.onOpen) owner.owner.onOpen(node.id); };
-    more.setTooltip("Plugin actions");
+    more.setTooltip(i18n::tr("Plugin actions", "Actions du plugin"));
     more.onClick = [this] {
         juce::PopupMenu menu;
-        menu.addItem(1, "Open interface");
-        menu.addItem(2, enabled ? "Bypass" : "Enable");
-        menu.addItem(6, "Save single preset file...");
+        menu.addItem(1, i18n::tr("Open interface", "Ouvrir l'interface"));
+        menu.addItem(2, i18n::tr(enabled ? "Bypass" : "Enable", enabled ? "Désactiver" : "Activer"));
+        menu.addItem(6, i18n::tr("Save single preset file...", "Enregistrer ce preset..."));
         const auto index = owner.slots.indexOf(this);
         menu.addSeparator();
-        menu.addItem(3, "Move up", index > 0);
-        menu.addItem(4, "Move down", index < owner.slots.size() - 1);
+        menu.addItem(3, i18n::tr("Move up", "Monter"), index > 0);
+        menu.addItem(4, i18n::tr("Move down", "Descendre"), index < owner.slots.size() - 1);
         menu.addSeparator();
-        menu.addItem(5, "Remove from chain");
+        menu.addItem(5, i18n::tr("Remove from chain", "Retirer de la chaîne"));
         menu.showMenuAsync(juce::PopupMenu::Options().withTargetComponent(&more), [this](int result) {
             switch (result)
             {
@@ -320,7 +325,14 @@ void ChainView::Slot::setNodeAndIndex(const PatchLinkProcessor::LoadedNode& n, i
 void ChainView::Slot::refreshEnabled()
 {
     power.setSelected(enabled);
-    power.setTooltip(enabled ? "Bypass plugin" : "Enable plugin");
+    power.setTooltip(i18n::tr(enabled ? "Bypass plugin" : "Enable plugin",
+                              enabled ? "Désactiver le plugin" : "Activer le plugin"));
+    open.setButtonText(i18n::tr("Open", "Ouvrir"));
+    dragPreset.setTooltip(i18n::tr("Drag this preset directly to your DAW (or click to save)",
+                                   "Glisser ce preset vers votre DAW (ou cliquer pour enregistrer)"));
+    open.setTooltip(i18n::tr("Open the plugin interface (double-click the card)",
+                             "Ouvrir l'interface du plugin (double-clic sur la carte)"));
+    more.setTooltip(i18n::tr("Plugin actions", "Actions du plugin"));
     repaint();
 }
 
@@ -392,10 +404,12 @@ void ChainView::Slot::paint(juce::Graphics& g)
     g.drawText(name, text.removeFromTop(52), juce::Justification::centredLeft, true);
     g.setColour(theme::muted);
     g.setFont(theme::font(11.5f));
-    auto detail = node.desc.manufacturerName.isNotEmpty() ? node.desc.manufacturerName : "Unknown developer";
+    auto detail = node.desc.manufacturerName.isNotEmpty()
+                      ? node.desc.manufacturerName
+                      : i18n::tr("Unknown developer", "Développeur inconnu");
     detail += "   /   " + node.desc.pluginFormatName;
     if (node.desc.version.isNotEmpty()) detail += "   /   " + node.desc.version;
-    if (!enabled) detail += "   /   BYPASSED";
+    if (!enabled) detail += i18n::tr("   /   BYPASSED", "   /   DÉSACTIVÉ");
     g.drawText(detail, text.removeFromTop(25), juce::Justification::centredLeft, true);
 }
 
@@ -476,15 +490,49 @@ ChainView::ChainView()
     addChildComponent(emptySetup);
     addChildComponent(emptyOpenCode);
 
-    hint.setText("Drag anywhere on a card to reorder  /  Double-click to edit", juce::dontSendNotification);
     hint.setFont(theme::font(11.0f));
     hint.setColour(juce::Label::textColourId, theme::faint);
     addAndMakeVisible(hint);
     clearButton.onClick = [this] { if (onClear) onClear(); };
     addAndMakeVisible(clearButton);
+    applyLanguage();
 }
 
 ChainView::~ChainView() = default;
+
+void ChainView::applyLanguage()
+{
+    if (libraryEmpty)
+    {
+        emptyTitle.setText(i18n::tr("Set up your VST3 plugin folders",
+                                    "Configurez vos dossiers de plugins VST3"),
+                           juce::dontSendNotification);
+        emptySubtitle.setText(i18n::tr("No VST3 plugins are scanned yet. Choose where your VST plugins are installed and run a scan,\nor open a 6-character code in Zero-Load mode.",
+                                       "Aucun plugin VST3 scanné pour l'instant. Choisissez vos dossiers VST puis lancez un scan,\nou ouvrez un code à 6 caractères en mode Sans-chargement."),
+                              juce::dontSendNotification);
+    }
+    else
+    {
+        emptyTitle.setText(i18n::tr("Your chain starts here", "Votre chaîne commence ici"),
+                           juce::dontSendNotification);
+        emptySubtitle.setText(i18n::tr("Add an effect, open its interface, and shape your sound.\nYour plugins and settings stay together in one portable chain.",
+                                       "Ajoutez un effet, ouvrez son interface et façonnez votre son.\nVos plugins et réglages voyagent ensemble dans une chaîne portable."),
+                              juce::dontSendNotification);
+    }
+    emptyAdd.setButtonText(i18n::tr("Add your first plugin", "Ajouter un premier plugin"));
+    emptySetup.setButtonText(i18n::tr("Choose VST Folders & Scan", "Choisir dossiers VST & Scanner"));
+    emptyOpenCode.setButtonText(i18n::tr("Open code", "Ouvrir code"));
+    hint.setText(i18n::tr("Drag anywhere on a card to reorder  /  Double-click to edit",
+                          "Glisser une carte pour réordonner  /  Double-clic pour ouvrir"),
+                 juce::dontSendNotification);
+    clearButton.setButtonText(i18n::tr("Clear chain", "Vider la chaîne"));
+    content->addButton.setButtonText(i18n::tr("Add next plugin", "Ajouter un plugin"));
+    for (int i = 0; i < content->getNumChildComponents(); ++i)
+        if (auto* slot = dynamic_cast<Slot*>(content->getChildComponent(i)))
+            slot->refreshEnabled();
+    repaint();
+    content->repaint();
+}
 
 void ChainView::applyTheme()
 {
@@ -500,18 +548,7 @@ void ChainView::setLibraryEmpty(bool isEmpty)
     if (libraryEmpty == isEmpty)
         return;
     libraryEmpty = isEmpty;
-    if (libraryEmpty)
-    {
-        emptyTitle.setText("Set up your VST3 plugin folders", juce::dontSendNotification);
-        emptySubtitle.setText("No VST3 plugins are scanned yet. Choose where your VST plugins are installed and run a scan,\nor open a 6-character code in Zero-Load mode.",
-                              juce::dontSendNotification);
-    }
-    else
-    {
-        emptyTitle.setText("Your chain starts here", juce::dontSendNotification);
-        emptySubtitle.setText("Add an effect, open its interface, and shape your sound.\nYour plugins and settings stay together in one portable chain.",
-                              juce::dontSendNotification);
-    }
+    applyLanguage();
     emptyAdd.setVisible(empty && !libraryEmpty);
     emptySetup.setVisible(empty && libraryEmpty);
     emptyOpenCode.setVisible(empty && libraryEmpty);

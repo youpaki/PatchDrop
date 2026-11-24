@@ -1,13 +1,18 @@
 #include "ShareDialog.h"
 #include "../Core/ChainFormat.h"
+#include "../Core/I18n.h"
 
 ShareDialog::ShareDialog(Mode dialogMode, const juce::var& patchRoot) : mode(dialogMode)
 {
     const auto publishing = mode == Mode::publish;
-    title.setText(publishing ? "Share your chain" : "Open a shared chain", juce::dontSendNotification);
+    title.setText(publishing ? i18n::tr("Share your chain", "Partager votre chaîne")
+                             : i18n::tr("Open a shared chain", "Ouvrir une chaîne partagée"),
+                  juce::dontSendNotification);
     title.setFont(theme::font(22.0f, true));
-    subtitle.setText(publishing ? "Publish a six-character code with everything needed to recall your sound."
-                                : "Paste a PatchDrop code to load the complete chain and its settings.",
+    subtitle.setText(publishing ? i18n::tr("Publish a six-character code with everything needed to recall your sound.",
+                                           "Publiez un code à 6 caractères contenant tout pour retrouver votre son.")
+                                : i18n::tr("Paste a PatchDrop code to load the complete chain and its settings.",
+                                           "Collez un code PatchDrop pour charger la chaîne complète et ses réglages."),
                      juce::dontSendNotification);
     subtitle.setFont(theme::font(12.5f));
     subtitle.setColour(juce::Label::textColourId, theme::muted);
@@ -15,7 +20,7 @@ ShareDialog::ShareDialog(Mode dialogMode, const juce::var& patchRoot) : mode(dia
     addAndMakeVisible(subtitle);
 
     closeButton.onClick = [this] { if (onDismiss) onDismiss(); };
-    closeButton.setTooltip("Close (Esc)");
+    closeButton.setTooltip(i18n::tr("Close (Esc)", "Fermer (Échap)"));
     addAndMakeVisible(closeButton);
 
     auto setupCaption = [](juce::Label& label, const juce::String& text, juce::Component* parent) {
@@ -24,10 +29,10 @@ ShareDialog::ShareDialog(Mode dialogMode, const juce::var& patchRoot) : mode(dia
         label.setColour(juce::Label::textColourId, theme::muted);
         parent->addAndMakeVisible(label);
     };
-    setupCaption(titleCaption, "CHAIN TITLE", this);
-    setupCaption(authorCaption, "YOUR NAME", this);
-    setupCaption(descriptionCaption, "DESCRIPTION", this);
-    setupCaption(manifestCaption, "DEPENDENCY MANIFEST", this);
+    setupCaption(titleCaption, i18n::tr("CHAIN TITLE", "NOM DE LA CHAÎNE"), this);
+    setupCaption(authorCaption, i18n::tr("YOUR NAME", "VOTRE NOM"), this);
+    setupCaption(descriptionCaption, i18n::tr("DESCRIPTION", "DESCRIPTION"), this);
+    setupCaption(manifestCaption, i18n::tr("DEPENDENCY MANIFEST", "PLUGINS DANS LA CHAÎNE"), this);
 
     auto setupEditor = [](juce::TextEditor& editor) {
         editor.setFont(theme::font(13.0f));
@@ -37,9 +42,9 @@ ShareDialog::ShareDialog(Mode dialogMode, const juce::var& patchRoot) : mode(dia
     setupEditor(authorEditor);
     setupEditor(descriptionEditor);
     setupEditor(codeEditor);
-    titleEditor.setTextToShowWhenEmpty("My vocal chain", theme::faint);
-    authorEditor.setTextToShowWhenEmpty("Optional", theme::faint);
-    descriptionEditor.setTextToShowWhenEmpty("What is this chain good for?", theme::faint);
+    titleEditor.setTextToShowWhenEmpty(i18n::tr("My vocal chain", "Ma chaîne vocale"), theme::faint);
+    authorEditor.setTextToShowWhenEmpty(i18n::tr("Optional", "Optionnel"), theme::faint);
+    descriptionEditor.setTextToShowWhenEmpty(i18n::tr("What is this chain good for?", "À quoi sert cette chaîne ?"), theme::faint);
     descriptionEditor.setMultiLine(true);
     descriptionEditor.setReturnKeyStartsNewLine(true);
     descriptionEditor.setIndents(10, 8);
@@ -49,21 +54,27 @@ ShareDialog::ShareDialog(Mode dialogMode, const juce::var& patchRoot) : mode(dia
     addAndMakeVisible(authorEditor);
     addAndMakeVisible(descriptionEditor);
 
+    publicToggle.setButtonText(i18n::tr("List in the public PatchDrop explorer",
+                                        "Afficher dans les presets publics PatchDrop"));
     publicToggle.setToggleState(true, juce::dontSendNotification);
     addAndMakeVisible(publicToggle);
 
     auto lines = chainformat::manifestLines(patchRoot);
     int portable = 0;
     for (const auto& line : lines) if (line.startsWith("[ok]")) ++portable;
-    manifestSummary.setText(juce::String(lines.size()) + (lines.size() == 1 ? " dependency" : " dependencies")
-                            + "  /  " + juce::String(portable) + " portable", juce::dontSendNotification);
+    manifestSummary.setText(juce::String(lines.size())
+                            + (lines.size() == 1 ? i18n::tr(" dependency", " plugin") : i18n::tr(" dependencies", " plugins"))
+                            + "  /  " + juce::String(portable)
+                            + i18n::tr(" portable", " portable(s)"),
+                            juce::dontSendNotification);
     manifestSummary.setFont(theme::mono(10.0f));
     manifestSummary.setColour(juce::Label::textColourId, theme::faint);
     addAndMakeVisible(manifestSummary);
     manifest.setMultiLine(true);
     manifest.setReadOnly(true);
     manifest.setFont(theme::mono(11.0f));
-    manifest.setText(lines.isEmpty() ? "No dependencies. This empty chain can be opened anywhere."
+    manifest.setText(lines.isEmpty() ? i18n::tr("No dependencies. This empty chain can be opened anywhere.",
+                                                "Aucune dépendance. Cette chaîne vide s'ouvre partout.")
                                      : lines.joinIntoString("\n"));
     addAndMakeVisible(manifest);
 
@@ -82,30 +93,39 @@ ShareDialog::ShareDialog(Mode dialogMode, const juce::var& patchRoot) : mode(dia
     };
     codeEditor.onReturnKey = [this] { submit(); };
 
-    successCaption.setText("Your chain is ready to travel", juce::dontSendNotification);
+    successCaption.setText(i18n::tr("Your chain is ready to travel", "Votre chaîne est prête à voyager"),
+                           juce::dontSendNotification);
     successCaption.setFont(theme::font(14.0f, true));
     successCaption.setColour(juce::Label::textColourId, theme::accent);
     successCaption.setJustificationType(juce::Justification::centred);
     codeLabel.setFont(theme::mono(40.0f));
     codeLabel.setJustificationType(juce::Justification::centred);
     codeLabel.setColour(juce::Label::textColourId, theme::text);
+    copyButton.setButtonText(i18n::tr("Copy code", "Copier le code"));
     copyButton.onClick = [this] {
         juce::SystemClipboard::copyTextToClipboard(sharedCode);
-        status.setText("Copied. Send the code to anyone using PatchLink.", juce::dontSendNotification);
-        copyButton.setButtonText("Copied");
+        status.setText(i18n::tr("Copied. Send the code to anyone using PatchLink.",
+                                "Copié. Envoyez ce code à n'importe qui utilisant PatchLink."),
+                       juce::dontSendNotification);
+        copyButton.setButtonText(i18n::tr("Copied", "Copié"));
     };
 
     status.setFont(theme::font(11.5f));
     status.setColour(juce::Label::textColourId, theme::muted);
     status.setJustificationType(juce::Justification::centredLeft);
     addAndMakeVisible(status);
-    stageButton.setTooltip("Store this chain without loading plugins so you can export or drag it");
+    stageButton.setButtonText(i18n::tr("Stage only", "Garder prêt"));
+    stageButton.setTooltip(i18n::tr("Store this chain without loading plugins so you can export or drag it",
+                                    "Préparer cette chaîne sans charger les plugins pour l'exporter ou la glisser"));
     stageButton.onClick = [this] { if (onStageFetched) onStageFetched(fetchedPatch, fetchedTitle); };
     addChildComponent(stageButton);
-    dragDawButton.setTooltip("Drag onto your DAW (or click for format options) without loading plugins inside PatchLink");
+    dragDawButton.setButtonText(i18n::tr("Drag to DAW", "Glisser vers DAW"));
+    dragDawButton.setTooltip(i18n::tr("Drag onto your DAW (or click for format options) without loading plugins inside PatchLink",
+                                      "Glisser vers votre DAW (ou cliquer pour choisir le format) sans charger les plugins ici"));
     dragDawButton.onDragStart = [this] { if (onDragFetchedToDaw) onDragFetchedToDaw(fetchedPatch, fetchedTitle, true); };
     dragDawButton.onClick = [this] { if (onDragFetchedToDaw) onDragFetchedToDaw(fetchedPatch, fetchedTitle, false); };
     addChildComponent(dragDawButton);
+    actionButton.setButtonText(i18n::tr("Publish chain", "Publier la chaîne"));
     actionButton.onClick = [this] { submit(); };
     addAndMakeVisible(actionButton);
 
@@ -115,7 +135,7 @@ ShareDialog::ShareDialog(Mode dialogMode, const juce::var& patchRoot) : mode(dia
     }
     else
     {
-        actionButton.setButtonText("Open chain");
+        actionButton.setButtonText(i18n::tr("Open chain", "Ouvrir la chaîne"));
         actionButton.setEnabled(false);
         addAndMakeVisible(codeEditor);
         juce::MessageManager::callAsync([safe = juce::Component::SafePointer<ShareDialog>(this)] {
@@ -126,7 +146,7 @@ ShareDialog::ShareDialog(Mode dialogMode, const juce::var& patchRoot) : mode(dia
     addChildComponent(codeLabel);
     addChildComponent(copyButton);
 
-    if (!publishing) setupCaption(manifestCaption, "PATCHDROP CODE", this);
+    if (!publishing) setupCaption(manifestCaption, i18n::tr("PATCHDROP CODE", "CODE PATCHDROP"), this);
     updateVisibility();
 }
 
@@ -155,7 +175,8 @@ void ShareDialog::submit()
     {
         if (titleEditor.getText().trim().isEmpty())
         {
-            operationFailed("Give your chain a title before publishing.");
+            operationFailed(i18n::tr("Give your chain a title before publishing.",
+                                     "Donnez un nom à votre chaîne avant de publier."));
             titleEditor.grabKeyboardFocus();
             return;
         }
@@ -167,7 +188,8 @@ void ShareDialog::submit()
         const auto code = codeEditor.getText().toUpperCase().trim();
         if (code.length() != 6)
         {
-            operationFailed("Enter the complete six-character code.");
+            operationFailed(i18n::tr("Enter the complete six-character code.",
+                                     "Entrez le code complet à 6 caractères."));
             return;
         }
         if (onOpenCode) onOpenCode(code);
@@ -185,11 +207,12 @@ void ShareDialog::setBusy(bool shouldBeBusy, const juce::String& message)
     stageButton.setEnabled(!busy);
     dragDawButton.setEnabled(!busy);
     actionButton.setEnabled(!busy && (mode == Mode::publish || fetchedReady || codeEditor.getText().length() == 6));
-    actionButton.setButtonText(busy ? (mode == Mode::publish ? "Publishing..." : "Fetching...")
-                                    : (fetchedReady ? "Load effects"
-                                                    : (mode == Mode::publish ? "Publish chain" : "Open chain")));
+    actionButton.setButtonText(busy ? (mode == Mode::publish ? i18n::tr("Publishing...", "Publication...") : i18n::tr("Fetching...", "Chargement..."))
+                                    : (fetchedReady ? i18n::tr("Load effects", "Charger les effets")
+                                                    : (mode == Mode::publish ? i18n::tr("Publish chain", "Publier la chaîne") : i18n::tr("Open chain", "Ouvrir la chaîne"))));
     status.setColour(juce::Label::textColourId, theme::muted);
-    status.setText(message.isNotEmpty() ? message : (busy ? "Contacting PatchDrop..." : ""), juce::dontSendNotification);
+    status.setText(message.isNotEmpty() ? message : (busy ? i18n::tr("Contacting PatchDrop...", "Connexion à PatchDrop...") : ""),
+                   juce::dontSendNotification);
 }
 
 void ShareDialog::publishSucceeded(const juce::String& code)
@@ -198,9 +221,11 @@ void ShareDialog::publishSucceeded(const juce::String& code)
     succeeded = true;
     sharedCode = code.toUpperCase().trim();
     codeLabel.setText(sharedCode, juce::dontSendNotification);
-    status.setText("Anyone with this code can open the chain in PatchLink.", juce::dontSendNotification);
+    status.setText(i18n::tr("Anyone with this code can open the chain in PatchLink.",
+                            "Toute personne ayant ce code peut ouvrir la chaîne dans PatchLink."),
+                   juce::dontSendNotification);
     status.setColour(juce::Label::textColourId, theme::muted);
-    actionButton.setButtonText("Done");
+    actionButton.setButtonText(i18n::tr("Done", "Terminé"));
     actionButton.setEnabled(true);
     updateVisibility();
     resized();
@@ -214,22 +239,26 @@ void ShareDialog::codeFetched(const juce::String& code, const juce::String& titl
     fetchedTitle = titleText.isNotEmpty() ? titleText : fetchedCode;
     fetchedPatch = patch;
 
-    title.setText("Code " + fetchedCode + " ready", juce::dontSendNotification);
-    subtitle.setText("Load effects inside PatchLink, or use Zero-Load mode to drag directly into your DAW.",
+    title.setText(i18n::tr("Code ", "Code ") + fetchedCode + i18n::tr(" ready", " prêt"), juce::dontSendNotification);
+    subtitle.setText(i18n::tr("Load effects inside PatchLink, or use Zero-Load mode to drag directly into your DAW.",
+                              "Chargez les effets ici, ou utilisez Sans-chargement pour glisser directement dans votre DAW."),
                      juce::dontSendNotification);
 
     auto lines = chainformat::manifestLines(patch);
     int portable = 0;
     for (const auto& line : lines) if (line.startsWith("[ok]")) ++portable;
-    manifestCaption.setText("CHAIN PLUGINS — " + fetchedTitle.toUpperCase(), juce::dontSendNotification);
-    manifestSummary.setText(juce::String(lines.size()) + (lines.size() == 1 ? " plugin" : " plugins")
-                            + "  /  " + juce::String(portable) + " portable", juce::dontSendNotification);
-    manifest.setText(lines.isEmpty() ? "No plugins in this chain." : lines.joinIntoString("\n"));
+    manifestCaption.setText(i18n::tr("CHAIN PLUGINS — ", "PLUGINS DE LA CHAÎNE — ") + fetchedTitle.toUpperCase(), juce::dontSendNotification);
+    manifestSummary.setText(juce::String(lines.size()) + " plugin" + (lines.size() == 1 ? "" : "s")
+                            + "  /  " + juce::String(portable) + i18n::tr(" portable", " portable(s)"),
+                            juce::dontSendNotification);
+    manifest.setText(lines.isEmpty() ? i18n::tr("No plugins in this chain.", "Aucun plugin dans cette chaîne.")
+                                     : lines.joinIntoString("\n"));
 
-    actionButton.setButtonText("Load effects");
+    actionButton.setButtonText(i18n::tr("Load effects", "Charger les effets"));
     actionButton.setEnabled(true);
     status.setColour(juce::Label::textColourId, theme::muted);
-    status.setText("Zero-Load: drag 'Drag to DAW' onto your DAW window without loading any plugins.",
+    status.setText(i18n::tr("Zero-Load: drag 'Drag to DAW' onto your DAW window without loading any plugins.",
+                            "Sans-chargement : glissez 'Glisser vers DAW' dans votre DAW sans ouvrir les plugins."),
                    juce::dontSendNotification);
 
     updateVisibility();
@@ -263,7 +292,7 @@ void ShareDialog::updateVisibility()
     codeLabel.setVisible(succeeded);
     copyButton.setVisible(succeeded);
     if (succeeded)
-        actionButton.setButtonText("Done");
+        actionButton.setButtonText(i18n::tr("Done", "Terminé"));
 }
 
 void ShareDialog::layoutCard(juce::Rectangle<int> card)

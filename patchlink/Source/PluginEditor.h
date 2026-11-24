@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 #include <map>
 #include "Chain/DawExport.h"
+#include "Core/I18n.h"
 #include "Core/Theme.h"
 #include "UI/Controls.h"
 #include "UI/ChainView.h"
@@ -49,6 +50,7 @@ private:
     PlButton simpleButton { "Chain", Icon::list, PlButton::Style::ghost };
     PlButton patcherButton { "Patcher", Icon::grid, PlButton::Style::ghost };
     PlButton themeButton { "Theme", Icon::none, PlButton::Style::ghost };
+    PlButton langButton { "EN", Icon::none, PlButton::Style::ghost };
     PlButton libraryButton { "Library", Icon::library, PlButton::Style::secondary };
     PlButton codeButton { "Open code", Icon::code, PlButton::Style::secondary };
     PlButton shareButton { "Share", Icon::share, PlButton::Style::secondary };
@@ -78,6 +80,8 @@ private:
     void setMode(Mode);
     void openThemeMenu();
     void applyCurrentTheme(int index);
+    void openLanguageMenu();
+    void applyLanguage(i18n::Lang lang, bool notify = true);
     void changeListenerCallback(juce::ChangeBroadcaster*) override;
     void refreshViews();
     void setStatus(const juce::String&);

@@ -12,6 +12,7 @@ public:
     void refresh(const std::vector<PatchLinkProcessor::LoadedNode>&);
     void setLibraryEmpty(bool isEmpty);
     void applyTheme();
+    void applyLanguage();
     void resized() override;
 
     std::function<void(juce::AudioProcessorGraph::NodeID, bool)> onBypass;

@@ -1,4 +1,5 @@
 #include "PluginBrowser.h"
+#include "../Core/I18n.h"
 
 class PluginBrowser::ResultsModel final : public juce::ListBoxModel
 {
@@ -33,7 +34,9 @@ public:
         g.drawText(type.name, textArea.removeFromTop(25).translated(0, 6), juce::Justification::centredLeft, true);
         g.setColour(theme::muted);
         g.setFont(theme::font(11.5f));
-        auto details = type.manufacturerName.isNotEmpty() ? type.manufacturerName : "Unknown developer";
+        auto details = type.manufacturerName.isNotEmpty()
+                           ? type.manufacturerName
+                           : i18n::tr("Unknown developer", "Développeur inconnu");
         if (type.version.isNotEmpty()) details += "  /  " + type.version;
         g.drawText(details, textArea.removeFromTop(21), juce::Justification::centredLeft, true);
 
@@ -62,15 +65,17 @@ PluginBrowser::PluginBrowser(const juce::Array<juce::PluginDescription>& types)
         return an == bn ? a.manufacturerName.toLowerCase() < b.manufacturerName.toLowerCase() : an < bn;
     });
 
-    title.setText("Add a plugin", juce::dontSendNotification);
+    title.setText(i18n::tr("Add a plugin", "Ajouter un plugin"), juce::dontSendNotification);
     title.setFont(theme::font(22.0f, true));
-    subtitle.setText("Search your library by plugin, developer, or format.", juce::dontSendNotification);
+    subtitle.setText(i18n::tr("Search your library by plugin, developer, or format.",
+                              "Recherchez par nom, éditeur ou format."),
+                     juce::dontSendNotification);
     subtitle.setFont(theme::font(12.5f));
     subtitle.setColour(juce::Label::textColourId, theme::muted);
     addAndMakeVisible(title);
     addAndMakeVisible(subtitle);
 
-    search.setTextToShowWhenEmpty("Search plugins...", theme::faint);
+    search.setTextToShowWhenEmpty(i18n::tr("Search plugins...", "Rechercher un plugin..."), theme::faint);
     search.setFont(theme::font(14.0f));
     search.setIndents(38, 0);
     search.setSelectAllWhenFocused(true);
@@ -87,9 +92,11 @@ PluginBrowser::PluginBrowser(const juce::Array<juce::PluginDescription>& types)
     results.getViewport()->setScrollBarsShown(true, false, true, false);
     addAndMakeVisible(results);
 
-    closeButton.setTooltip("Close (Esc)");
+    closeButton.setTooltip(i18n::tr("Close (Esc)", "Fermer (Échap)"));
     closeButton.onClick = [this] { if (onDismiss) onDismiss(); };
     addAndMakeVisible(closeButton);
+
+    scanButton.setButtonText(i18n::tr("Open Scan Manager", "Ouvrir le scanner"));
 
     scanButton.onClick = [this] { if (onScanRequested) onScanRequested(); };
     addChildComponent(scanButton);
@@ -135,13 +142,16 @@ void PluginBrowser::filter()
     results.selectRow(toSelect);
 
     const auto hasLibrary = !allTypes.isEmpty();
-    emptyLabel.setText(hasLibrary ? "No plugins match this search."
-                                  : "Your library is empty. Scan your plugin folders to get started.",
+    emptyLabel.setText(hasLibrary
+                           ? i18n::tr("No plugins match this search.", "Aucun plugin ne correspond à la recherche.")
+                           : i18n::tr("Your library is empty. Scan your plugin folders to get started.",
+                                      "Votre bibliothèque est vide. Scannez vos dossiers VST pour commencer."),
                        juce::dontSendNotification);
     emptyLabel.setVisible(filtered.empty());
     scanButton.setVisible(!hasLibrary);
-    countLabel.setText(juce::String((int)filtered.size()) + (filtered.size() == 1 ? " plugin" : " plugins")
-                       + (query.isNotEmpty() ? " found" : " indexed"), juce::dontSendNotification);
+    const auto noun = filtered.size() == 1 ? i18n::tr(" plugin", " plugin") : i18n::tr(" plugins", " plugins");
+    const auto suffix = query.isNotEmpty() ? i18n::tr(" found", " trouvé(s)") : i18n::tr(" indexed", " indexé(s)");
+    countLabel.setText(juce::String((int)filtered.size()) + noun + suffix, juce::dontSendNotification);
     results.repaint();
 }
 

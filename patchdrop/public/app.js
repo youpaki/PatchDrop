@@ -1,13 +1,12 @@
 // PatchDrop front: community presets explorer, multi-DAW browser drag-in/out, and publisher
+const TR = (k, vars) => (window.PD_I18N ? window.PD_I18N.t(k, vars) : k);
 const CATEGORY_ORDER = ['vocals', 'master', 'drums', 'synths', 'inst', 'fx'];
-const CATEGORY_LABELS = {
-  vocals: 'Vocals',
-  master: 'Mix Bus & Master',
-  drums: 'Drums & 808',
-  synths: 'Synths & Pads',
-  inst: 'Guitars & Keys',
-  fx: 'FX & Creative',
-};
+function catLabel(key) {
+  return TR('cat.' + (key || 'fx'));
+}
+const CATEGORY_LABELS = new Proxy({}, {
+  get: (_, prop) => catLabel(String(prop)),
+});
 
 const JUCE_B64 = '.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+';
 
@@ -696,7 +695,7 @@ function buildPresetCard(p, { isPreview = false, activeTag = '', onTagSelect = n
   const el = document.createElement('div');
   el.className = 'card';
   el.draggable = true;
-  el.title = 'Step 1: Drag this card into PatchLink -> Step 2: Drag from PatchLink into your DAW';
+  el.title = TR('card.dragTip');
   el.addEventListener('dragstart', (ev) => attachDawDragData(ev, p, 'fst'));
 
   const head = document.createElement('div');
@@ -706,11 +705,11 @@ function buildPresetCard(p, { isPreview = false, activeTag = '', onTagSelect = n
   code.textContent = p.code || '';
   const badge = document.createElement('span');
   badge.className = 'cat-badge';
-  badge.textContent = p.categoryLabel || CATEGORY_LABELS[p.category] || 'FX & Creative';
+  badge.textContent = catLabel(p.category || 'fx');
   head.append(code, badge);
 
   const title = document.createElement('h3');
-  title.textContent = p.title || 'Untitled preset';
+  title.textContent = p.title || TR('card.untitled');
   el.append(head, title);
 
   if (p.description) {
@@ -722,8 +721,13 @@ function buildPresetCard(p, { isPreview = false, activeTag = '', onTagSelect = n
 
   const meta = document.createElement('div');
   meta.className = 'meta';
-  const dateText = p.createdAt ? new Date(p.createdAt).toLocaleDateString() : '';
-  meta.textContent = `by ${p.author || 'Anonymous'} · ${dateText} · ${p.downloads || 0} dl`;
+  const locale = (window.PD_I18N && window.PD_I18N.getLang() === 'fr') ? 'fr-FR' : undefined;
+  const dateText = p.createdAt ? new Date(p.createdAt).toLocaleDateString(locale) : '';
+  meta.textContent = TR('card.meta', {
+    author: p.author || TR('card.anon'),
+    date: dateText,
+    dl: p.downloads || 0,
+  });
   el.appendChild(meta);
 
   if (Array.isArray(p.tags) && p.tags.length) {
@@ -766,7 +770,7 @@ function buildPresetCard(p, { isPreview = false, activeTag = '', onTagSelect = n
     }
   } else {
     const s = document.createElement('span');
-    s.textContent = '0 plugins';
+    s.textContent = TR('card.zeroPlugins');
     pl.appendChild(s);
   }
   el.appendChild(pl);
@@ -775,23 +779,23 @@ function buildPresetCard(p, { isPreview = false, activeTag = '', onTagSelect = n
   row.className = 'row';
   const copyBtn = document.createElement('button');
   copyBtn.type = 'button';
-  copyBtn.textContent = 'Copy code';
+  copyBtn.textContent = TR('card.copy');
   copyBtn.onclick = async () => {
     await navigator.clipboard.writeText(p.code);
-    copyBtn.textContent = 'Copied ✓';
-    setTimeout(() => { copyBtn.textContent = 'Copy code'; }, 1600);
+    copyBtn.textContent = TR('card.copied');
+    setTimeout(() => { copyBtn.textContent = TR('card.copy'); }, 1600);
   };
 
   const dlSelect = document.createElement('select');
   dlSelect.className = 'dl-select';
-  dlSelect.setAttribute('aria-label', 'Download format');
+  dlSelect.setAttribute('aria-label', TR('card.dlLabel'));
   const dlOptions = [
-    { value: '', label: 'Download ▾' },
+    { value: '', label: TR('card.dlPrompt') },
     { value: 'patchlink', label: 'PatchLink (.patchlink)' },
     { value: 'RfxChain', label: 'REAPER (.RfxChain)' },
     { value: 'adg', label: 'Ableton Live (.adg)' },
     { value: 'fst', label: 'FL Studio (.fst)' },
-    { value: 'vstpreset', label: 'Cubase / Studio One (.vstpreset)' },
+    { value: 'vstpreset', label: TR('card.dlVst3') },
   ];
   for (const opt of dlOptions) {
     const o = document.createElement('option');
@@ -864,9 +868,9 @@ if (fullGrid) {
       };
       catTabsEl.appendChild(btn);
     };
-    mkTab('all', 'All', allTotal);
+    mkTab('all', TR('cat.all'), allTotal);
     for (const key of CATEGORY_ORDER) {
-      mkTab(key, labels[key] || CATEGORY_LABELS[key] || key, categories[key] || 0);
+      mkTab(key, catLabel(key), categories[key] || 0);
     }
   };
 
@@ -902,7 +906,7 @@ if (fullGrid) {
   };
 
   const loadDirectory = async () => {
-    fullGrid.innerHTML = '<div class="empty">Loading…</div>';
+    fullGrid.innerHTML = `<div class="empty">${TR('dir.emptyLoad')}</div>`;
     const qs = new URLSearchParams();
     if (state.q) qs.set('q', state.q);
     if (state.category && state.category !== 'all') qs.set('category', state.category);
@@ -919,14 +923,14 @@ if (fullGrid) {
       renderTagBar(j.popularTags || []);
 
       const activeParts = [];
-      if (state.category !== 'all') activeParts.push(`Category: ${labels[state.category] || state.category}`);
+      if (state.category !== 'all') activeParts.push(TR('dir.catPrefix', { c: catLabel(state.category) }));
       if (state.tag) activeParts.push(`#${state.tag}`);
-      if (state.q) activeParts.push(`Query: "${state.q}"`);
-      statusEl.textContent = `Showing ${j.presets.length} of ${j.allTotal ?? j.total} presets`
+      if (state.q) activeParts.push(TR('dir.queryPrefix', { q: state.q }));
+      statusEl.textContent = TR('dir.showing', { n: j.presets.length, total: j.allTotal ?? j.total })
         + (activeParts.length ? ' · ' + activeParts.join(' · ') : '');
 
       if (!j.presets.length) {
-        fullGrid.innerHTML = '<div class="empty">No presets match the active filters.</div>';
+        fullGrid.innerHTML = `<div class="empty">${TR('dir.noMatch')}</div>`;
         return;
       }
       fullGrid.innerHTML = '';
@@ -942,8 +946,8 @@ if (fullGrid) {
         }));
       }
     } catch (e) {
-      statusEl.textContent = 'API error';
-      fullGrid.innerHTML = `<div class="empty">API unreachable: ${e.message}</div>`;
+      statusEl.textContent = TR('dir.apiErr');
+      fullGrid.innerHTML = `<div class="empty">${TR('dir.apiUnreach', { err: e.message })}</div>`;
     }
   };
 
@@ -971,17 +975,16 @@ if (previewGrid) {
   const previewCountEl = document.getElementById('preview-count');
 
   const loadPreview = async () => {
-    previewGrid.innerHTML = '<div class="empty">Loading preview…</div>';
+    previewGrid.innerHTML = `<div class="empty">${TR('dir.loadingPreview')}</div>`;
     try {
       const j = await api('api/list?limit=3');
-      const labels = j.categoryLabels || CATEGORY_LABELS;
 
       if (previewCatsEl) {
         previewCatsEl.innerHTML = '';
         const allLink = document.createElement('a');
         allLink.className = 'cat-tab active';
         allLink.href = 'presets.html';
-        allLink.append(document.createTextNode('All '));
+        allLink.append(document.createTextNode(TR('cat.all') + ' '));
         const allCnt = document.createElement('span');
         allCnt.className = 'cnt';
         allCnt.textContent = String(j.allTotal ?? j.total ?? 0);
@@ -992,7 +995,7 @@ if (previewGrid) {
           const a = document.createElement('a');
           a.className = 'cat-tab';
           a.href = `presets.html?category=${encodeURIComponent(key)}`;
-          a.append(document.createTextNode((labels[key] || CATEGORY_LABELS[key] || key) + ' '));
+          a.append(document.createTextNode(catLabel(key) + ' '));
           const cnt = document.createElement('span');
           cnt.className = 'cnt';
           cnt.textContent = String((j.categories && j.categories[key]) || 0);
@@ -1025,11 +1028,11 @@ if (previewGrid) {
 
       if (previewCountEl) {
         const total = j.allTotal ?? j.total ?? j.presets.length;
-        previewCountEl.textContent = `Showing latest ${j.presets.length} of ${total} public presets`;
+        previewCountEl.textContent = TR('dir.previewShowing', { n: j.presets.length, total });
       }
 
       if (!j.presets.length) {
-        previewGrid.innerHTML = '<div class="empty">No presets found.</div>';
+        previewGrid.innerHTML = `<div class="empty">${TR('dir.none')}</div>`;
         return;
       }
       previewGrid.innerHTML = '';
@@ -1037,7 +1040,7 @@ if (previewGrid) {
         previewGrid.appendChild(buildPresetCard(p, { isPreview: true }));
       }
     } catch (e) {
-      previewGrid.innerHTML = `<div class="empty">API unreachable: ${e.message}</div>`;
+      previewGrid.innerHTML = `<div class="empty">${TR('dir.apiUnreach', { err: e.message })}</div>`;
     }
   };
 
@@ -1056,40 +1059,41 @@ if (previewGrid) {
     modalBackdrop.innerHTML = `
       <div class="pub-modal" role="dialog" aria-modal="true" aria-label="Publish a chain">
         <div class="pub-modal-head">
-          <h2>Publish a chain</h2>
-          <button type="button" class="btn small ghost" id="pub-modal-close">Close ✕</button>
+          <h2 data-i18n="pub.modal.title">Publish a chain</h2>
+          <button type="button" class="btn small ghost" id="pub-modal-close" data-i18n="pub.modal.close">Close ✕</button>
         </div>
         <form id="pubform" class="pub">
           <div id="drop-box" class="drop-zone-large">
-            <strong>Drop your DAW chain file here</strong>
-            <div id="drop-summary" class="drop-summary">Supports .RfxChain, .adg, .fst, .vstpreset, or .patchlink</div>
+            <strong data-i18n="pub.drop.strong">Drop your DAW chain file here</strong>
+            <div id="drop-summary" class="drop-summary" data-i18n="pub.drop.summary">Supports .RfxChain, .adg, .fst, .vstpreset, or .patchlink</div>
             <input id="f-file" type="file" accept=".patchlink,.fst,.rfxchain,.RfxChain,.rpp,.RPP,.adg,.adv,.als,.vstpreset,.bwpreset,.fxchainpreset,.fxchain,.multipreset,.json,application/json">
           </div>
           <div class="pub-row">
-            <label>Title<input id="f-title" maxlength="80" placeholder="Lead vocal chain" required></label>
-            <label>Author<input id="f-author" maxlength="40" placeholder="leve"></label>
+            <label><span data-i18n="pub.lbl.title">Title</span><input id="f-title" maxlength="80" data-i18n-placeholder="pub.ph.title" placeholder="Lead vocal chain" required></label>
+            <label><span data-i18n="pub.lbl.author">Author</span><input id="f-author" maxlength="40" placeholder="leve"></label>
           </div>
           <div class="pub-row">
-            <label>Category
+            <label><span data-i18n="pub.lbl.category">Category</span>
               <select id="f-category">
-                <option value="">Auto-detect from title &amp; plugins</option>
-                <option value="vocals">Vocals</option>
-                <option value="master">Mix Bus &amp; Master</option>
-                <option value="drums">Drums &amp; 808</option>
-                <option value="synths">Synths &amp; Pads</option>
-                <option value="inst">Guitars &amp; Keys</option>
-                <option value="fx">FX &amp; Creative</option>
+                <option value="" data-i18n="pub.cat.auto">Auto-detect from title &amp; plugins</option>
+                <option value="vocals" data-i18n="cat.vocals">Vocals</option>
+                <option value="master" data-i18n="cat.master">Mix Bus &amp; Master</option>
+                <option value="drums" data-i18n="cat.drums">Drums &amp; 808</option>
+                <option value="synths" data-i18n="cat.synths">Synths &amp; Pads</option>
+                <option value="inst" data-i18n="cat.inst">Guitars &amp; Keys</option>
+                <option value="fx" data-i18n="cat.fx">FX &amp; Creative</option>
               </select>
             </label>
-            <label>Hashtags<input id="f-tags" maxlength="160" placeholder="#vocals #rap #warmth"></label>
+            <label><span data-i18n="pub.lbl.tags">Hashtags</span><input id="f-tags" maxlength="160" placeholder="#vocals #rap #warmth"></label>
           </div>
-          <label>Description<input id="f-desc" maxlength="500" placeholder="Pro-Q 3 -> CLA-76 -> Pro-DS (optional)"></label>
-          <label class="check"><input id="f-public" type="checkbox" checked> List publicly in Community Presets</label>
-          <button class="btn big" type="submit">Upload and generate code</button>
+          <label><span data-i18n="pub.lbl.desc">Description</span><input id="f-desc" maxlength="500" data-i18n-placeholder="pub.ph.desc" placeholder="Pro-Q 3 -> CLA-76 -> Pro-DS (optional)"></label>
+          <label class="check"><input id="f-public" type="checkbox" checked> <span data-i18n="pub.public">List publicly in Community Presets</span></label>
+          <button class="btn big" type="submit" data-i18n="pub.submit">Upload and generate code</button>
           <div id="pubres"></div>
         </form>
       </div>`;
     document.body.appendChild(modalBackdrop);
+    if (window.PD_I18N) window.PD_I18N.applyPage();
     pubForm = document.getElementById('pubform');
 
     const closeBtn = document.getElementById('pub-modal-close');
@@ -1117,7 +1121,8 @@ if (previewGrid) {
 
   const veil = document.createElement('div');
   veil.className = 'page-drop-veil';
-  veil.textContent = 'Drop any DAW chain (.fst, .RfxChain, .adg, .vstpreset, .patchlink) to publish a code';
+  veil.setAttribute('data-i18n', 'drop.veil');
+  veil.textContent = TR('drop.veil');
   document.body.appendChild(veil);
 
   const setDropStatus = (msg) => {
@@ -1140,21 +1145,21 @@ if (previewGrid) {
 
   const loadLocalPresetFile = async (f) => {
     if (!f) return;
-    setDropStatus('Parsing ' + f.name + '…');
+    setDropStatus(TR('drop.parsing', { name: f.name }));
     try {
       const res = await parseAnyDawFileInBrowser(f);
       const patch = res.patch;
-      const note = res.skipped && res.skipped.length ? ` (skipped: ${res.skipped.join(', ')})` : '';
+      const note = res.skipped && res.skipped.length ? TR('drop.skippedPrefix', { list: res.skipped.join(', ') }) : '';
       stagedFilePatch = patch;
       if (fileInput) fileInput.required = false;
       if (titleInput && !titleInput.value.trim()) {
         titleInput.value = (patch.name && patch.name !== 'Untitled chain') ? patch.name : f.name.replace(/\.[^/.]+$/, '');
       }
       const names = (patch.nodes || []).map((n) => (n.ids && n.ids.name) || n.name || '?').filter(Boolean);
-      setDropStatus(`Loaded ${f.name}: ${names.length} plugin(s) [${names.slice(0, 6).join(', ')}]${note}`);
+      setDropStatus(TR('drop.loaded', { name: f.name, n: names.length, list: names.slice(0, 6).join(', '), note }));
     } catch (err) {
       stagedFilePatch = null;
-      setDropStatus('Error reading ' + f.name + ': ' + err.message);
+      setDropStatus(TR('drop.errRead', { name: f.name, err: err.message }));
     }
   };
 
@@ -1203,7 +1208,7 @@ if (previewGrid) {
       if (files && files.length) {
         loadLocalPresetFile(files[0]);
       } else {
-        setDropStatus('Browser did not receive a readable file from that drag — drop it onto PatchLink or click Choose File below.');
+        setDropStatus(TR('drop.noReadable'));
       }
     }
   }, true);
@@ -1212,8 +1217,8 @@ if (previewGrid) {
     e.preventDefault();
     const box = document.getElementById('pubres');
     const f = fileInput && fileInput.files[0];
-    if (!stagedFilePatch && !f) { box.textContent = 'Drop or pick any DAW chain (.fst, .RfxChain, .adg, .vstpreset) or .patchlink file.'; return; }
-    box.textContent = 'Uploading…';
+    if (!stagedFilePatch && !f) { box.textContent = TR('drop.pickFirst'); return; }
+    box.textContent = TR('pub.uploading');
     try {
       let patch = stagedFilePatch;
       if (!patch && f) {
@@ -1223,7 +1228,7 @@ if (previewGrid) {
       const tagsEl = document.getElementById('f-tags');
       const body = {
         title: document.getElementById('f-title').value,
-        author: document.getElementById('f-author').value || 'Anonymous',
+        author: document.getElementById('f-author').value || TR('card.anon'),
         description: document.getElementById('f-desc').value,
         category: catEl ? catEl.value : '',
         tags: tagsEl ? tagsEl.value : '',
@@ -1236,13 +1241,23 @@ if (previewGrid) {
         body: JSON.stringify(body),
       });
       const tagsTxt = (j.tags || []).join(' ');
-      box.innerHTML = `<div class="ok">Code ready: <b>${j.code}</b><br>Category: ${(CATEGORY_LABELS[j.category] || j.category || 'FX')}${tagsTxt ? ' · ' + tagsTxt : ''}<br>Drag this preset card into <b>PatchLink</b> (then drag from PatchLink into your DAW), or paste <b>${j.code}</b> in PatchLink → <i>Open code</i>.</div>`;
+      box.innerHTML = TR('pub.readyHtml', {
+        code: j.code,
+        cat: catLabel(j.category || 'fx'),
+        tags: tagsTxt ? ' · ' + tagsTxt : '',
+      });
       if (reloadActiveView) reloadActiveView();
     } catch (err) {
-      box.textContent = 'Error: ' + err.message;
+      box.textContent = TR('pub.errPrefix', { err: err.message });
     }
   });
 })();
+
+if (window.PD_I18N) {
+  window.PD_I18N.onChange(() => {
+    if (reloadActiveView) reloadActiveView();
+  });
+}
 
 // 4. Download links: if a binary isn't uploaded yet, show a clean message
 document.querySelectorAll('[data-dl]').forEach((a) => {
@@ -1253,7 +1268,7 @@ document.querySelectorAll('[data-dl]').forEach((a) => {
         ev.preventDefault();
         const note = document.getElementById('dl-note');
         if (note) {
-          note.innerHTML = 'That file is not published yet. Source + build instructions: <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.';
+          note.innerHTML = TR('dl.missing');
         }
       }
     } catch { /* let the browser handle it */ }

@@ -3,7 +3,7 @@
 ; Compile: ISCC.exe installer.iss   (run from patchlink/installer/)
 
 #define MyAppName "PatchLink"
-#define MyAppVersion "1.6.1"
+#define MyAppVersion "1.6.2"
 #define MyAppPublisher "leve"
 #define MyAppURL "https://gg.trenas.fr/patchdrop/"
 
@@ -33,6 +33,7 @@ DirExistsWarning=no
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 
 [Types]
 Name: "full"; Description: "Full installation (recommended)"
@@ -69,11 +70,22 @@ var
 
 procedure InitializeWizard;
 begin
-  InfoPage := CreateOutputMsgMemoPage(wpSelectComponents,
-    'Where things go', 'No wrong answers here.',
-    'VST3 plugins MUST live in the shared system folder, so the installer puts PatchLink there automatically:' + #13#10 +
-    '  C:\Program Files\Common Files\VST3\PatchLink.vst3' + #13#10#13#10 +
-    'Your DAW finds it on the next plugin rescan (FL / REAPER / Ableton / Cubase / Studio One).' + #13#10#13#10 +
-    'Existing installs are replaced, your saved patches and share codes are untouched.',
-    '');
+  if ActiveLanguage = 'french' then
+    InfoPage := CreateOutputMsgMemoPage(wpSelectComponents,
+      'Emplacement des fichiers', 'Tout est configuré automatiquement.',
+      'Les plugins VST3 doivent se trouver dans le dossier système partagé, PatchLink y est donc installé automatiquement :' + #13#10 +
+      '  C:\Program Files\Common Files\VST3\PatchLink.vst3' + #13#10#13#10 +
+      'Votre DAW le détectera au prochain scan de plugins (FL Studio / REAPER / Ableton / Cubase / Studio One).' + #13#10#13#10 +
+      'À la première ouverture, PatchLink vous permettra de choisir vos dossiers VST3 personnalisés.' + #13#10#13#10 +
+      'Les installations existantes sont mises à jour sans toucher à vos patchs ni à vos codes.',
+      '')
+  else
+    InfoPage := CreateOutputMsgMemoPage(wpSelectComponents,
+      'Where things go', 'No wrong answers here.',
+      'VST3 plugins MUST live in the shared system folder, so the installer puts PatchLink there automatically:' + #13#10 +
+      '  C:\Program Files\Common Files\VST3\PatchLink.vst3' + #13#10#13#10 +
+      'Your DAW finds it on the next plugin rescan (FL / REAPER / Ableton / Cubase / Studio One).' + #13#10#13#10 +
+      'On first launch, PatchLink will let you choose your custom VST3 plugin folders.' + #13#10#13#10 +
+      'Existing installs are replaced, your saved patches and share codes are untouched.',
+      '');
 end;
