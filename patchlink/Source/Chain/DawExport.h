@@ -912,14 +912,16 @@ inline bool buildAbletonAdgRack(const juce::var& patchVar, juce::MemoryBlock& ou
             rackName = n;
     }
 
-    auto toUpperHex = [](const juce::MemoryBlock& mb) -> juce::String {
+    auto toWrappedUpperHex = [](const juce::MemoryBlock& mb, const char* indent) -> juce::String {
         static constexpr char kHex[] = "0123456789ABCDEF";
         const auto* ptr = static_cast<const uint8_t*>(mb.getData());
         const size_t n = mb.getSize();
         juce::String s;
-        s.preallocateBytes(n * 2 + 16);
+        s.preallocateBytes(n * 2 + (n / 40) * 16 + 32);
         for (size_t i = 0; i < n; ++i)
         {
+            if (i % 40 == 0)
+                s << "\n" << indent;
             const uint8_t b = ptr[i];
             s << kHex[(b >> 4) & 0xF] << kHex[b & 0xF];
         }
@@ -931,7 +933,7 @@ inline bool buildAbletonAdgRack(const juce::var& patchVar, juce::MemoryBlock& ou
     };
 
     juce::String xml;
-    xml.preallocateBytes(32768);
+    xml.preallocateBytes(65536);
     xml << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         << "<Ableton MajorVersion=\"5\" MinorVersion=\"11.0_433\" Creator=\"Ableton Live 11.0.1d1\" Revision=\"9b647e316b473e011255bf37ec94f36700805423\">\n"
         << "\t<GroupDevicePreset>\n"
@@ -939,22 +941,125 @@ inline bool buildAbletonAdgRack(const juce::var& patchVar, juce::MemoryBlock& ou
         << "\t\t<Device>\n"
         << "\t\t\t<AudioEffectGroupDevice Id=\"0\">\n"
         << "\t\t\t\t<LomId Value=\"0\" />\n"
+        << "\t\t\t\t<LomIdView Value=\"0\" />\n"
         << "\t\t\t\t<IsExpanded Value=\"true\" />\n"
-        << "\t\t\t\t<On><LomId Value=\"0\" /><Manual Value=\"true\" /><AutomationTarget Id=\"0\"><LockEnvelope Value=\"0\" /></AutomationTarget><MidiCCOnOffThresholds><Min Value=\"64\" /><Max Value=\"127\" /></MidiCCOnOffThresholds></On>\n"
+        << "\t\t\t\t<On>\n"
+        << "\t\t\t\t\t<LomId Value=\"0\" />\n"
+        << "\t\t\t\t\t<Manual Value=\"true\" />\n"
+        << "\t\t\t\t\t<AutomationTarget Id=\"0\">\n"
+        << "\t\t\t\t\t\t<LockEnvelope Value=\"0\" />\n"
+        << "\t\t\t\t\t</AutomationTarget>\n"
+        << "\t\t\t\t\t<MidiCCOnOffThresholds>\n"
+        << "\t\t\t\t\t\t<Min Value=\"64\" />\n"
+        << "\t\t\t\t\t\t<Max Value=\"127\" />\n"
+        << "\t\t\t\t\t</MidiCCOnOffThresholds>\n"
+        << "\t\t\t\t</On>\n"
+        << "\t\t\t\t<ModulationSourceCount Value=\"0\" />\n"
+        << "\t\t\t\t<ParametersListWrapper LomId=\"0\" />\n"
+        << "\t\t\t\t<Pointee Id=\"0\" />\n"
+        << "\t\t\t\t<LastSelectedTimeableIndex Value=\"0\" />\n"
+        << "\t\t\t\t<LastSelectedClipEnvelopeIndex Value=\"0\" />\n"
+        << "\t\t\t\t<LastPresetRef>\n"
+        << "\t\t\t\t\t<Value />\n"
+        << "\t\t\t\t</LastPresetRef>\n"
+        << "\t\t\t\t<LockedScripts />\n"
         << "\t\t\t\t<IsFolded Value=\"false\" />\n"
         << "\t\t\t\t<ShouldShowPresetName Value=\"true\" />\n"
         << "\t\t\t\t<UserName Value=\"" << esc(rackName) << "\" />\n"
         << "\t\t\t\t<Annotation Value=\"Exported from PatchLink\" />\n"
+        << "\t\t\t\t<SourceContext>\n"
+        << "\t\t\t\t\t<Value />\n"
+        << "\t\t\t\t</SourceContext>\n"
+        << "\t\t\t\t<OverwriteProtectionNumber Value=\"2817\" />\n"
         << "\t\t\t\t<Branches />\n"
         << "\t\t\t\t<IsBranchesListVisible Value=\"false\" />\n"
         << "\t\t\t\t<IsReturnBranchesListVisible Value=\"false\" />\n"
         << "\t\t\t\t<IsRangesEditorVisible Value=\"false\" />\n"
         << "\t\t\t\t<AreDevicesVisible Value=\"true\" />\n"
+        << "\t\t\t\t<NumVisibleMacroControls Value=\"8\" />\n";
+
+    for (int m = 0; m < 16; ++m)
+    {
+        xml << "\t\t\t\t<MacroControls." << m << ">\n"
+            << "\t\t\t\t\t<LomId Value=\"0\" />\n"
+            << "\t\t\t\t\t<Manual Value=\"0\" />\n"
+            << "\t\t\t\t\t<MidiControllerRange>\n"
+            << "\t\t\t\t\t\t<Min Value=\"0\" />\n"
+            << "\t\t\t\t\t\t<Max Value=\"127\" />\n"
+            << "\t\t\t\t\t</MidiControllerRange>\n"
+            << "\t\t\t\t\t<AutomationTarget Id=\"0\">\n"
+            << "\t\t\t\t\t\t<LockEnvelope Value=\"0\" />\n"
+            << "\t\t\t\t\t</AutomationTarget>\n"
+            << "\t\t\t\t\t<ModulationTarget Id=\"0\">\n"
+            << "\t\t\t\t\t\t<LockEnvelope Value=\"0\" />\n"
+            << "\t\t\t\t\t</ModulationTarget>\n"
+            << "\t\t\t\t</MacroControls." << m << ">\n";
+    }
+    for (int m = 0; m < 16; ++m)
+        xml << "\t\t\t\t<MacroDisplayNames." << m << " Value=\"Macro " << (m + 1) << "\" />\n";
+    for (int m = 0; m < 16; ++m)
+        xml << "\t\t\t\t<MacroDefaults." << m << " Value=\"" << (m < 8 ? "0" : "-1") << "\" />\n";
+    for (int m = 0; m < 16; ++m)
+        xml << "\t\t\t\t<MacroAnnotations." << m << " Value=\"\" />\n";
+    for (int m = 0; m < 16; ++m)
+        xml << "\t\t\t\t<ForceDisplayGenericValue." << m << " Value=\"false\" />\n";
+
+    xml << "\t\t\t\t<AreMacroControlsVisible Value=\"false\" />\n"
+        << "\t\t\t\t<IsAutoSelectEnabled Value=\"false\" />\n"
+        << "\t\t\t\t<ChainSelector>\n"
+        << "\t\t\t\t\t<LomId Value=\"0\" />\n"
+        << "\t\t\t\t\t<Manual Value=\"0\" />\n"
+        << "\t\t\t\t\t<MidiControllerRange>\n"
+        << "\t\t\t\t\t\t<Min Value=\"0\" />\n"
+        << "\t\t\t\t\t\t<Max Value=\"127\" />\n"
+        << "\t\t\t\t\t</MidiControllerRange>\n"
+        << "\t\t\t\t\t<AutomationTarget Id=\"0\">\n"
+        << "\t\t\t\t\t\t<LockEnvelope Value=\"0\" />\n"
+        << "\t\t\t\t\t</AutomationTarget>\n"
+        << "\t\t\t\t\t<ModulationTarget Id=\"0\">\n"
+        << "\t\t\t\t\t\t<LockEnvelope Value=\"0\" />\n"
+        << "\t\t\t\t\t</ModulationTarget>\n"
+        << "\t\t\t\t</ChainSelector>\n"
+        << "\t\t\t\t<ChainSelectorRelativePosition Value=\"-1073741824\" />\n"
+        << "\t\t\t\t<ViewsToRestoreWhenUnfolding Value=\"0\" />\n"
         << "\t\t\t\t<ReturnBranches />\n"
-        << "\t\t\t\t<AreMacroControlsVisible Value=\"false\" />\n"
+        << "\t\t\t\t<BranchesSplitterProportion Value=\"0.5\" />\n"
+        << "\t\t\t\t<ShowBranchesInSessionMixer Value=\"false\" />\n";
+
+    for (int m = 0; m < 16; ++m)
+        xml << "\t\t\t\t<MacroColor." << m << " Value=\"-1\" />\n";
+
+    xml << "\t\t\t\t<LockId Value=\"0\" />\n"
+        << "\t\t\t\t<LockSeal Value=\"0\" />\n"
+        << "\t\t\t\t<ChainsListWrapper LomId=\"0\" />\n"
+        << "\t\t\t\t<ReturnChainsListWrapper LomId=\"0\" />\n"
+        << "\t\t\t\t<MacroVariations>\n"
+        << "\t\t\t\t\t<MacroSnapshots />\n"
+        << "\t\t\t\t</MacroVariations>\n";
+
+    for (int m = 0; m < 16; ++m)
+        xml << "\t\t\t\t<ExcludeMacroFromRandomization." << m << " Value=\"false\" />\n";
+    for (int m = 0; m < 16; ++m)
+        xml << "\t\t\t\t<ExcludeMacroFromSnapshots." << m << " Value=\"false\" />\n";
+
+    xml << "\t\t\t\t<AreMacroVariationsControlsVisible Value=\"false\" />\n"
         << "\t\t\t</AudioEffectGroupDevice>\n"
         << "\t\t</Device>\n"
-        << "\t\t<PresetRef />\n"
+        << "\t\t<PresetRef>\n"
+        << "\t\t\t<AbletonDefaultPresetRef Id=\"0\">\n"
+        << "\t\t\t\t<FileRef>\n"
+        << "\t\t\t\t\t<RelativePathType Value=\"0\" />\n"
+        << "\t\t\t\t\t<RelativePath Value=\"\" />\n"
+        << "\t\t\t\t\t<Path Value=\"\" />\n"
+        << "\t\t\t\t\t<Type Value=\"1\" />\n"
+        << "\t\t\t\t\t<LivePackName Value=\"\" />\n"
+        << "\t\t\t\t\t<LivePackId Value=\"\" />\n"
+        << "\t\t\t\t\t<OriginalFileSize Value=\"0\" />\n"
+        << "\t\t\t\t\t<OriginalCrc Value=\"0\" />\n"
+        << "\t\t\t\t</FileRef>\n"
+        << "\t\t\t\t<DeviceId Name=\"AudioEffectGroupDevice\" />\n"
+        << "\t\t\t</AbletonDefaultPresetRef>\n"
+        << "\t\t</PresetRef>\n"
         << "\t\t<BranchPresets>\n"
         << "\t\t\t<AudioEffectBranchPreset Id=\"0\">\n"
         << "\t\t\t\t<Name Value=\"" << esc(rackName) << "\" />\n"
@@ -964,7 +1069,6 @@ inline bool buildAbletonAdgRack(const juce::var& patchVar, juce::MemoryBlock& ou
     for (size_t idx = 0; idx < nodes.size(); ++idx)
     {
         const auto& info = nodes[idx];
-        const auto plugName = info.name.isNotEmpty() ? info.name : (info.flPluginName.isNotEmpty() ? info.flPluginName : "VST3 Plugin");
         const auto fuid = info.fuidHex.length() == 32 ? info.fuidHex : detail::steinbergFuidString(info.tuid);
         int32_t f[4] {};
         for (int k = 0; k < 4; ++k)
@@ -972,49 +1076,51 @@ inline bool buildAbletonAdgRack(const juce::var& patchVar, juce::MemoryBlock& ou
 
         juce::MemoryBlock comp, cont;
         flstudio::extractRawVst3ChunksFromBase64(info.stateBase64, comp, cont);
-        const auto compHex = toUpperHex(comp);
-        const auto contHex = toUpperHex(cont);
-        const juce::String uidXml = "<Uid><Fields.0 Value=\"" + juce::String(f[0]) + "\" /><Fields.1 Value=\"" + juce::String(f[1])
-                                  + "\" /><Fields.2 Value=\"" + juce::String(f[2]) + "\" /><Fields.3 Value=\"" + juce::String(f[3]) + "\" /></Uid>";
+        const auto compHex = toWrappedUpperHex(comp, "\t\t\t\t\t\t\t");
+        const auto contHex = toWrappedUpperHex(cont, "\t\t\t\t\t\t\t");
 
-        xml << "\t\t\t\t\t<AbletonDevicePreset Id=\"" << juce::String(idx) << "\">\n"
+        xml << "\t\t\t\t\t<Vst3Preset Id=\"" << juce::String(idx) << "\">\n"
             << "\t\t\t\t\t\t<OverwriteProtectionNumber Value=\"2817\" />\n"
-            << "\t\t\t\t\t\t<Device>\n"
-            << "\t\t\t\t\t\t\t<PluginDevice Id=\"0\">\n"
-            << "\t\t\t\t\t\t\t\t<LomId Value=\"0\" />\n"
-            << "\t\t\t\t\t\t\t\t<LomIdView Value=\"0\" />\n"
-            << "\t\t\t\t\t\t\t\t<IsExpanded Value=\"true\" />\n"
-            << "\t\t\t\t\t\t\t\t<On><LomId Value=\"0\" /><Manual Value=\"" << (info.bypass ? "false" : "true") << "\" /><AutomationTarget Id=\"0\"><LockEnvelope Value=\"0\" /></AutomationTarget><MidiCCOnOffThresholds><Min Value=\"64\" /><Max Value=\"127\" /></MidiCCOnOffThresholds></On>\n"
-            << "\t\t\t\t\t\t\t\t<IsFolded Value=\"false\" />\n"
-            << "\t\t\t\t\t\t\t\t<ShouldShowPresetName Value=\"true\" />\n"
-            << "\t\t\t\t\t\t\t\t<UserName Value=\"\" />\n"
-            << "\t\t\t\t\t\t\t\t<Annotation Value=\"\" />\n"
-            << "\t\t\t\t\t\t\t\t<OverwriteProtectionNumber Value=\"2817\" />\n"
-            << "\t\t\t\t\t\t\t\t<PluginDesc>\n"
-            << "\t\t\t\t\t\t\t\t\t<Vst3PluginInfo Id=\"0\">\n"
-            << "\t\t\t\t\t\t\t\t\t\t<WinPosX Value=\"0\" />\n"
-            << "\t\t\t\t\t\t\t\t\t\t<WinPosY Value=\"0\" />\n"
-            << "\t\t\t\t\t\t\t\t\t\t<Name Value=\"" << esc(plugName) << "\" />\n"
-            << "\t\t\t\t\t\t\t\t\t\t<Preset>\n"
-            << "\t\t\t\t\t\t\t\t\t\t\t<Vst3Preset Id=\"0\">\n"
-            << "\t\t\t\t\t\t\t\t\t\t\t\t<OverwriteProtectionNumber Value=\"2817\" />\n"
-            << "\t\t\t\t\t\t\t\t\t\t\t\t" << uidXml << "\n"
-            << "\t\t\t\t\t\t\t\t\t\t\t\t<DeviceType Value=\"2\" />\n"
-            << "\t\t\t\t\t\t\t\t\t\t\t\t<ProcessorState>" << compHex << "</ProcessorState>\n"
-            << "\t\t\t\t\t\t\t\t\t\t\t\t<ControllerState>" << contHex << "</ControllerState>\n"
-            << "\t\t\t\t\t\t\t\t\t\t\t\t<Name Value=\"" << esc(plugName) << "\" />\n"
-            << "\t\t\t\t\t\t\t\t\t\t\t\t<PresetRef><Value /></PresetRef>\n"
-            << "\t\t\t\t\t\t\t\t\t\t\t</Vst3Preset>\n"
-            << "\t\t\t\t\t\t\t\t\t\t</Preset>\n"
-            << "\t\t\t\t\t\t\t\t\t\t" << uidXml << "\n"
-            << "\t\t\t\t\t\t\t\t\t\t<DeviceType Value=\"2\" />\n"
-            << "\t\t\t\t\t\t\t\t\t</Vst3PluginInfo>\n"
-            << "\t\t\t\t\t\t\t\t</PluginDesc>\n"
-            << "\t\t\t\t\t\t\t\t<ParameterList />\n"
-            << "\t\t\t\t\t\t\t</PluginDevice>\n"
-            << "\t\t\t\t\t\t</Device>\n"
+            << "\t\t\t\t\t\t<MpeEnabled Value=\"2\" />\n"
+            << "\t\t\t\t\t\t<MpeSettings>\n"
+            << "\t\t\t\t\t\t\t<ZoneType Value=\"0\" />\n"
+            << "\t\t\t\t\t\t\t<FirstNoteChannel Value=\"1\" />\n"
+            << "\t\t\t\t\t\t\t<LastNoteChannel Value=\"15\" />\n"
+            << "\t\t\t\t\t\t</MpeSettings>\n"
+            << "\t\t\t\t\t\t<ParameterSettings />\n"
+            << "\t\t\t\t\t\t<IsOn Value=\"" << (info.bypass ? "false" : "true") << "\" />\n"
+            << "\t\t\t\t\t\t<PowerMacroControlIndex Value=\"-1\" />\n"
+            << "\t\t\t\t\t\t<PowerMacroMappingRange>\n"
+            << "\t\t\t\t\t\t\t<Min Value=\"64\" />\n"
+            << "\t\t\t\t\t\t\t<Max Value=\"127\" />\n"
+            << "\t\t\t\t\t\t</PowerMacroMappingRange>\n"
+            << "\t\t\t\t\t\t<IsFolded Value=\"false\" />\n"
+            << "\t\t\t\t\t\t<StoredAllParameters Value=\"true\" />\n"
+            << "\t\t\t\t\t\t<DeviceLomId Value=\"0\" />\n"
+            << "\t\t\t\t\t\t<DeviceViewLomId Value=\"0\" />\n"
+            << "\t\t\t\t\t\t<IsOnLomId Value=\"0\" />\n"
+            << "\t\t\t\t\t\t<ParametersListWrapperLomId Value=\"0\" />\n"
+            << "\t\t\t\t\t\t<Uid>\n"
+            << "\t\t\t\t\t\t\t<Fields.0 Value=\"" << juce::String(f[0]) << "\" />\n"
+            << "\t\t\t\t\t\t\t<Fields.1 Value=\"" << juce::String(f[1]) << "\" />\n"
+            << "\t\t\t\t\t\t\t<Fields.2 Value=\"" << juce::String(f[2]) << "\" />\n"
+            << "\t\t\t\t\t\t\t<Fields.3 Value=\"" << juce::String(f[3]) << "\" />\n"
+            << "\t\t\t\t\t\t</Uid>\n"
+            << "\t\t\t\t\t\t<DeviceType Value=\"2\" />\n";
+
+        if (compHex.isNotEmpty())
+            xml << "\t\t\t\t\t\t<ProcessorState>" << compHex << "\n\t\t\t\t\t\t</ProcessorState>\n";
+        else
+            xml << "\t\t\t\t\t\t<ProcessorState />\n";
+
+        if (contHex.isNotEmpty())
+            xml << "\t\t\t\t\t\t<ControllerState>" << contHex << "\n\t\t\t\t\t\t</ControllerState>\n";
+        else
+            xml << "\t\t\t\t\t\t<ControllerState />\n";
+
+        xml << "\t\t\t\t\t\t<Name Value=\"\" />\n"
             << "\t\t\t\t\t\t<PresetRef />\n"
-            << "\t\t\t\t\t</AbletonDevicePreset>\n";
+            << "\t\t\t\t\t</Vst3Preset>\n";
     }
 
     xml << "\t\t\t\t</DevicePresets>\n"
@@ -1024,18 +1130,115 @@ inline bool buildAbletonAdgRack(const juce::var& patchVar, juce::MemoryBlock& ou
         << "\t\t\t\t\t\t<Device>\n"
         << "\t\t\t\t\t\t\t<AudioBranchMixerDevice Id=\"0\">\n"
         << "\t\t\t\t\t\t\t\t<LomId Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t<LomIdView Value=\"0\" />\n"
         << "\t\t\t\t\t\t\t\t<IsExpanded Value=\"true\" />\n"
-        << "\t\t\t\t\t\t\t\t<On><LomId Value=\"0\" /><Manual Value=\"true\" /><AutomationTarget Id=\"0\"><LockEnvelope Value=\"0\" /></AutomationTarget></On>\n"
-        << "\t\t\t\t\t\t\t\t<Speaker><LomId Value=\"0\" /><Manual Value=\"true\" /><AutomationTarget Id=\"0\"><LockEnvelope Value=\"0\" /></AutomationTarget></Speaker>\n"
-        << "\t\t\t\t\t\t\t\t<Volume><LomId Value=\"0\" /><Manual Value=\"1\" /><MidiControllerRange><Min Value=\"0.0003162277571\" /><Max Value=\"1.99526238\" /></MidiControllerRange></Volume>\n"
-        << "\t\t\t\t\t\t\t\t<Panorama><LomId Value=\"0\" /><Manual Value=\"0\" /><MidiControllerRange><Min Value=\"-1\" /><Max Value=\"1\" /></MidiControllerRange></Panorama>\n"
+        << "\t\t\t\t\t\t\t\t<On>\n"
+        << "\t\t\t\t\t\t\t\t\t<LomId Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t\t<Manual Value=\"true\" />\n"
+        << "\t\t\t\t\t\t\t\t\t<AutomationTarget Id=\"0\">\n"
+        << "\t\t\t\t\t\t\t\t\t\t<LockEnvelope Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t\t</AutomationTarget>\n"
+        << "\t\t\t\t\t\t\t\t\t<MidiCCOnOffThresholds>\n"
+        << "\t\t\t\t\t\t\t\t\t\t<Min Value=\"64\" />\n"
+        << "\t\t\t\t\t\t\t\t\t\t<Max Value=\"127\" />\n"
+        << "\t\t\t\t\t\t\t\t\t</MidiCCOnOffThresholds>\n"
+        << "\t\t\t\t\t\t\t\t</On>\n"
+        << "\t\t\t\t\t\t\t\t<ModulationSourceCount Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t<ParametersListWrapper LomId=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t<Pointee Id=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t<LastSelectedTimeableIndex Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t<LastSelectedClipEnvelopeIndex Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t<LastPresetRef>\n"
+        << "\t\t\t\t\t\t\t\t\t<Value />\n"
+        << "\t\t\t\t\t\t\t\t</LastPresetRef>\n"
+        << "\t\t\t\t\t\t\t\t<LockedScripts />\n"
+        << "\t\t\t\t\t\t\t\t<IsFolded Value=\"false\" />\n"
+        << "\t\t\t\t\t\t\t\t<ShouldShowPresetName Value=\"true\" />\n"
+        << "\t\t\t\t\t\t\t\t<UserName Value=\"\" />\n"
+        << "\t\t\t\t\t\t\t\t<Annotation Value=\"\" />\n"
+        << "\t\t\t\t\t\t\t\t<SourceContext>\n"
+        << "\t\t\t\t\t\t\t\t\t<Value />\n"
+        << "\t\t\t\t\t\t\t\t</SourceContext>\n"
+        << "\t\t\t\t\t\t\t\t<OverwriteProtectionNumber Value=\"2817\" />\n"
+        << "\t\t\t\t\t\t\t\t<Speaker>\n"
+        << "\t\t\t\t\t\t\t\t\t<LomId Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t\t<Manual Value=\"true\" />\n"
+        << "\t\t\t\t\t\t\t\t\t<AutomationTarget Id=\"0\">\n"
+        << "\t\t\t\t\t\t\t\t\t\t<LockEnvelope Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t\t</AutomationTarget>\n"
+        << "\t\t\t\t\t\t\t\t\t<MidiCCOnOffThresholds>\n"
+        << "\t\t\t\t\t\t\t\t\t\t<Min Value=\"64\" />\n"
+        << "\t\t\t\t\t\t\t\t\t\t<Max Value=\"127\" />\n"
+        << "\t\t\t\t\t\t\t\t\t</MidiCCOnOffThresholds>\n"
+        << "\t\t\t\t\t\t\t\t</Speaker>\n"
+        << "\t\t\t\t\t\t\t\t<Volume>\n"
+        << "\t\t\t\t\t\t\t\t\t<LomId Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t\t<Manual Value=\"1\" />\n"
+        << "\t\t\t\t\t\t\t\t\t<MidiControllerRange>\n"
+        << "\t\t\t\t\t\t\t\t\t\t<Min Value=\"0.0003162277571\" />\n"
+        << "\t\t\t\t\t\t\t\t\t\t<Max Value=\"1.99526238\" />\n"
+        << "\t\t\t\t\t\t\t\t\t</MidiControllerRange>\n"
+        << "\t\t\t\t\t\t\t\t\t<AutomationTarget Id=\"0\">\n"
+        << "\t\t\t\t\t\t\t\t\t\t<LockEnvelope Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t\t</AutomationTarget>\n"
+        << "\t\t\t\t\t\t\t\t\t<ModulationTarget Id=\"0\">\n"
+        << "\t\t\t\t\t\t\t\t\t\t<LockEnvelope Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t\t</ModulationTarget>\n"
+        << "\t\t\t\t\t\t\t\t</Volume>\n"
+        << "\t\t\t\t\t\t\t\t<Panorama>\n"
+        << "\t\t\t\t\t\t\t\t\t<LomId Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t\t<Manual Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t\t<MidiControllerRange>\n"
+        << "\t\t\t\t\t\t\t\t\t\t<Min Value=\"-1\" />\n"
+        << "\t\t\t\t\t\t\t\t\t\t<Max Value=\"1\" />\n"
+        << "\t\t\t\t\t\t\t\t\t</MidiControllerRange>\n"
+        << "\t\t\t\t\t\t\t\t\t<AutomationTarget Id=\"0\">\n"
+        << "\t\t\t\t\t\t\t\t\t\t<LockEnvelope Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t\t</AutomationTarget>\n"
+        << "\t\t\t\t\t\t\t\t\t<ModulationTarget Id=\"0\">\n"
+        << "\t\t\t\t\t\t\t\t\t\t<LockEnvelope Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t\t</ModulationTarget>\n"
+        << "\t\t\t\t\t\t\t\t</Panorama>\n"
         << "\t\t\t\t\t\t\t\t<SendInfos />\n"
+        << "\t\t\t\t\t\t\t\t<RoutingHelper>\n"
+        << "\t\t\t\t\t\t\t\t\t<Routable>\n"
+        << "\t\t\t\t\t\t\t\t\t\t<Target Value=\"AudioOut/None\" />\n"
+        << "\t\t\t\t\t\t\t\t\t\t<UpperDisplayString Value=\"No Output\" />\n"
+        << "\t\t\t\t\t\t\t\t\t\t<LowerDisplayString Value=\"\" />\n"
+        << "\t\t\t\t\t\t\t\t\t</Routable>\n"
+        << "\t\t\t\t\t\t\t\t\t<TargetEnum Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t</RoutingHelper>\n"
+        << "\t\t\t\t\t\t\t\t<SendsListWrapper LomId=\"0\" />\n"
         << "\t\t\t\t\t\t\t</AudioBranchMixerDevice>\n"
         << "\t\t\t\t\t\t</Device>\n"
-        << "\t\t\t\t\t\t<PresetRef />\n"
+        << "\t\t\t\t\t\t<PresetRef>\n"
+        << "\t\t\t\t\t\t\t<AbletonDefaultPresetRef Id=\"0\">\n"
+        << "\t\t\t\t\t\t\t\t<FileRef>\n"
+        << "\t\t\t\t\t\t\t\t\t<RelativePathType Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t\t<RelativePath Value=\"\" />\n"
+        << "\t\t\t\t\t\t\t\t\t<Path Value=\"\" />\n"
+        << "\t\t\t\t\t\t\t\t\t<Type Value=\"1\" />\n"
+        << "\t\t\t\t\t\t\t\t\t<LivePackName Value=\"\" />\n"
+        << "\t\t\t\t\t\t\t\t\t<LivePackId Value=\"\" />\n"
+        << "\t\t\t\t\t\t\t\t\t<OriginalFileSize Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t\t<OriginalCrc Value=\"0\" />\n"
+        << "\t\t\t\t\t\t\t\t</FileRef>\n"
+        << "\t\t\t\t\t\t\t\t<DeviceId Name=\"AudioBranchMixerDevice\" />\n"
+        << "\t\t\t\t\t\t\t</AbletonDefaultPresetRef>\n"
+        << "\t\t\t\t\t\t</PresetRef>\n"
         << "\t\t\t\t\t</AbletonDevicePreset>\n"
         << "\t\t\t\t</MixerPreset>\n"
-        << "\t\t\t\t<BranchSelectorRange><Min Value=\"0\" /><Max Value=\"127\" /><CrossfadeMin Value=\"0\" /><CrossfadeMax Value=\"0\" /></BranchSelectorRange>\n"
+        << "\t\t\t\t<BranchSelectorRange>\n"
+        << "\t\t\t\t\t<Min Value=\"0\" />\n"
+        << "\t\t\t\t\t<Max Value=\"0\" />\n"
+        << "\t\t\t\t\t<CrossfadeMin Value=\"0\" />\n"
+        << "\t\t\t\t\t<CrossfadeMax Value=\"0\" />\n"
+        << "\t\t\t\t</BranchSelectorRange>\n"
+        << "\t\t\t\t<SessionViewBranchWidth Value=\"55\" />\n"
+        << "\t\t\t\t<DocumentColorIndex Value=\"3\" />\n"
+        << "\t\t\t\t<AutoColored Value=\"true\" />\n"
+        << "\t\t\t\t<AutoColorScheme Value=\"0\" />\n"
+        << "\t\t\t\t<SourceContext />\n"
         << "\t\t\t</AudioEffectBranchPreset>\n"
         << "\t\t</BranchPresets>\n"
         << "\t\t<ReturnBranchPresets />\n"
@@ -1043,10 +1246,12 @@ inline bool buildAbletonAdgRack(const juce::var& patchVar, juce::MemoryBlock& ou
         << "</Ableton>\n";
 
     outGzip.reset();
-    juce::MemoryOutputStream rawOut(outGzip, false);
-    juce::GZIPCompressorOutputStream gz(&rawOut, -1, false, 31); // windowBits 15+16 -> RFC 1952 gzip header
-    gz.write(xml.toRawUTF8(), xml.getNumBytesAsUTF8());
-    gz.flush();
+    {
+        juce::MemoryOutputStream rawOut(outGzip, false);
+        juce::GZIPCompressorOutputStream gz(&rawOut, -1, false, 31); // windowBits 15+16 -> RFC 1952 gzip header
+        gz.write(xml.toRawUTF8(), xml.getNumBytesAsUTF8());
+        gz.flush();
+    }
     return outGzip.getSize() > 10;
 }
 

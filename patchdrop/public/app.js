@@ -558,6 +558,52 @@ async function parseAbletonAdgInBrowser(arrayBuffer, fileName = 'Ableton Rack', 
     }
   }
 
+  for (const vp of doc.querySelectorAll('Vst3Preset')) {
+    if (vp.closest('PluginDevice')) continue;
+    const isOnEl = vp.querySelector('IsOn');
+    const bypass = isOnEl ? isOnEl.getAttribute('Value') === 'false' : false;
+    const nameEl = vp.querySelector(':scope > PlugName') || vp.querySelector(':scope > Name');
+    const plugName = (nameEl && nameEl.getAttribute('Value')) || '';
+    const uidEl = vp.querySelector(':scope > Uid');
+    let fuidHex = '';
+    if (uidEl) {
+      fuidHex = [0, 1, 2, 3].map((k) => {
+        const fel = uidEl.querySelector(`Fields\\.${k}`);
+        const v = fel ? (parseInt(fel.getAttribute('Value') || '0', 10) >>> 0) : 0;
+        return v.toString(16).padStart(8, '0').toUpperCase();
+      }).join('');
+    }
+    const psEl = vp.querySelector(':scope > ProcessorState');
+    const csEl = vp.querySelector(':scope > ControllerState');
+    const comp = psEl ? hexToBytes(psEl.textContent) : new Uint8Array(0);
+    const cont = csEl ? hexToBytes(csEl.textContent) : new Uint8Array(0);
+    if (fuidHex.length === 32 || plugName) {
+      plugins.push({
+        slotName: plugName, pluginName: plugName, vendor: '', filePath: '',
+        fuidHex, bypass, isVst2: false, stateBase64: packVst3ChunksToBase64(comp, cont),
+      });
+    }
+  }
+
+  for (const v2 of doc.querySelectorAll('VstPreset')) {
+    if (v2.closest('PluginDevice')) continue;
+    const isOnEl = v2.querySelector('IsOn');
+    const bypass = isOnEl ? isOnEl.getAttribute('Value') === 'false' : false;
+    const ne = v2.querySelector(':scope > PlugName') || v2.querySelector(':scope > Name');
+    const rawName = (ne && ne.getAttribute('Value')) || '';
+    if (rawName) {
+      const cleanName = rawName.replace(/_(x64|x86)$/i, '').trim();
+      plugins.push({
+        slotName: rawName, pluginName: cleanName, vendor: '', filePath: '',
+        fuidHex: '', bypass, isVst2: true, stateBase64: '',
+      });
+    } else {
+      const uidEl = v2.querySelector(':scope > UniqueId');
+      const uid = (uidEl && uidEl.getAttribute('Value')) || '';
+      skipped.push(uid ? `VST2 Plugin (${uid})` : 'VST2 Plugin');
+    }
+  }
+
   return buildNodesFromPlugins(plugins, skipped, rackName, 'Ableton Live', tuidDb);
 }
 

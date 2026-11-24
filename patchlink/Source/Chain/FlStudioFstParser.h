@@ -1035,6 +1035,61 @@ inline ParsedFst parseAbletonAdgData(const void* rawData, size_t totalSize, cons
             return;
         }
 
+        if (el->hasTagName("Vst3Preset"))
+        {
+            FstPluginEntry entry;
+            entry.bypass = readChildValue(el, "IsOn").equalsIgnoreCase("false");
+            entry.pluginName = readChildValue(el, "PlugName");
+            if (entry.pluginName.isEmpty())
+                entry.pluginName = readChildValue(el, "Name");
+            entry.slotName = entry.pluginName;
+
+            if (auto* uidEl = el->getChildByName("Uid"))
+            {
+                const uint32_t f0 = static_cast<uint32_t>(static_cast<int64_t>(readChildValue(uidEl, "Fields.0").getLargeIntValue()));
+                const uint32_t f1 = static_cast<uint32_t>(static_cast<int64_t>(readChildValue(uidEl, "Fields.1").getLargeIntValue()));
+                const uint32_t f2 = static_cast<uint32_t>(static_cast<int64_t>(readChildValue(uidEl, "Fields.2").getLargeIntValue()));
+                const uint32_t f3 = static_cast<uint32_t>(static_cast<int64_t>(readChildValue(uidEl, "Fields.3").getLargeIntValue()));
+                entry.fuidHex = juce::String::formatted("%08X%08X%08X%08X", f0, f1, f2, f3);
+                entry.tuidHex = fuidHexToTuidHex(entry.fuidHex);
+                entry.juceUniqueId = computeJuceUniqueIdFromFuidHex(entry.fuidHex);
+            }
+
+            juce::MemoryBlock comp, cont;
+            if (auto* ps = el->getChildByName("ProcessorState"))
+                dawparse::decodeHexToMemoryBlock(ps->getAllSubText(), comp);
+            if (auto* cs = el->getChildByName("ControllerState"))
+                dawparse::decodeHexToMemoryBlock(cs->getAllSubText(), cont);
+            entry.stateBase64 = packRawVst3ChunksToBase64(comp.getData(), comp.getSize(),
+                                                          cont.getData(), cont.getSize());
+
+            if (entry.fuidHex.length() == 32 || entry.pluginName.isNotEmpty())
+                result.plugins.push_back(std::move(entry));
+            return;
+        }
+
+        if (el->hasTagName("VstPreset"))
+        {
+            auto n = readChildValue(el, "PlugName");
+            if (n.isEmpty())
+                n = readChildValue(el, "Name");
+            if (n.isNotEmpty())
+            {
+                FstPluginEntry vst2Entry;
+                vst2Entry.isVst2 = true;
+                vst2Entry.bypass = readChildValue(el, "IsOn").equalsIgnoreCase("false");
+                vst2Entry.slotName = n;
+                vst2Entry.pluginName = n.replace("_x64", "", true).replace("_x86", "", true).replace(" (Mono)", "", true).trim();
+                result.plugins.push_back(std::move(vst2Entry));
+            }
+            else
+            {
+                const auto uid = readChildValue(el, "UniqueId");
+                result.skipped.add(uid.isNotEmpty() ? ("VST2 Plugin (UniqueId " + uid + ")") : "VST2 Plugin (missing plugin name)");
+            }
+            return;
+        }
+
         for (auto* child : el->getChildIterator())
             walk(child);
     };
