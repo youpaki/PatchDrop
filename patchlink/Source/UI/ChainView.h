@@ -10,6 +10,7 @@ public:
     ChainView();
     ~ChainView() override;
     void refresh(const std::vector<PatchLinkProcessor::LoadedNode>&);
+    void setLibraryEmpty(bool isEmpty);
     void applyTheme();
     void resized() override;
 
@@ -20,6 +21,8 @@ public:
     std::function<void(int)> onDragSlot;
     std::function<void(int)> onExportSlot;
     std::function<void()> onAdd;
+    std::function<void()> onOpenLibrary;
+    std::function<void()> onOpenCode;
     std::function<void()> onClear;
 
 private:
@@ -31,8 +34,11 @@ private:
     Content* content = nullptr;
     juce::Label emptyTitle, emptySubtitle, hint;
     PlButton emptyAdd { "Add your first plugin", Icon::plus, PlButton::Style::primary };
+    PlButton emptySetup { "Choose VST Folders & Scan", Icon::library, PlButton::Style::primary };
+    PlButton emptyOpenCode { "Open code", Icon::code, PlButton::Style::secondary };
     PlButton clearButton { "Clear chain", Icon::trash, PlButton::Style::ghost };
     bool empty = true;
+    bool libraryEmpty = false;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChainView)
 };

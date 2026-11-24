@@ -468,9 +468,13 @@ ChainView::ChainView()
     emptySubtitle.setColour(juce::Label::textColourId, theme::muted);
     emptySubtitle.setJustificationType(juce::Justification::centred);
     emptyAdd.onClick = [this] { if (onAdd) onAdd(); };
+    emptySetup.onClick = [this] { if (onOpenLibrary) onOpenLibrary(); };
+    emptyOpenCode.onClick = [this] { if (onOpenCode) onOpenCode(); };
     addAndMakeVisible(emptyTitle);
     addAndMakeVisible(emptySubtitle);
     addAndMakeVisible(emptyAdd);
+    addChildComponent(emptySetup);
+    addChildComponent(emptyOpenCode);
 
     hint.setText("Drag anywhere on a card to reorder  /  Double-click to edit", juce::dontSendNotification);
     hint.setFont(theme::font(11.0f));
@@ -491,13 +495,39 @@ void ChainView::applyTheme()
     content->repaint();
 }
 
+void ChainView::setLibraryEmpty(bool isEmpty)
+{
+    if (libraryEmpty == isEmpty)
+        return;
+    libraryEmpty = isEmpty;
+    if (libraryEmpty)
+    {
+        emptyTitle.setText("Set up your VST3 plugin folders", juce::dontSendNotification);
+        emptySubtitle.setText("No VST3 plugins are scanned yet. Choose where your VST plugins are installed and run a scan,\nor open a 6-character code in Zero-Load mode.",
+                              juce::dontSendNotification);
+    }
+    else
+    {
+        emptyTitle.setText("Your chain starts here", juce::dontSendNotification);
+        emptySubtitle.setText("Add an effect, open its interface, and shape your sound.\nYour plugins and settings stay together in one portable chain.",
+                              juce::dontSendNotification);
+    }
+    emptyAdd.setVisible(empty && !libraryEmpty);
+    emptySetup.setVisible(empty && libraryEmpty);
+    emptyOpenCode.setVisible(empty && libraryEmpty);
+    resized();
+    repaint();
+}
+
 void ChainView::refresh(const std::vector<PatchLinkProcessor::LoadedNode>& nodes)
 {
     empty = nodes.empty();
     content->rebuild(nodes);
     emptyTitle.setVisible(empty);
     emptySubtitle.setVisible(empty);
-    emptyAdd.setVisible(empty);
+    emptyAdd.setVisible(empty && !libraryEmpty);
+    emptySetup.setVisible(empty && libraryEmpty);
+    emptyOpenCode.setVisible(empty && libraryEmpty);
     hint.setVisible(!empty);
     clearButton.setVisible(!empty);
     resized();
@@ -517,4 +547,6 @@ void ChainView::resized()
     emptyTitle.setBounds(r.getX() + 20, centre.y - 102, r.getWidth() - 40, 36);
     emptySubtitle.setBounds(r.getX() + 20, centre.y - 56, r.getWidth() - 40, 54);
     emptyAdd.setBounds(centre.x - 102, centre.y + 20, 204, 40);
+    emptySetup.setBounds(centre.x - 186, centre.y + 20, 232, 40);
+    emptyOpenCode.setBounds(centre.x + 56, centre.y + 20, 130, 40);
 }

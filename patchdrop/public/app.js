@@ -198,12 +198,18 @@ function buildNodesFromPlugins(plugins, skipped, baseTitle, dawLabel, tuidDb = n
     if (tuidDb && tuidDb.byUniqueId) {
       let rec = (fuid && tuidDb.byFuid && tuidDb.byFuid[fuid]) ? tuidDb.byUniqueId[tuidDb.byFuid[fuid]] : null;
       if (!rec && uniqueId) rec = tuidDb.byUniqueId[uidHex];
+      if (!rec && tuidDb.byName && pluginName) {
+        const nk = pluginName.toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (nk && tuidDb.byName[nk]) rec = tuidDb.byUniqueId[tuidDb.byName[nk]];
+      }
       if (rec) {
         if (!pluginName && rec.flPlugin) pluginName = rec.flPlugin;
         if (!slotName && rec.flPlugin) slotName = rec.flPlugin;
         if (!vendor && rec.vendor) vendor = rec.vendor;
         if (!filePath && rec.file) filePath = rec.file;
         if (!reaperHash && rec.reaperHash) reaperHash = rec.reaperHash;
+        if (!fuid && rec.fuid) fuid = rec.fuid;
+        if (!tuidHex && rec.tuid) tuidHex = rec.tuid;
       }
     }
 
@@ -212,7 +218,7 @@ function buildNodesFromPlugins(plugins, skipped, baseTitle, dawLabel, tuidDb = n
       name: displayName,
       manufacturer: vendor,
       version: '',
-      format: e.isVst2 ? 'VST' : 'VST3',
+      format: 'VST3',
       fileOrId: filePath,
       identifier: (!e.isVst2 && uniqueId !== 0) ? `VST3-${displayName}-0-${uidHex}` : '',
     };
@@ -500,8 +506,8 @@ async function parseAbletonAdgInBrowser(arrayBuffer, fileName = 'Ableton Rack', 
     const bypass = manualEl ? manualEl.getAttribute('Value') === 'false' : false;
     const v3 = pd.querySelector('PluginDesc > Vst3PluginInfo');
     if (v3) {
-      const nameEl = v3.querySelector(':scope > Name') || v3.querySelector(':scope > PlugName')
-        || v3.querySelector('Vst3Preset > Name');
+      const nameEl = v3.querySelector(':scope > PlugName') || v3.querySelector(':scope > Name')
+        || v3.querySelector('Vst3Preset > PlugName') || v3.querySelector('Vst3Preset > Name');
       const plugName = (nameEl && nameEl.getAttribute('Value')) || '';
       const uidEl = v3.querySelector(':scope > Uid') || v3.querySelector('Vst3Preset > Uid');
       let fuidHex = '';
@@ -526,13 +532,30 @@ async function parseAbletonAdgInBrowser(arrayBuffer, fileName = 'Ableton Rack', 
     const v2 = pd.querySelector('PluginDesc > VstPluginInfo');
     if (v2) {
       const ne = v2.querySelector('PlugName') || v2.querySelector('Name');
-      skipped.push(((ne && ne.getAttribute('Value')) || 'VST2 Plugin') + ' (VST2)');
+      const rawName = (ne && ne.getAttribute('Value')) || '';
+      if (rawName) {
+        const cleanName = rawName.replace(/_(x64|x86)$/i, '').trim();
+        plugins.push({
+          slotName: rawName, pluginName: cleanName, vendor: '', filePath: '',
+          fuidHex: '', bypass, isVst2: true, stateBase64: '',
+        });
+      } else {
+        skipped.push('VST2 Plugin');
+      }
       continue;
     }
     const au = pd.querySelector('PluginDesc > AuPluginInfo');
     if (au) {
-      const ne = au.querySelector('Name');
-      skipped.push(((ne && ne.getAttribute('Value')) || 'Audio Unit') + ' (AU)');
+      const ne = au.querySelector('Name') || au.querySelector('PlugName');
+      const rawName = (ne && ne.getAttribute('Value')) || '';
+      if (rawName) {
+        plugins.push({
+          slotName: rawName, pluginName: rawName, vendor: '', filePath: '',
+          fuidHex: '', bypass, isVst2: true, stateBase64: '',
+        });
+      } else {
+        skipped.push('Audio Unit');
+      }
     }
   }
 

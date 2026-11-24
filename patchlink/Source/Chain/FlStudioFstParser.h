@@ -759,8 +759,18 @@ inline ParsedFst parseReaperRfxChainData(const void* rawData, size_t totalSize, 
 
             if (!isVst3)
             {
-                result.skipped.add(cleanName + " (VST2 plugin not supported in PatchLink)");
+                FstPluginEntry vst2Entry;
+                vst2Entry.isVst2 = true;
+                vst2Entry.slotName = cleanName;
+                vst2Entry.pluginName = cleanName.replace("_x64", "", true).replace("_x86", "", true).trim();
+                vst2Entry.vendor = vendor;
+                vst2Entry.filePath = fileToken;
+                vst2Entry.bypass = pendingBypass;
                 pendingBypass = false;
+                if (vst2Entry.pluginName.isNotEmpty())
+                    result.plugins.push_back(std::move(vst2Entry));
+                else
+                    result.skipped.add(cleanName + " (VST2 plugin)");
                 continue;
             }
 
@@ -924,9 +934,9 @@ inline ParsedFst parseAbletonAdgData(const void* rawData, size_t totalSize, cons
                     FstPluginEntry entry;
                     entry.bypass = bypassed;
 
-                    auto plugName = readChildValue(v3, "Name");
+                    auto plugName = readChildValue(v3, "PlugName");
                     if (plugName.isEmpty())
-                        plugName = readChildValue(v3, "PlugName");
+                        plugName = readChildValue(v3, "Name");
 
                     const auto* uidEl = v3->getChildByName("Uid");
                     const juce::XmlElement* vst3PresetEl = nullptr;
@@ -934,17 +944,27 @@ inline ParsedFst parseAbletonAdgData(const void* rawData, size_t totalSize, cons
                         vst3PresetEl = pEl->getChildByName("Vst3Preset");
 
                     if (plugName.isEmpty() && vst3PresetEl != nullptr)
-                        plugName = readChildValue(vst3PresetEl, "Name");
+                    {
+                        plugName = readChildValue(vst3PresetEl, "PlugName");
+                        if (plugName.isEmpty())
+                            plugName = readChildValue(vst3PresetEl, "Name");
+                    }
+                    if (plugName.isEmpty())
+                    {
+                        const auto fn = readChildValue(v3, "FileName");
+                        if (fn.isNotEmpty())
+                            plugName = juce::File::createFileWithoutCheckingPath(fn).getFileNameWithoutExtension();
+                    }
 
                     if (uidEl == nullptr && vst3PresetEl != nullptr)
                         uidEl = vst3PresetEl->getChildByName("Uid");
 
                     if (uidEl != nullptr)
                     {
-                        const uint32_t f0 = static_cast<uint32_t>(readChildValue(uidEl, "Fields.0").getIntValue());
-                        const uint32_t f1 = static_cast<uint32_t>(readChildValue(uidEl, "Fields.1").getIntValue());
-                        const uint32_t f2 = static_cast<uint32_t>(readChildValue(uidEl, "Fields.2").getIntValue());
-                        const uint32_t f3 = static_cast<uint32_t>(readChildValue(uidEl, "Fields.3").getIntValue());
+                        const uint32_t f0 = static_cast<uint32_t>(static_cast<int64_t>(readChildValue(uidEl, "Fields.0").getLargeIntValue()));
+                        const uint32_t f1 = static_cast<uint32_t>(static_cast<int64_t>(readChildValue(uidEl, "Fields.1").getLargeIntValue()));
+                        const uint32_t f2 = static_cast<uint32_t>(static_cast<int64_t>(readChildValue(uidEl, "Fields.2").getLargeIntValue()));
+                        const uint32_t f3 = static_cast<uint32_t>(static_cast<int64_t>(readChildValue(uidEl, "Fields.3").getLargeIntValue()));
                         entry.fuidHex = juce::String::formatted("%08X%08X%08X%08X", f0, f1, f2, f3);
                         entry.tuidHex = fuidHexToTuidHex(entry.fuidHex);
                         entry.juceUniqueId = computeJuceUniqueIdFromFuidHex(entry.fuidHex);
@@ -971,13 +991,44 @@ inline ParsedFst parseAbletonAdgData(const void* rawData, size_t totalSize, cons
                 {
                     auto n = readChildValue(v2, "PlugName");
                     if (n.isEmpty()) n = readChildValue(v2, "Name");
-                    result.skipped.add((n.isNotEmpty() ? n : "VST2 Plugin") + " (Ableton VST2 not supported)");
+                    if (n.isEmpty())
+                    {
+                        const auto p = readChildValue(v2, "Path");
+                        if (p.isNotEmpty())
+                            n = juce::File::createFileWithoutCheckingPath(p).getFileNameWithoutExtension();
+                    }
+                    if (n.isNotEmpty())
+                    {
+                        FstPluginEntry vst2Entry;
+                        vst2Entry.isVst2 = true;
+                        vst2Entry.bypass = bypassed;
+                        vst2Entry.slotName = n;
+                        vst2Entry.pluginName = n.replace("_x64", "", true).replace("_x86", "", true).replace(" (Mono)", "", true).trim();
+                        result.plugins.push_back(std::move(vst2Entry));
+                    }
+                    else
+                    {
+                        result.skipped.add("VST2 Plugin (missing plugin name)");
+                    }
                     return;
                 }
                 if (auto* au = descEl->getChildByName("AuPluginInfo"))
                 {
                     auto n = readChildValue(au, "Name");
-                    result.skipped.add((n.isNotEmpty() ? n : "Audio Unit") + " (AU preset not supported on Windows)");
+                    if (n.isEmpty()) n = readChildValue(au, "PlugName");
+                    if (n.isNotEmpty())
+                    {
+                        FstPluginEntry auEntry;
+                        auEntry.isVst2 = true; // resolve by name to local VST3
+                        auEntry.bypass = bypassed;
+                        auEntry.slotName = n;
+                        auEntry.pluginName = n;
+                        result.plugins.push_back(std::move(auEntry));
+                    }
+                    else
+                    {
+                        result.skipped.add("Audio Unit (missing plugin name)");
+                    }
                     return;
                 }
             }

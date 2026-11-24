@@ -395,83 +395,189 @@ static juce::String normalizePluginLookupKey(const juce::String& text)
 
 bool PatchLinkProcessor::resolvePluginDescription(int uniqueId, const juce::String& identifier,
                                                   const juce::String& fileOrId, const juce::String& name,
-                                                  const juce::String& format, const juce::String& slotName,
-                                                  juce::PluginDescription& out) const
+                                                  const juce::String& rawFormat, const juce::String& slotName,
+                                                  juce::PluginDescription& out)
 {
-    const auto types = knownList.getTypes();
-
-    if (identifier.isNotEmpty())
+    juce::String format = rawFormat;
+    if (format.equalsIgnoreCase("VST") || format.equalsIgnoreCase("VST2")
+#if JUCE_WINDOWS
+        || format.equalsIgnoreCase("AudioUnit") || format.equalsIgnoreCase("AU")
+#endif
+    )
     {
-        for (const auto& t : types)
-            if (t.createIdentifierString() == identifier) { out = t; return true; }
+        format = "VST3";
     }
 
-    if (uniqueId != 0)
-    {
-        for (const auto& t : types)
-            if (t.uniqueId == uniqueId && (format.isEmpty() || t.pluginFormatName.equalsIgnoreCase(format)))
-                { out = t; return true; }
-        for (const auto& t : types)
-            if (t.uniqueId == uniqueId) { out = t; return true; }
-    }
-
-    if (fileOrId.isNotEmpty())
-    {
-        int fileMatches = 0;
-        juce::PluginDescription singleMatch;
-        const auto normName = normalizePluginLookupKey(name);
-        const auto normSlot = normalizePluginLookupKey(slotName);
-        const bool isLeafOnly = !fileOrId.containsAnyOf("\\/");
-        for (const auto& t : types)
+    auto matchInList = [&](const juce::Array<juce::PluginDescription>& types) -> bool {
+        if (identifier.isNotEmpty())
         {
-            const bool fileMatchesCandidate =
-                t.fileOrIdentifier == fileOrId || t.fileOrIdentifier.equalsIgnoreCase(fileOrId)
-                || (isLeafOnly && juce::File::createFileWithoutCheckingPath(t.fileOrIdentifier).getFileName().equalsIgnoreCase(fileOrId));
-            if (fileMatchesCandidate)
+            for (const auto& t : types)
+                if (t.createIdentifierString() == identifier) { out = t; return true; }
+        }
+
+        if (uniqueId != 0)
+        {
+            for (const auto& t : types)
+                if (t.uniqueId == uniqueId && (format.isEmpty() || t.pluginFormatName.equalsIgnoreCase(format)))
+                    { out = t; return true; }
+            for (const auto& t : types)
+                if (t.uniqueId == uniqueId) { out = t; return true; }
+        }
+
+        if (fileOrId.isNotEmpty())
+        {
+            int fileMatches = 0;
+            juce::PluginDescription singleMatch;
+            const auto normName = normalizePluginLookupKey(name);
+            const auto normSlot = normalizePluginLookupKey(slotName);
+            const auto leafFileName = juce::File::createFileWithoutCheckingPath(fileOrId).getFileName();
+            for (const auto& t : types)
+            {
+                const auto tLeaf = juce::File::createFileWithoutCheckingPath(t.fileOrIdentifier).getFileName();
+                const bool fileMatchesCandidate =
+                    t.fileOrIdentifier == fileOrId || t.fileOrIdentifier.equalsIgnoreCase(fileOrId)
+                    || (leafFileName.isNotEmpty() && tLeaf.equalsIgnoreCase(leafFileName));
+                if (fileMatchesCandidate)
+                {
+                    if (format.isNotEmpty() && !t.pluginFormatName.equalsIgnoreCase(format))
+                        continue;
+                    const auto tn = normalizePluginLookupKey(t.name);
+                    const auto tvn = normalizePluginLookupKey(t.manufacturerName + " " + t.name);
+                    if ((normSlot.isNotEmpty() && (tn == normSlot || tvn == normSlot))
+                        || (normName.isNotEmpty() && (tn == normName || tvn == normName)))
+                    {
+                        out = t;
+                        return true;
+                    }
+                    singleMatch = t;
+                    ++fileMatches;
+                }
+            }
+            if (fileMatches == 1)
+            {
+                out = singleMatch;
+                return true;
+            }
+        }
+
+        juce::StringArray candidates;
+        if (slotName.isNotEmpty()) candidates.add(slotName);
+        if (name.isNotEmpty() && !candidates.contains(name)) candidates.add(name);
+
+        for (const auto& candidate : candidates)
+        {
+            for (const auto& t : types)
+                if (t.name.equalsIgnoreCase(candidate) && (format.isEmpty() || t.pluginFormatName.equalsIgnoreCase(format)))
+                    { out = t; return true; }
+
+            const auto normCandidate = normalizePluginLookupKey(candidate);
+            if (normCandidate.isEmpty()) continue;
+
+            for (const auto& t : types)
             {
                 if (format.isNotEmpty() && !t.pluginFormatName.equalsIgnoreCase(format))
                     continue;
-                const auto tn = normalizePluginLookupKey(t.name);
-                const auto tvn = normalizePluginLookupKey(t.manufacturerName + " " + t.name);
-                if ((normSlot.isNotEmpty() && (tn == normSlot || tvn == normSlot))
-                    || (normName.isNotEmpty() && (tn == normName || tvn == normName)))
+                if (normalizePluginLookupKey(t.name) == normCandidate
+                    || normalizePluginLookupKey(t.manufacturerName + " " + t.name) == normCandidate)
                 {
                     out = t;
                     return true;
                 }
-                singleMatch = t;
-                ++fileMatches;
             }
         }
-        if (fileMatches == 1)
-        {
-            out = singleMatch;
-            return true;
-        }
-    }
+        return false;
+    };
 
-    juce::StringArray candidates;
-    if (slotName.isNotEmpty()) candidates.add(slotName);
-    if (name.isNotEmpty() && !candidates.contains(name)) candidates.add(name);
+    if (matchInList(knownList.getTypes()))
+        return true;
 
-    for (const auto& candidate : candidates)
+    // On-disk VST3 fallback: if the user hasn't scanned yet (or added a new plugin),
+    // locate matching .vst3 bundles in configured folders so valid VST3s still load immediately.
+    if (format.isEmpty() || format.equalsIgnoreCase("VST3"))
     {
-        for (const auto& t : types)
-            if (t.name.equalsIgnoreCase(candidate) && (format.isEmpty() || t.pluginFormatName.equalsIgnoreCase(format)))
-                { out = t; return true; }
-
-        const auto normCandidate = normalizePluginLookupKey(candidate);
-        if (normCandidate.isEmpty()) continue;
-
-        for (const auto& t : types)
+        juce::AudioPluginFormat* vst3Fmt = nullptr;
+        for (int i = 0; i < formatManager.getNumFormats(); ++i)
         {
-            if (format.isNotEmpty() && !t.pluginFormatName.equalsIgnoreCase(format))
-                continue;
-            if (normalizePluginLookupKey(t.name) == normCandidate
-                || normalizePluginLookupKey(t.manufacturerName + " " + t.name) == normCandidate)
+            if (auto* fmt = formatManager.getFormat(i))
+                if (fmt->getName().equalsIgnoreCase("VST3"))
+                    { vst3Fmt = fmt; break; }
+        }
+
+        if (vst3Fmt != nullptr)
+        {
+            juce::StringArray targetKeys;
+            auto addKey = [&](const juce::String& raw) {
+                auto cleaned = raw.replace("_x64", "", true).replace("_x86", "", true);
+                const auto k = normalizePluginLookupKey(cleaned);
+                if (k.length() >= 3 && !targetKeys.contains(k))
+                    targetKeys.add(k);
+            };
+            if (fileOrId.isNotEmpty())
+                addKey(juce::File::createFileWithoutCheckingPath(fileOrId).getFileNameWithoutExtension());
+            addKey(name);
+            addKey(slotName);
+
+            if (!targetKeys.isEmpty())
             {
-                out = t;
-                return true;
+                juce::StringArray dirs;
+                for (const auto& src : scanManager.getSources())
+                    if (src.enabled && src.path.isNotEmpty())
+                        dirs.addIfNotAlreadyThere(src.path);
+                for (const auto& sf : daws::standardFolders())
+                    if (sf.exists && sf.path.isNotEmpty())
+                        dirs.addIfNotAlreadyThere(sf.path);
+
+                juce::Array<juce::File> candidateBundles;
+                for (const auto& d : dirs)
+                {
+                    const juce::File rootDir(d);
+                    if (!rootDir.isDirectory()) continue;
+                    for (const auto& entry : juce::RangedDirectoryIterator(
+                             rootDir, true, "*.vst3", juce::File::findFilesAndDirectories))
+                    {
+                        const auto f = entry.getFile();
+                        if (!f.getFileName().endsWithIgnoreCase(".vst3"))
+                            continue;
+                        if (f.getFileName().containsIgnoreCase("WaveShell"))
+                            continue;
+                        const auto stemKey = normalizePluginLookupKey(f.getFileNameWithoutExtension());
+                        if (stemKey.isEmpty())
+                            continue;
+                        for (const auto& tk : targetKeys)
+                        {
+                            if (stemKey == tk
+                                || (stemKey.length() >= 4 && tk.startsWith(stemKey))
+                                || (tk.length() >= 4 && stemKey.startsWith(tk)))
+                            {
+                                candidateBundles.addIfNotAlreadyThere(f);
+                                break;
+                            }
+                        }
+                        if (candidateBundles.size() >= 6)
+                            break;
+                    }
+                    if (candidateBundles.size() >= 6)
+                        break;
+                }
+
+                juce::OwnedArray<juce::PluginDescription> discovered;
+                for (const auto& bundle : candidateBundles)
+                    vst3Fmt->findAllTypesForFile(discovered, bundle.getFullPathName());
+
+                if (!discovered.isEmpty())
+                {
+                    juce::Array<juce::PluginDescription> added;
+                    for (auto* d : discovered)
+                    {
+                        if (d != nullptr)
+                        {
+                            knownList.addType(*d);
+                            added.add(*d);
+                        }
+                    }
+                    if (matchInList(added))
+                        return true;
+                }
             }
         }
     }
@@ -484,14 +590,15 @@ void PatchLinkProcessor::loadFromVarAsync(const juce::var& root,
 {
     juce::String err;
     if (!loadFromVarSyncLayout(root, err)) { if (done) done({}, err); return; }
-    if (auto* object = root.getDynamicObject())
+    auto* rootObj = root.getDynamicObject();
+    if (rootObj == nullptr) { if (done) done({}, "Invalid patch object"); return; }
     {
-        const auto name = object->getProperty("name").toString();
+        const auto name = rootObj->getProperty("name").toString();
         setPatchName(name.isNotEmpty() ? name : "Untitled chain");
     }
 
     auto state = std::make_shared<PatchLoadState>();
-    if (auto* jnodes = root.getDynamicObject()->getProperty("nodes").getArray())
+    if (auto* jnodes = rootObj->getProperty("nodes").getArray())
     {
         for (auto& jn : *jnodes)
         {
@@ -537,7 +644,7 @@ void PatchLinkProcessor::loadFromVarAsync(const juce::var& root,
             state->nodes.push_back(spec);
         }
     }
-    if (auto* jw = root.getDynamicObject()->getProperty("connections").getArray())
+    if (auto* jw = rootObj->getProperty("connections").getArray())
         for (auto& j : *jw)
             if (auto* co = j.getDynamicObject())
                 state->wires.emplace_back((int)co->getProperty("src"), (int)co->getProperty("srcCh"),
@@ -732,8 +839,10 @@ void PatchLinkProcessor::importParsedFstAsync(const flstudio::ParsedFst& parsed,
         const int ny = 200 + (idx / 4) * 140;
         auto nodeVar = chainformat::makeNodeVar(desc, entry.isVst2 ? juce::String{} : entry.stateBase64,
                                                 100 + idx, nx, ny, entry.bypass);
-        nodeVar.getDynamicObject()->setProperty("order", idx);
-        if (auto* ids = nodeVar.getDynamicObject()->getProperty("ids").getDynamicObject())
+        if (auto* nvObj = nodeVar.getDynamicObject())
+        {
+            nvObj->setProperty("order", idx);
+            if (auto* ids = nvObj->getProperty("ids").getDynamicObject())
         {
             if (desc.uniqueId != 0)
                 ids->setProperty("uniqueId", desc.uniqueId);
@@ -743,8 +852,9 @@ void PatchLinkProcessor::importParsedFstAsync(const flstudio::ParsedFst& parsed,
                 ids->setProperty("fuidHex", entry.fuidHex);
             if (entry.reaperHash != 0)
                 ids->setProperty("reaperHash", static_cast<juce::int64>(entry.reaperHash));
-            if (entry.pluginName.isNotEmpty())
-                ids->setProperty("flPluginName", entry.pluginName);
+                if (entry.pluginName.isNotEmpty())
+                    ids->setProperty("flPluginName", entry.pluginName);
+            }
         }
         jnodes.add(nodeVar);
         ++idx;

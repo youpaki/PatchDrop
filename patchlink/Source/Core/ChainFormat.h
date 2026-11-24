@@ -52,7 +52,10 @@ inline Portability scoreNode(const juce::String& format, const juce::String& sta
 inline juce::StringArray manifestLines(const juce::var& chainRoot)
 {
     juce::StringArray out;
-    if (auto* arr = chainRoot.getDynamicObject()->getProperty("nodes").getArray())
+    auto* rootObj = chainRoot.getDynamicObject();
+    if (rootObj == nullptr)
+        return out;
+    if (auto* arr = rootObj->getProperty("nodes").getArray())
         for (auto& n : *arr)
             if (auto* o = n.getDynamicObject())
                 if (auto* ids = o->getProperty("ids").getDynamicObject())
@@ -69,8 +72,9 @@ inline juce::StringArray manifestLines(const juce::var& chainRoot)
 
 inline int formatVersionOf(const juce::var& root)
 {
-    if (!root.isObject()) return -1;
-    auto v = root.getDynamicObject()->getProperty("chainFormat");
+    auto* rootObj = root.getDynamicObject();
+    if (rootObj == nullptr) return -1;
+    auto v = rootObj->getProperty("chainFormat");
     if (v.isVoid()) return 1; // v1 files have "version" instead
     return (int)v;
 }

@@ -82,7 +82,7 @@ public:
     bool resolvePluginDescription(int uniqueId, const juce::String& identifier,
                                   const juce::String& fileOrId, const juce::String& name,
                                   const juce::String& format, const juce::String& slotName,
-                                  juce::PluginDescription& out) const;
+                                  juce::PluginDescription& out);
     bool exportPatch(const juce::File& file, juce::String& err);
     void importPatchAsync(const juce::File& file,
                           std::function<void(juce::StringArray missing, juce::String err)> done);

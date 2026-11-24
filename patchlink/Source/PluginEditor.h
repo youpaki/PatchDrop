@@ -94,6 +94,7 @@ private:
     void loadPatchIntoProcessor(const juce::var& patch, const juce::String& label);
     void showEmptyDropModal(const juce::var& stagedVar, const juce::String& label, const juce::StringArray& notes,
                             std::function<void()> loadIntoPatchLinkFn);
+    void showFirstRunSetupModal();
 
     void openPluginBrowser(int x, int y);
     void openShareDialog(bool publish);

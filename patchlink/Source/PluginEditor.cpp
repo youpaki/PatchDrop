@@ -113,6 +113,8 @@ PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& processor)
     chainView.onDragSlot = [this](int slotIdx) { startExternalDawDrag({}, slotIdx); };
     chainView.onExportSlot = [this](int slotIdx) { showFormatPickerMenu({}, slotIdx, false); };
     chainView.onAdd = [this] { addButton.triggerClick(); };
+    chainView.onOpenLibrary = [this] { openScanDialog(); };
+    chainView.onOpenCode = [this] { openShareDialog(false); };
     chainView.onClear = [this] { confirmClearChain(); };
     addAndMakeVisible(chainView);
 
@@ -142,6 +144,20 @@ PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& processor)
     proc.getScanManager().addChangeListener(this);
     setMode(proc.preferredMode == 2 ? Mode::patcher : Mode::simple);
     setStatus("Ready  ·  " + (hostDetection.isStandalone ? juce::String("Standalone") : ("Host: " + hostDetection.hostName)));
+
+    if (!proc.getScanManager().hasCompletedSetup()
+        && proc.getKnownList().getNumTypes() == 0
+        && !proc.getScanManager().isScanning())
+    {
+        juce::MessageManager::callAsync([safe = juce::Component::SafePointer<PatchLinkEditor>(this)] {
+            if (safe && safe->overlay == nullptr
+                && !safe->proc.getScanManager().hasCompletedSetup()
+                && safe->proc.getKnownList().getNumTypes() == 0)
+            {
+                safe->showFirstRunSetupModal();
+            }
+        });
+    }
 }
 
 PatchLinkEditor::~PatchLinkEditor()
@@ -223,13 +239,15 @@ void PatchLinkEditor::refreshViews()
         stagedPatchTitle.clear();
     }
 
+    chainView.setLibraryEmpty(proc.getKnownList().getNumTypes() == 0);
     chainView.refresh(nodes);
     patcherView.refresh(nodes, proc.getWires());
 
     int stagedCount = 0;
-    if (nodes.empty() && stagedPatchVar.isObject())
-        if (auto* arr = stagedPatchVar.getDynamicObject()->getProperty("nodes").getArray())
-            stagedCount = arr->size();
+    if (nodes.empty())
+        if (auto* stObj = stagedPatchVar.getDynamicObject())
+            if (auto* arr = stObj->getProperty("nodes").getArray())
+                stagedCount = arr->size();
 
     if (!patchName.hasKeyboardFocus(true))
     {
@@ -620,10 +638,23 @@ void PatchLinkEditor::showMissingPlugins(const juce::StringArray& missing, const
         showToast("Everything in this chain was restored");
         return;
     }
-    juce::String message = "The available plugins and settings were restored.\n\nInstall or scan these missing plugins, then reopen the chain:\n\n- "
+    juce::String extraHint = proc.getKnownList().getNumTypes() == 0
+        ? "\n\nTip: Your VST3 library has not been scanned yet! Click 'Choose VST Folders / Rescan' below to pick your VST folders and scan."
+        : "\n\nIf these plugins are installed in a custom folder, click 'Choose VST Folders / Rescan' to add that folder and rescan.";
+    juce::String message = "The available plugins and settings were restored.\n\nCould not load or skipped:\n\n- "
                          + missing.joinIntoString("\n- ")
-                         + "\n\nYour patch file keeps their original settings.";
-    juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::InfoIcon, title, message);
+                         + extraHint;
+    juce::AlertWindow::showOkCancelBox(
+        juce::AlertWindow::InfoIcon,
+        title,
+        message,
+        "Choose VST Folders / Rescan",
+        "Close",
+        this,
+        juce::ModalCallbackFunction::create([safe = juce::Component::SafePointer<PatchLinkEditor>(this)](int res) {
+            if (safe && res != 0)
+                safe->openScanDialog();
+        }));
 }
 
 namespace
@@ -1204,7 +1235,155 @@ private:
         manifest.setBounds(r);
     }
 };
+
+class FirstRunSetupModal final : public ModalOverlay
+{
+public:
+    explicit FirstRunSetupModal(PluginScanManager& scanMgr) : mgr(scanMgr)
+    {
+        title.setText("Welcome to PatchLink — Choose your VST folders", juce::dontSendNotification);
+        title.setFont(theme::font(20.0f, true));
+        subtitle.setText("Select where your third-party VST3 plugins are installed so PatchLink can load shared chains and effects. You can add custom folders anytime from the Library button.",
+                         juce::dontSendNotification);
+        subtitle.setFont(theme::font(12.5f));
+        subtitle.setColour(juce::Label::textColourId, theme::muted);
+        addAndMakeVisible(title);
+        addAndMakeVisible(subtitle);
+
+        closeButton.setTooltip("Skip for now (Esc)");
+        closeButton.onClick = [this] { if (onDismiss) onDismiss(); };
+        addAndMakeVisible(closeButton);
+
+        caption.setText("DETECTED & CUSTOM VST FOLDERS", juce::dontSendNotification);
+        caption.setFont(theme::font(11.0f, true));
+        caption.setColour(juce::Label::textColourId, theme::muted);
+        addAndMakeVisible(caption);
+
+        folderList.setMultiLine(true);
+        folderList.setReadOnly(true);
+        folderList.setFont(theme::mono(11.0f));
+        addAndMakeVisible(folderList);
+        refreshFolders();
+
+        addFolderBtn.setTooltip("Browse and add a custom VST3 folder (e.g. D:\\VST3 or C:\\Program Files\\Steinberg\\VSTPlugins)");
+        manageBtn.setTooltip("Open the full Library Manager to toggle or remove individual paths");
+        skipBtn.setTooltip("Skip scanning for now (you can still convert chains in Zero-Load mode)");
+        scanNowBtn.setTooltip("Scan all enabled folders above and index your VST3 plugins");
+
+        addFolderBtn.onClick = [this] { pickFolder(); };
+        manageBtn.onClick = [this] { if (onManageFolders) onManageFolders(); };
+        skipBtn.onClick = [this] { if (onDismiss) onDismiss(); };
+        scanNowBtn.onClick = [this] { if (onScanNow) onScanNow(); };
+
+        addAndMakeVisible(addFolderBtn);
+        addAndMakeVisible(manageBtn);
+        addAndMakeVisible(skipBtn);
+        addAndMakeVisible(scanNowBtn);
+    }
+
+    juce::Rectangle<int> getCardBounds() const override
+    {
+        const int w = juce::jmin(700, getWidth() - 48);
+        const int h = juce::jmin(460, getHeight() - 48);
+        return juce::Rectangle<int>(w, h).withCentre(getLocalBounds().getCentre());
+    }
+
+    void refreshFolders()
+    {
+        juce::StringArray lines;
+        for (const auto& s : mgr.getSources())
+        {
+            lines.add(juce::String(s.enabled ? "[ON]  " : "[OFF] ")
+                      + s.path
+                      + (s.origin.isNotEmpty() ? ("   (" + s.origin + ")") : ""));
+        }
+        folderList.setText(lines.isEmpty()
+                               ? "No folders configured yet. Click '+ Choose VST Folder...' below to add your VST3 directory."
+                               : lines.joinIntoString("\n"));
+    }
+
+    std::function<void()> onManageFolders;
+    std::function<void()> onScanNow;
+
+private:
+    PluginScanManager& mgr;
+    juce::Label title, subtitle, caption;
+    juce::TextEditor folderList;
+    PlButton closeButton { "", Icon::close, PlButton::Style::ghost };
+    PlButton addFolderBtn { "+ Choose VST Folder...", Icon::plus, PlButton::Style::secondary };
+    PlButton manageBtn { "Edit paths...", Icon::library, PlButton::Style::ghost };
+    PlButton skipBtn { "Skip for now", Icon::none, PlButton::Style::ghost };
+    PlButton scanNowBtn { "Scan Plugins Now", Icon::library, PlButton::Style::primary };
+
+    void pickFolder()
+    {
+        auto chooser = std::make_shared<juce::FileChooser>("Select a VST3 plugin folder");
+        chooser->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectDirectories,
+            [safe = juce::Component::SafePointer<FirstRunSetupModal>(this), chooser](const juce::FileChooser&) {
+                if (!safe) return;
+                const auto dir = chooser->getResult();
+                if (!dir.isDirectory()) return;
+                safe->mgr.addSource({ dir.getFullPathName(), "Custom VST folder", true, true });
+                safe->refreshFolders();
+            });
+    }
+
+    void layoutCard(juce::Rectangle<int> card) override
+    {
+        auto r = card.reduced(24, 20);
+        closeButton.setBounds(r.getRight() - 34, r.getY(), 34, 34);
+        title.setBounds(r.removeFromTop(32).withTrimmedRight(44));
+        subtitle.setBounds(r.removeFromTop(38));
+        r.removeFromTop(10);
+
+        auto footer = r.removeFromBottom(40);
+        scanNowBtn.setBounds(footer.removeFromRight(164).reduced(0, 2));
+        footer.removeFromRight(8);
+        skipBtn.setBounds(footer.removeFromRight(104).reduced(0, 2));
+        addFolderBtn.setBounds(footer.removeFromLeft(182).reduced(0, 2));
+        footer.removeFromLeft(8);
+        manageBtn.setBounds(footer.removeFromLeft(110).reduced(0, 2));
+        r.removeFromBottom(12);
+
+        caption.setBounds(r.removeFromTop(20));
+        r.removeFromTop(4);
+        folderList.setBounds(r);
+    }
+};
 } // namespace
+
+void PatchLinkEditor::showFirstRunSetupModal()
+{
+    dismissOverlay();
+    auto* modal = new FirstRunSetupModal(proc.getScanManager());
+    overlay.reset(modal);
+
+    modal->onDismiss = [safe = juce::Component::SafePointer<PatchLinkEditor>(this)] {
+        if (!safe) return;
+        safe->proc.getScanManager().setSetupCompleted(true);
+        safe->dismissOverlay();
+    };
+
+    modal->onManageFolders = [safe = juce::Component::SafePointer<PatchLinkEditor>(this)] {
+        if (!safe) return;
+        safe->proc.getScanManager().setSetupCompleted(true);
+        safe->dismissOverlay();
+        safe->openScanDialog();
+    };
+
+    modal->onScanNow = [safe = juce::Component::SafePointer<PatchLinkEditor>(this)] {
+        if (!safe) return;
+        safe->proc.getScanManager().setSetupCompleted(true);
+        safe->dismissOverlay();
+        safe->scanWindow.reset();
+        safe->proc.getScanManager().startScan(false);
+        safe->openScanDialog();
+    };
+
+    modal->setBounds(getLocalBounds());
+    addAndMakeVisible(modal);
+    modal->grabKeyboardFocus();
+}
 
 void PatchLinkEditor::showEmptyDropModal(const juce::var& stagedVar,
                                          const juce::String& label,

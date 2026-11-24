@@ -76,6 +76,8 @@ inline juce::Array<DawFolder> standardFolders()
 #if JUCE_WINDOWS
     addUniqueFolder(out, "C:\\Program Files\\Common Files\\VST3", "VST3 system", true);
     addUniqueFolder(out, "C:\\Program Files (x86)\\Common Files\\VST3", "VST3 32-bit", true);
+    addUniqueFolder(out, "C:\\Program Files\\Steinberg\\VSTPlugins", "Steinberg VST folder", true);
+    addUniqueFolder(out, "C:\\Program Files\\VSTPlugins", "Common VST folder", true);
     {
         // Per-user VST3 lives under %LOCALAPPDATA% (Roaming is wrong — JUCE brief).
         DWORD need = ExpandEnvironmentStringsA("%LOCALAPPDATA%\\Programs\\Common\\VST3", nullptr, 0);
@@ -189,7 +191,7 @@ inline void readReaperPaths(juce::Array<DawFolder>& out)
                     addUniqueFolder(out, p, "REAPER VST path");
 }
 
-// Ableton: PluginScanner.txt is plain text ("... scanning plugins in \"<path>\" (user)").
+// Ableton: PluginScanner.txt is plain text ("... scanning plugins in \"<path>\" (custom)" or "(user)").
 // Prefer it over the binary Preferences.cfg.
 inline void readAbletonPaths(juce::Array<DawFolder>& out)
 {
@@ -198,7 +200,9 @@ inline void readAbletonPaths(juce::Array<DawFolder>& out)
     if (!prefsRoot.isDirectory()) return;
     juce::Array<juce::File> liveDirs;
     prefsRoot.findChildFiles(liveDirs, juce::File::findDirectories, false, "Live *");
-    // newest version dir first is nice-to-have; order from the FS is fine.
+    std::sort(liveDirs.begin(), liveDirs.end(), [](const juce::File& a, const juce::File& b) {
+        return a.getFileName().compareNatural(b.getFileName()) > 0;
+    });
     for (auto d : liveDirs)
     {
         juce::File log = d.getChildFile("Preferences").getChildFile("PluginScanner.txt");
@@ -209,12 +213,10 @@ inline void readAbletonPaths(juce::Array<DawFolder>& out)
             auto q2 = line.lastIndexOfChar('"');
             if (q1 >= 0 && q2 > q1)
             {
-                // Only the user's CUSTOM folders matter - system scans are just noise.
-                if (line.contains("(user)"))
+                if (line.containsIgnoreCase("(custom)") || line.containsIgnoreCase("(user)"))
                     addUniqueFolder(out, line.substring(q1 + 1, q2), "Ableton custom folder", true);
             }
         }
-        if (!out.isEmpty()) return; // newest log with data wins
     }
 }
 

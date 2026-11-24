@@ -100,11 +100,18 @@ juce::File PluginScanManager::getPedalFile()
     return getSettingsDir().getChildFile("RecentlyCrashedPluginsList");
 }
 
+void PluginScanManager::setSetupCompleted(bool completed)
+{
+    setupCompleted.set(completed ? 1 : 0);
+    saveSettings();
+}
+
 void PluginScanManager::saveSettings()
 {
     auto dir = getSettingsDir();
     dir.createDirectory();
     auto* root = new juce::XmlElement("PatchLinkScan");
+    root->setAttribute("setupCompleted", setupCompleted.get() != 0);
     {
         juce::ScopedLock l(stateLock);
         auto* s = new juce::XmlElement("Sources");
@@ -131,6 +138,7 @@ void PluginScanManager::loadSettings()
     if (!file.existsAsFile()) return;
     if (auto xml = juce::parseXML(file.loadFileAsString()))
     {
+        bool markedDone = xml->getBoolAttribute("setupCompleted", false);
         std::vector<Source> loaded;
         if (auto* s = xml->getChildByName("Sources"))
             for (auto* e : s->getChildIterator())
@@ -143,6 +151,8 @@ void PluginScanManager::loadSettings()
         // plugin list child is the element that isn't "Sources"
         for (auto* child : xml->getChildIterator())
             if (!child->hasTagName("Sources")) { knownList.recreateFromXml(*child); break; }
+        if (markedDone || knownList.getNumTypes() > 0)
+            setupCompleted.set(1);
     }
     // Crash durability: blacklist whatever died mid-scan last time, then clear the pedal.
     juce::PluginDirectoryScanner::applyBlacklistingsFromDeadMansPedal(knownList, getPedalFile());
@@ -207,6 +217,7 @@ juce::ThreadPoolJob::JobStatus PluginScanManager::ScanJob::runJob()
 
     o.scanning.set(0);
     o.progress.set(1.0f);
+    o.setupCompleted.set(1);
     o.saveSettings();
     o.sendChangeMessage(); // picked up by UI (message thread)
     return juce::ThreadPoolJob::jobHasFinished;

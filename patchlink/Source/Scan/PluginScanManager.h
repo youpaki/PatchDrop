@@ -42,6 +42,9 @@ public:
     void saveSettings();
     void loadSettings(); // sources + plugin list; call once at startup
 
+    bool hasCompletedSetup() const { return setupCompleted.get() != 0; }
+    void setSetupCompleted(bool completed = true);
+
     juce::KnownPluginList& getList() { return knownList; }
 
 private:
@@ -64,6 +67,7 @@ private:
     juce::String currentFile;
     juce::StringArray failedFiles;
     juce::Atomic<int> cancelFlag { 0 };
+    juce::Atomic<int> setupCompleted { 0 };
 
     friend struct ScanJob;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginScanManager)
