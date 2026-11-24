@@ -338,7 +338,7 @@ function parseFstBufferInBrowser(arrayBuffer, fileName = 'FL Chain', tuidDb = nu
             }
           }
           if (entry.filePath.toLowerCase().endsWith('.dll')) entry.isVst2 = true;
-          if (entry.pluginName || entry.slotName || entry.filePath) plugins.push(entry);
+          if (entry.pluginName || entry.slotName || entry.filePath || entry.tuidHex || entry.uniqueId) plugins.push(entry);
         } else if (curPlugin && curPlugin.toLowerCase() !== 'fruity wrapper') {
           skipped.push(curPlugin + ' (FL native)');
         }
@@ -489,6 +489,59 @@ async function gunzipIfNeededBytes(arrayBuffer) {
   return bytes;
 }
 
+function xmlChild(parent, tagName) {
+  if (!parent || !parent.children) return null;
+  for (let i = 0; i < parent.children.length; i++) {
+    if (parent.children[i].tagName === tagName) return parent.children[i];
+  }
+  return null;
+}
+
+function xmlAttrVal(parent, tagName) {
+  const el = xmlChild(parent, tagName);
+  return el ? (el.getAttribute('Value') || '').trim() : '';
+}
+
+function inferVst3NameFromFuidAndState(fuidHex, comp, cont) {
+  const u = String(fuidHex || '').toUpperCase();
+  const contHead = cont && cont.length >= 4 ? String.fromCharCode(cont[0], cont[1], cont[2], cont[3]) : '';
+  if (u === 'ED57BD725C60467EA64DD2F400758B6F' || contHead === 'FQ4p') return 'FabFilter Pro-Q 4';
+  if (u === '72C4DB717A4D459AB97E51745D84B39D' || contHead === 'FQ3p') return 'FabFilter Pro-Q 3';
+  if (u === 'ABCDEF019182FAEB416E747256727662') return 'Vocal Reverb';
+  if (u === '565354415438314175746F2D54756E65') return 'Auto-Tune';
+  if (u.length === 32 && u.startsWith('565354')) {
+    const b = hexToBytes(u);
+    let s = '';
+    for (let i = 7; i < 16 && b[i] !== 0; i++) {
+      if (b[i] >= 32 && b[i] < 127) s += String.fromCharCode(b[i]);
+      else break;
+    }
+    if (s.trim().length >= 3) return s.trim();
+  }
+  if (u.length === 32 && u.startsWith('ABCDEF019182FAEB')) {
+    const b = hexToBytes(u);
+    const ascii = (from, to) => Array.from(b.subarray(from, to)).every((c) => c >= 32 && c < 127)
+      ? String.fromCharCode(...b.subarray(from, to)) : '';
+    const v = ascii(8, 12), p = ascii(12, 16);
+    if (v && p) return `${v} ${p}`;
+  }
+  return '';
+}
+
+function inferVst2NameFromUniqueId(uidStr) {
+  const u = (parseInt(uidStr || '0', 10) >>> 0);
+  if (!u) return '';
+  const bytes = [(u >>> 24) & 255, (u >>> 16) & 255, (u >>> 8) & 255, u & 255];
+  if (!bytes.every((c) => c >= 32 && c < 127)) return '';
+  const code = String.fromCharCode(...bytes);
+  const map = {
+    FQ22: 'FabFilter Pro-Q 2', FQ33: 'FabFilter Pro-Q 3', FQ44: 'FabFilter Pro-Q 4',
+    FC22: 'FabFilter Pro-C 2', FL22: 'FabFilter Pro-L 2', FR11: 'FabFilter Pro-R',
+    FD22: 'FabFilter Pro-DS', FM22: 'FabFilter Pro-MB', FS22: 'FabFilter Saturn 2',
+  };
+  return map[code] || '';
+}
+
 async function parseAbletonAdgInBrowser(arrayBuffer, fileName = 'Ableton Rack', tuidDb = null) {
   const xmlBytes = await gunzipIfNeededBytes(arrayBuffer);
   const xmlText = new TextDecoder('utf-8').decode(xmlBytes);
@@ -500,38 +553,41 @@ async function parseAbletonAdgInBrowser(arrayBuffer, fileName = 'Ableton Rack', 
   const plugins = [];
   const skipped = [];
 
-  for (const pd of doc.querySelectorAll('PluginDevice')) {
-    const manualEl = pd.querySelector('On > Manual');
-    const bypass = manualEl ? manualEl.getAttribute('Value') === 'false' : false;
-    const v3 = pd.querySelector('PluginDesc > Vst3PluginInfo');
+  for (const pd of doc.getElementsByTagName('PluginDevice')) {
+    const onEl = xmlChild(pd, 'On');
+    const bypass = onEl ? xmlAttrVal(onEl, 'Manual').toLowerCase() === 'false' : false;
+    const descEl = xmlChild(pd, 'PluginDesc');
+    const v3 = xmlChild(descEl, 'Vst3PluginInfo');
     if (v3) {
-      const nameEl = v3.querySelector(':scope > PlugName') || v3.querySelector(':scope > Name')
-        || v3.querySelector('Vst3Preset > PlugName') || v3.querySelector('Vst3Preset > Name');
-      const plugName = (nameEl && nameEl.getAttribute('Value')) || '';
-      const uidEl = v3.querySelector(':scope > Uid') || v3.querySelector('Vst3Preset > Uid');
+      const presetWrap = xmlChild(v3, 'Preset');
+      const vp = xmlChild(presetWrap, 'Vst3Preset');
+      const plugName = xmlAttrVal(v3, 'PlugName') || xmlAttrVal(v3, 'Name')
+        || xmlAttrVal(vp, 'PlugName') || xmlAttrVal(vp, 'Name');
+      const uidEl = xmlChild(v3, 'Uid') || xmlChild(vp, 'Uid');
       let fuidHex = '';
       if (uidEl) {
         fuidHex = [0, 1, 2, 3].map((k) => {
-          const fel = uidEl.querySelector(`Fields\\.${k}`);
-          const v = fel ? (parseInt(fel.getAttribute('Value') || '0', 10) >>> 0) : 0;
+          const val = xmlAttrVal(uidEl, `Fields.${k}`);
+          const v = val ? (parseInt(val, 10) >>> 0) : 0;
           return v.toString(16).padStart(8, '0').toUpperCase();
         }).join('');
       }
-      const vp = v3.querySelector('Preset > Vst3Preset');
-      const psEl = vp && vp.querySelector('ProcessorState');
-      const csEl = vp && vp.querySelector('ControllerState');
+      const psEl = xmlChild(vp, 'ProcessorState');
+      const csEl = xmlChild(vp, 'ControllerState');
       const comp = psEl ? hexToBytes(psEl.textContent) : new Uint8Array(0);
       const cont = csEl ? hexToBytes(csEl.textContent) : new Uint8Array(0);
+      const hasTuidMatch = !plugName && tuidDb && tuidDb.byFuid && fuidHex && tuidDb.byFuid[fuidHex];
+      const resolvedName = plugName || (hasTuidMatch ? '' : inferVst3NameFromFuidAndState(fuidHex, comp, cont));
       plugins.push({
-        slotName: plugName, pluginName: plugName, vendor: '', filePath: '',
+        slotName: resolvedName, pluginName: resolvedName, vendor: '', filePath: '',
         fuidHex, bypass, isVst2: false, stateBase64: packVst3ChunksToBase64(comp, cont),
       });
       continue;
     }
-    const v2 = pd.querySelector('PluginDesc > VstPluginInfo');
+    const v2 = xmlChild(descEl, 'VstPluginInfo');
     if (v2) {
-      const ne = v2.querySelector('PlugName') || v2.querySelector('Name');
-      const rawName = (ne && ne.getAttribute('Value')) || '';
+      const rawName = xmlAttrVal(v2, 'PlugName') || xmlAttrVal(v2, 'Name')
+        || inferVst2NameFromUniqueId(xmlAttrVal(v2, 'UniqueId'));
       if (rawName) {
         const cleanName = rawName.replace(/_(x64|x86)$/i, '').trim();
         plugins.push({
@@ -543,10 +599,9 @@ async function parseAbletonAdgInBrowser(arrayBuffer, fileName = 'Ableton Rack', 
       }
       continue;
     }
-    const au = pd.querySelector('PluginDesc > AuPluginInfo');
+    const au = xmlChild(descEl, 'AuPluginInfo');
     if (au) {
-      const ne = au.querySelector('Name') || au.querySelector('PlugName');
-      const rawName = (ne && ne.getAttribute('Value')) || '';
+      const rawName = xmlAttrVal(au, 'Name') || xmlAttrVal(au, 'PlugName');
       if (rawName) {
         plugins.push({
           slotName: rawName, pluginName: rawName, vendor: '', filePath: '',
@@ -558,39 +613,38 @@ async function parseAbletonAdgInBrowser(arrayBuffer, fileName = 'Ableton Rack', 
     }
   }
 
-  for (const vp of doc.querySelectorAll('Vst3Preset')) {
+  for (const vp of doc.getElementsByTagName('Vst3Preset')) {
     if (vp.closest('PluginDevice')) continue;
-    const isOnEl = vp.querySelector('IsOn');
-    const bypass = isOnEl ? isOnEl.getAttribute('Value') === 'false' : false;
-    const nameEl = vp.querySelector(':scope > PlugName') || vp.querySelector(':scope > Name');
-    const plugName = (nameEl && nameEl.getAttribute('Value')) || '';
-    const uidEl = vp.querySelector(':scope > Uid');
+    const bypass = xmlAttrVal(vp, 'IsOn').toLowerCase() === 'false';
+    const plugName = xmlAttrVal(vp, 'PlugName') || xmlAttrVal(vp, 'Name');
+    const uidEl = xmlChild(vp, 'Uid');
     let fuidHex = '';
     if (uidEl) {
       fuidHex = [0, 1, 2, 3].map((k) => {
-        const fel = uidEl.querySelector(`Fields\\.${k}`);
-        const v = fel ? (parseInt(fel.getAttribute('Value') || '0', 10) >>> 0) : 0;
+        const val = xmlAttrVal(uidEl, `Fields.${k}`);
+        const v = val ? (parseInt(val, 10) >>> 0) : 0;
         return v.toString(16).padStart(8, '0').toUpperCase();
       }).join('');
     }
-    const psEl = vp.querySelector(':scope > ProcessorState');
-    const csEl = vp.querySelector(':scope > ControllerState');
+    const psEl = xmlChild(vp, 'ProcessorState');
+    const csEl = xmlChild(vp, 'ControllerState');
     const comp = psEl ? hexToBytes(psEl.textContent) : new Uint8Array(0);
     const cont = csEl ? hexToBytes(csEl.textContent) : new Uint8Array(0);
-    if (fuidHex.length === 32 || plugName) {
+    const hasTuidMatch = !plugName && tuidDb && tuidDb.byFuid && fuidHex && tuidDb.byFuid[fuidHex];
+    const resolvedName = plugName || (hasTuidMatch ? '' : inferVst3NameFromFuidAndState(fuidHex, comp, cont));
+    if (fuidHex.length === 32 || resolvedName) {
       plugins.push({
-        slotName: plugName, pluginName: plugName, vendor: '', filePath: '',
+        slotName: resolvedName, pluginName: resolvedName, vendor: '', filePath: '',
         fuidHex, bypass, isVst2: false, stateBase64: packVst3ChunksToBase64(comp, cont),
       });
     }
   }
 
-  for (const v2 of doc.querySelectorAll('VstPreset')) {
+  for (const v2 of doc.getElementsByTagName('VstPreset')) {
     if (v2.closest('PluginDevice')) continue;
-    const isOnEl = v2.querySelector('IsOn');
-    const bypass = isOnEl ? isOnEl.getAttribute('Value') === 'false' : false;
-    const ne = v2.querySelector(':scope > PlugName') || v2.querySelector(':scope > Name');
-    const rawName = (ne && ne.getAttribute('Value')) || '';
+    const bypass = xmlAttrVal(v2, 'IsOn').toLowerCase() === 'false';
+    const uidVal = xmlAttrVal(v2, 'UniqueId');
+    const rawName = xmlAttrVal(v2, 'PlugName') || xmlAttrVal(v2, 'Name') || inferVst2NameFromUniqueId(uidVal);
     if (rawName) {
       const cleanName = rawName.replace(/_(x64|x86)$/i, '').trim();
       plugins.push({
@@ -598,9 +652,7 @@ async function parseAbletonAdgInBrowser(arrayBuffer, fileName = 'Ableton Rack', 
         fuidHex: '', bypass, isVst2: true, stateBase64: '',
       });
     } else {
-      const uidEl = v2.querySelector(':scope > UniqueId');
-      const uid = (uidEl && uidEl.getAttribute('Value')) || '';
-      skipped.push(uid ? `VST2 Plugin (${uid})` : 'VST2 Plugin');
+      skipped.push(uidVal ? `VST2 Plugin (${uidVal})` : 'VST2 Plugin');
     }
   }
 

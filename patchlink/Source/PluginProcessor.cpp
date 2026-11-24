@@ -763,7 +763,9 @@ void PatchLinkProcessor::importParsedFstAsync(const flstudio::ParsedFst& parsed,
     if (!parsed.isMixerTrack && parsed.plugins.size() == 1 && appendSingleToChain)
     {
         const auto& entry = parsed.plugins.front();
-        const auto displayName = entry.slotName.isNotEmpty() ? entry.slotName : entry.pluginName;
+        auto displayName = entry.slotName.isNotEmpty() ? entry.slotName : entry.pluginName;
+        if (displayName.isEmpty())
+            displayName = entry.fuidHex.isNotEmpty() ? ("VST3 " + entry.fuidHex.substring(0, 8)) : "VST3 Plugin";
         juce::PluginDescription desc;
 
         if (entry.isVst2)
@@ -810,7 +812,9 @@ void PatchLinkProcessor::importParsedFstAsync(const flstudio::ParsedFst& parsed,
 
     for (const auto& entry : parsed.plugins)
     {
-        const auto displayName = entry.slotName.isNotEmpty() ? entry.slotName : entry.pluginName;
+        auto displayName = entry.slotName.isNotEmpty() ? entry.slotName : entry.pluginName;
+        if (displayName.isEmpty())
+            displayName = entry.fuidHex.isNotEmpty() ? ("VST3 " + entry.fuidHex.substring(0, 8)) : ("VST3 Plugin " + juce::String(idx + 1));
         juce::PluginDescription desc;
 
         if (entry.isVst2)

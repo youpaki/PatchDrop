@@ -455,7 +455,9 @@ inline ParsedFst parseFstData(const void* rawData, size_t totalSize)
                     if (entry.filePath.endsWithIgnoreCase(".dll"))
                         entry.isVst2 = true;
 
-                    if (entry.pluginName.isNotEmpty() || entry.slotName.isNotEmpty() || entry.filePath.isNotEmpty())
+                    if (entry.pluginName.isNotEmpty() || entry.slotName.isNotEmpty()
+                        || entry.filePath.isNotEmpty() || entry.tuidHex.isNotEmpty()
+                        || entry.juceUniqueId != 0)
                         result.plugins.push_back(std::move(entry));
                 }
                 else if (curPlugin.isNotEmpty() && !curPlugin.equalsIgnoreCase("Fruity Wrapper"))
@@ -488,6 +490,91 @@ inline ParsedFst parseFstFile(const juce::File& file)
 
 namespace dawparse
 {
+inline juce::String inferVst3NameFromFuidAndState(const juce::String& fuidHex,
+                                                 const juce::MemoryBlock& comp,
+                                                 const juce::MemoryBlock& cont)
+{
+    const auto upper = fuidHex.retainCharacters("0123456789abcdefABCDEF").toUpperCase();
+    auto startsWithAscii = [](const juce::MemoryBlock& mb, const char* prefix) -> bool {
+        const size_t n = std::strlen(prefix);
+        return mb.getSize() >= n && std::memcmp(mb.getData(), prefix, n) == 0;
+    };
+
+    if (upper == "ED57BD725C60467EA64DD2F400758B6F" || startsWithAscii(cont, "FQ4p"))
+        return "FabFilter Pro-Q 4";
+    if (upper == "72C4DB717A4D459AB97E51745D84B39D" || startsWithAscii(cont, "FQ3p"))
+        return "FabFilter Pro-Q 3";
+    if (upper == "ABCDEF019182FAEB416E747256727662")
+        return "Vocal Reverb";
+    if (upper == "565354415438314175746F2D54756E65")
+        return "Auto-Tune";
+
+    auto hexToBytes = [](const juce::String& h, std::vector<uint8_t>& out) {
+        out.clear();
+        for (int i = 0; i + 1 < h.length(); i += 2)
+            out.push_back(static_cast<uint8_t>(h.substring(i, i + 2).getHexValue32()));
+    };
+
+    if (upper.length() == 32)
+    {
+        std::vector<uint8_t> b;
+        hexToBytes(upper, b);
+        if (b.size() == 16 && upper.startsWith("565354"))
+        {
+            juce::String s;
+            for (size_t i = 7; i < 16 && b[i] != 0; ++i)
+            {
+                if (b[i] >= 32 && b[i] < 127)
+                    s << static_cast<juce::juce_wchar>(b[i]);
+                else
+                    break;
+            }
+            if (s.trim().length() >= 3)
+                return s.trim();
+        }
+        if (b.size() == 16 && upper.startsWith("ABCDEF019182FAEB"))
+        {
+            juce::String vendor, prod;
+            for (size_t i = 8; i < 12; ++i)
+                if (b[i] >= 32 && b[i] < 127) vendor << static_cast<juce::juce_wchar>(b[i]);
+            for (size_t i = 12; i < 16; ++i)
+                if (b[i] >= 32 && b[i] < 127) prod << static_cast<juce::juce_wchar>(b[i]);
+            if (vendor.length() == 4 && prod.length() == 4)
+                return vendor + " " + prod;
+        }
+        return "VST3 " + upper.substring(0, 8);
+    }
+    return {};
+}
+
+inline juce::String inferVst2NameFromUniqueId(const juce::String& uidStr)
+{
+    if (uidStr.isEmpty())
+        return {};
+    const uint32_t u = static_cast<uint32_t>(static_cast<int64_t>(uidStr.getLargeIntValue()));
+    if (u == 0)
+        return {};
+    char fcc[5] {};
+    fcc[0] = static_cast<char>((u >> 24) & 0xFF);
+    fcc[1] = static_cast<char>((u >> 16) & 0xFF);
+    fcc[2] = static_cast<char>((u >> 8) & 0xFF);
+    fcc[3] = static_cast<char>(u & 0xFF);
+    for (int i = 0; i < 4; ++i)
+        if (static_cast<unsigned char>(fcc[i]) < 32 || static_cast<unsigned char>(fcc[i]) >= 127)
+            return {};
+    const juce::String code(fcc);
+    if (code == "FQ22") return "FabFilter Pro-Q 2";
+    if (code == "FQ33") return "FabFilter Pro-Q 3";
+    if (code == "FQ44") return "FabFilter Pro-Q 4";
+    if (code == "FC22") return "FabFilter Pro-C 2";
+    if (code == "FL22") return "FabFilter Pro-L 2";
+    if (code == "FR11") return "FabFilter Pro-R";
+    if (code == "FD22") return "FabFilter Pro-DS";
+    if (code == "FM22") return "FabFilter Pro-MB";
+    if (code == "FS22") return "FabFilter Saturn 2";
+    return {};
+}
+
 inline juce::StringArray tokenizeReaperArgs(const juce::String& line)
 {
     juce::StringArray tokens;
@@ -1062,6 +1149,11 @@ inline ParsedFst parseAbletonAdgData(const void* rawData, size_t totalSize, cons
                 dawparse::decodeHexToMemoryBlock(cs->getAllSubText(), cont);
             entry.stateBase64 = packRawVst3ChunksToBase64(comp.getData(), comp.getSize(),
                                                           cont.getData(), cont.getSize());
+            if (entry.pluginName.isEmpty() && entry.fuidHex.length() == 32)
+            {
+                entry.pluginName = dawparse::inferVst3NameFromFuidAndState(entry.fuidHex, comp, cont);
+                entry.slotName = entry.pluginName;
+            }
 
             if (entry.fuidHex.length() == 32 || entry.pluginName.isNotEmpty())
                 result.plugins.push_back(std::move(entry));
@@ -1073,6 +1165,8 @@ inline ParsedFst parseAbletonAdgData(const void* rawData, size_t totalSize, cons
             auto n = readChildValue(el, "PlugName");
             if (n.isEmpty())
                 n = readChildValue(el, "Name");
+            if (n.isEmpty())
+                n = dawparse::inferVst2NameFromUniqueId(readChildValue(el, "UniqueId"));
             if (n.isNotEmpty())
             {
                 FstPluginEntry vst2Entry;
@@ -1284,7 +1378,9 @@ inline juce::var parsedFstToPatchVar(const ParsedFst& parsed, const juce::KnownP
     int idx = 0;
     for (const auto& entry : parsed.plugins)
     {
-        const auto displayName = entry.slotName.isNotEmpty() ? entry.slotName : entry.pluginName;
+        auto displayName = entry.slotName.isNotEmpty() ? entry.slotName : entry.pluginName;
+        if (displayName.isEmpty())
+            displayName = entry.fuidHex.isNotEmpty() ? ("VST3 " + entry.fuidHex.substring(0, 8)) : ("Plugin " + juce::String(idx + 1));
         juce::PluginDescription desc;
         const bool resolved = matchType(entry, desc);
         if (!resolved)

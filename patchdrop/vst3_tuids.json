@@ -3225,6 +3225,20 @@
       "fuid": "56535447523853656C65637472696320",
       "flPlugin": "Electric Grand 80 Stereo",
       "vendor": "Waves"
+    },
+    "beb1ab47": {
+      "tuid": "72bd57ed605c7e46a64dd2f400758b6f",
+      "flPlugin": "FabFilter Pro-Q 4",
+      "vendor": "FabFilter",
+      "fuid": "ED57BD725C60467EA64DD2F400758B6F",
+      "file": "C:\\Program Files\\Common Files\\VST3\\FabFilter Pro-Q 4.vst3"
+    },
+    "913aa1ba": {
+      "tuid": "01efcdab8291ebfa416e747256727662",
+      "flPlugin": "Vocal Reverb",
+      "vendor": "Antares",
+      "fuid": "ABCDEF019182FAEB416E747256727662",
+      "file": "C:\\Program Files\\Common Files\\VST3\\Antares\\Vocal Reverb.vst3"
     }
   },
   "byName": {
@@ -4134,7 +4148,11 @@
     "omnisphere": "adb7ab48",
     "sonobusinstrument": "b228e66e",
     "uadxpolymaxsynth": "f6988c48",
-    "electricgrand80stereo": "033deeaa"
+    "electricgrand80stereo": "033deeaa",
+    "fabfilterproq4": "beb1ab47",
+    "fabfilterfabfilterproq4": "beb1ab47",
+    "vocalreverb": "913aa1ba",
+    "antaresvocalreverb": "913aa1ba"
   },
   "byFuid": {
     "56535441746235616D706C6974756265": "64d69c5c",
@@ -4585,6 +4603,8 @@
     "56535441524344617263616465000000": "d8a6335c",
     "ABCDEF019182FAEB5541447855493036": "f6988c48",
     "ABCDEF019182FAEB536F6E6F49427573": "b228e66e",
-    "56535447523853656C65637472696320": "033deeaa"
+    "56535447523853656C65637472696320": "033deeaa",
+    "ED57BD725C60467EA64DD2F400758B6F": "beb1ab47",
+    "ABCDEF019182FAEB416E747256727662": "913aa1ba"
   }
 }
