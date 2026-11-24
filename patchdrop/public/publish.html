@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Publish a Chain — PatchDrop by leve</title>
+<meta name="description" content="Drop a REAPER, Ableton Live, FL Studio, Cubase, Studio One, Bitwig, or PatchLink chain file to generate a 6-character share code.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=1.6.2">
+</head>
+<body>
+<header class="nav">
+  <a class="logo" href="index.html">
+    <span class="logo-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2.5" y="7.5" width="11" height="9" rx="4.5"></rect>
+        <rect x="10.5" y="7.5" width="11" height="9" rx="4.5"></rect>
+      </svg>
+    </span>
+    <span class="logo-text">PATCHDROP</span>
+    <span class="logo-sub">BY LEVE</span>
+  </a>
+  <nav>
+    <a href="index.html">Overview</a>
+    <a href="guide.html">How it works</a>
+    <a href="presets.html">Presets</a>
+    <a href="publish.html" class="active">Publish</a>
+  </nav>
+  <a class="btn small secondary" href="index.html#download">v1.6.0</a>
+</header>
+
+<main id="top">
+  <section class="section page-head page-head-centered">
+    <div class="hero-eyebrow">PATCHDROP // UPLOAD &amp; SHARE</div>
+    <h1>Publish a chain</h1>
+    <p class="sub">Drop a preset file from your DAW or Explorer below to generate a 6-character share code.</p>
+
+    <div class="daw-inline-row" style="justify-content:center">
+      <div class="daw-chip"><img src="daws/reaper.png" alt="REAPER" width="20" height="20">REAPER <span>.RfxChain</span></div>
+      <div class="daw-chip"><img src="daws/ableton.png" alt="Ableton Live" width="20" height="20">Ableton <span>.adg</span></div>
+      <div class="daw-chip"><img src="daws/flstudio.png" alt="FL Studio" width="20" height="20">FL Studio <span>.fst</span></div>
+      <div class="daw-chip"><img src="daws/cubase.png" alt="Cubase" width="20" height="20">Cubase <span>.vstpreset</span></div>
+      <div class="daw-chip"><img src="daws/studioone.png" alt="Studio One" width="20" height="20">Studio One <span>.vstpreset</span></div>
+      <div class="daw-chip"><img src="daws/bitwig.png" alt="Bitwig" width="20" height="20">Bitwig <span>.vstpreset</span></div>
+    </div>
+  </section>
+
+  <form id="pubform" class="pub pub-centered">
+    <div id="drop-box" class="drop-zone-large">
+      <strong>Drop your DAW chain file anywhere here</strong>
+      <div id="drop-summary" class="drop-summary">Supports .RfxChain, .rpp, .adg, .adv, .fst, .vstpreset, or .patchlink</div>
+      <input id="f-file" type="file" accept=".patchlink,.fst,.rfxchain,.RfxChain,.rpp,.RPP,.adg,.adv,.als,.vstpreset,.bwpreset,.fxchainpreset,.fxchain,.multipreset,.json,application/json" required>
+    </div>
+
+    <div class="pub-row">
+      <label>Title<input id="f-title" maxlength="80" placeholder="Lead vocal chain" required></label>
+      <label>Author<input id="f-author" maxlength="40" placeholder="leve"></label>
+    </div>
+    <div class="pub-row">
+      <label>Category
+        <select id="f-category">
+          <option value="">Auto-detect from title &amp; plugins</option>
+          <option value="vocals">Vocals</option>
+          <option value="master">Mix Bus &amp; Master</option>
+          <option value="drums">Drums &amp; 808</option>
+          <option value="synths">Synths &amp; Pads</option>
+          <option value="inst">Guitars &amp; Keys</option>
+          <option value="fx">FX &amp; Creative</option>
+        </select>
+      </label>
+      <label>Hashtags<input id="f-tags" maxlength="160" placeholder="#vocals #rap #warmth"></label>
+    </div>
+    <label>Description<input id="f-desc" maxlength="500" placeholder="Pro-Q 3 -> CLA-76 -> Pro-DS (optional)"></label>
+    <label class="check"><input id="f-public" type="checkbox" checked> List publicly in Community Presets</label>
+    <button class="btn big" type="submit">Upload and generate code</button>
+    <div id="pubres"></div>
+  </form>
+</main>
+
+<footer>PATCHDROP · PatchLink v1.6.0 by leve · <a href="index.html">Overview</a> · <a href="guide.html">How it works</a> · <a href="presets.html">Presets</a></footer>
+<script src="app.js?v=1.6.2"></script>
+</body>
+</html>

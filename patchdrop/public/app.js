@@ -1022,46 +1022,98 @@ if (previewGrid) {
   loadPreview();
 }
 
-// 3. Publish & Multi-DAW Browser Drag & Drop
-const pubForm = document.getElementById('pubform');
-if (pubForm) {
+// 3. Publish & Multi-DAW Browser Drag & Drop (dedicated publish.html + instant modal on all other pages)
+(() => {
+  let pubForm = document.getElementById('pubform');
+  let modalBackdrop = null;
+
+  if (!pubForm) {
+    modalBackdrop = document.createElement('div');
+    modalBackdrop.className = 'pub-modal-backdrop';
+    modalBackdrop.innerHTML = `
+      <div class="pub-modal" role="dialog" aria-modal="true" aria-label="Publish a chain">
+        <div class="pub-modal-head">
+          <h2>Publish a chain</h2>
+          <button type="button" class="btn small ghost" id="pub-modal-close">Close ✕</button>
+        </div>
+        <form id="pubform" class="pub">
+          <div id="drop-box" class="drop-zone-large">
+            <strong>Drop your DAW chain file here</strong>
+            <div id="drop-summary" class="drop-summary">Supports .RfxChain, .adg, .fst, .vstpreset, or .patchlink</div>
+            <input id="f-file" type="file" accept=".patchlink,.fst,.rfxchain,.RfxChain,.rpp,.RPP,.adg,.adv,.als,.vstpreset,.bwpreset,.fxchainpreset,.fxchain,.multipreset,.json,application/json">
+          </div>
+          <div class="pub-row">
+            <label>Title<input id="f-title" maxlength="80" placeholder="Lead vocal chain" required></label>
+            <label>Author<input id="f-author" maxlength="40" placeholder="leve"></label>
+          </div>
+          <div class="pub-row">
+            <label>Category
+              <select id="f-category">
+                <option value="">Auto-detect from title &amp; plugins</option>
+                <option value="vocals">Vocals</option>
+                <option value="master">Mix Bus &amp; Master</option>
+                <option value="drums">Drums &amp; 808</option>
+                <option value="synths">Synths &amp; Pads</option>
+                <option value="inst">Guitars &amp; Keys</option>
+                <option value="fx">FX &amp; Creative</option>
+              </select>
+            </label>
+            <label>Hashtags<input id="f-tags" maxlength="160" placeholder="#vocals #rap #warmth"></label>
+          </div>
+          <label>Description<input id="f-desc" maxlength="500" placeholder="Pro-Q 3 -> CLA-76 -> Pro-DS (optional)"></label>
+          <label class="check"><input id="f-public" type="checkbox" checked> List publicly in Community Presets</label>
+          <button class="btn big" type="submit">Upload and generate code</button>
+          <div id="pubres"></div>
+        </form>
+      </div>`;
+    document.body.appendChild(modalBackdrop);
+    pubForm = document.getElementById('pubform');
+
+    const closeBtn = document.getElementById('pub-modal-close');
+    if (closeBtn) closeBtn.addEventListener('click', () => modalBackdrop.classList.remove('open'));
+    modalBackdrop.addEventListener('click', (ev) => {
+      if (ev.target === modalBackdrop) modalBackdrop.classList.remove('open');
+    });
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape') modalBackdrop.classList.remove('open');
+    });
+  }
+
+  const quickBanner = document.getElementById('quick-drop-banner');
+  if (quickBanner) {
+    quickBanner.addEventListener('click', (ev) => {
+      if (!ev.target.closest('a')) window.location.href = 'publish.html';
+    });
+  }
+
   let stagedFilePatch = null;
   const fileInput = document.getElementById('f-file');
   const titleInput = document.getElementById('f-title');
   const dropBox = document.getElementById('drop-box');
   const dropSummary = document.getElementById('drop-summary');
-  const heroDropBox = document.getElementById('hero-drop-box');
-  const heroDropSummary = document.getElementById('hero-drop-summary');
-
-  const setDropStatus = (msg) => {
-    if (dropSummary) dropSummary.textContent = msg;
-    if (heroDropSummary) heroDropSummary.textContent = msg;
-  };
-
-  const setDragActive = (active) => {
-    veil.classList.toggle('active', active);
-    if (dropBox) dropBox.classList.toggle('dragover', active);
-    if (heroDropBox) heroDropBox.classList.toggle('dragover', active);
-  };
 
   const veil = document.createElement('div');
   veil.className = 'page-drop-veil';
   veil.textContent = 'Drop any DAW chain (.fst, .RfxChain, .adg, .vstpreset, .patchlink) to publish a code';
   document.body.appendChild(veil);
 
-  if (heroDropBox && fileInput) {
-    heroDropBox.addEventListener('click', () => {
-      fileInput.click();
+  const setDropStatus = (msg) => {
+    if (dropSummary) dropSummary.textContent = msg;
+  };
+
+  const setDragActive = (active) => {
+    veil.classList.toggle('active', active);
+    if (dropBox) dropBox.classList.toggle('dragover', active);
+    if (quickBanner) quickBanner.classList.toggle('dragover', active);
+  };
+
+  const revealPublishUI = () => {
+    if (modalBackdrop) {
+      modalBackdrop.classList.add('open');
+    } else {
       pubForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
-    heroDropBox.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        fileInput.click();
-        pubForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    });
-  }
+    }
+  };
 
   const loadLocalPresetFile = async (f) => {
     if (!f) return;
@@ -1124,13 +1176,11 @@ if (pubForm) {
     if (isFileDrag(e) || (files && files.length)) {
       e.preventDefault();
       e.stopPropagation();
+      revealPublishUI();
       if (files && files.length) {
-        const f = files[0];
-        loadLocalPresetFile(f);
-        pubForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        loadLocalPresetFile(files[0]);
       } else {
-        setDropStatus('Browser did not receive a readable file from that drag — drop it onto PatchLink or click to pick the file.');
-        pubForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setDropStatus('Browser did not receive a readable file from that drag — drop it onto PatchLink or click Choose File below.');
       }
     }
   }, true);
@@ -1169,7 +1219,7 @@ if (pubForm) {
       box.textContent = 'Error: ' + err.message;
     }
   });
-}
+})();
 
 // 4. Download links: if a binary isn't uploaded yet, show a clean message
 document.querySelectorAll('[data-dl]').forEach((a) => {

@@ -793,8 +793,8 @@ main {
 
 footer {
   border-top: 1px solid var(--line-soft);
-  margin-top: 40px;
-  padding: 24px;
+  margin-top: 64px;
+  padding: 28px 24px;
   color: var(--faint);
   font-size: 12px;
   text-align: center;
@@ -803,104 +803,289 @@ footer {
 footer a { color: var(--muted); text-decoration: none; }
 footer a:hover { color: var(--accent); }
 
-/* Clean DAW logos strip, hero drop zone, and simplified card download menu */
-.hero { padding: 40px 24px 18px; }
-.section { padding: 36px 24px 8px; }
-
-.hero-side {
-  display: grid;
-  gap: 12px;
+/* Generous studio spacing & multi-page dispatched layout */
+main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 28px 96px;
 }
 
-.hero-drop-box {
-  border: 1.5px dashed rgba(240, 126, 62, 0.5);
-  background: rgba(240, 126, 62, 0.06);
-  border-radius: var(--radius);
-  padding: 14px 16px;
-  cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
-}
-.hero-drop-box:hover,
-.hero-drop-box.dragover {
-  border-color: var(--accent);
-  background: rgba(240, 126, 62, 0.14);
-}
-.hero-drop-box strong {
-  display: block;
-  font-size: 13.5px;
-  color: var(--text);
-  margin-bottom: 3px;
-}
-.hero-drop-box span {
-  display: block;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.daw-strip {
-  display: flex;
+.hero {
+  gap: 48px;
   align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding: 10px 24px 6px;
+  padding: 76px 0 64px;
 }
-.daw-strip-compact {
-  padding: 14px 0 4px;
+
+.section {
+  padding: 72px 0 12px;
 }
-.daw-strip-label {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.09em;
-  color: var(--faint);
-  white-space: nowrap;
+
+.section + .section {
+  border-top: 1px solid var(--line-soft);
+  margin-top: 44px;
 }
-.daw-logos-bar {
+
+.page-head {
+  padding-top: 52px;
+}
+
+.steps {
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.step {
+  padding: 24px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  flex: 1;
+  flex-direction: column;
+  gap: 6px;
 }
-.daw-logo-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 11px;
-  border: 1px solid var(--line-soft);
-  border-radius: var(--radius);
-  background: var(--card);
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text);
+
+.grid {
+  gap: 18px;
+  margin-top: 22px;
 }
-.daw-logo-pill svg {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-.daw-logo-pill small {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  font-weight: 400;
-  color: var(--faint);
+
+.card {
+  padding: 20px;
+  gap: 12px;
 }
 
 .dl-grid-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 24px;
 }
 
+.dl-card {
+  padding: 26px;
+}
+
+.section-foot {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Official DAW Logos Grid & Chips */
+.daw-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.daw-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  padding: 22px 12px;
+  background: var(--card);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  transition: border-color 140ms ease, background-color 140ms ease, transform 140ms ease;
+}
+
+.daw-tile:hover {
+  border-color: var(--line);
+  background: var(--card-hover);
+  transform: translateY(-2px);
+}
+
+.daw-tile img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 8px;
+  display: block;
+}
+
+.daw-tile strong {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.daw-tile span {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--faint);
+}
+
+.daw-inline-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0 8px;
+}
+
+.daw-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background: var(--card);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.daw-chip img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.daw-chip span {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--faint);
+}
+
+/* Quick Drop Banner & Dedicated Publish Page */
+.drop-banner {
+  border: 1.5px dashed rgba(240, 126, 62, 0.45);
+  background: rgba(240, 126, 62, 0.05);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  cursor: pointer;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+
+.drop-banner:hover,
+.drop-banner.dragover {
+  border-color: var(--accent);
+  background: rgba(240, 126, 62, 0.11);
+}
+
+.drop-banner h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.drop-banner p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.page-head-centered {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.page-head-centered .sub {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pub-centered {
+  max-width: 720px;
+  margin: 24px auto 0;
+  padding: 28px;
+  gap: 18px;
+}
+
+.drop-zone-large {
+  border: 1.5px dashed rgba(240, 126, 62, 0.5);
+  background: rgba(240, 126, 62, 0.06);
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  text-align: center;
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+
+.drop-zone-large.dragover {
+  border-color: var(--accent);
+  background: rgba(240, 126, 62, 0.14);
+}
+
+.drop-zone-large strong {
+  font-size: 16px;
+  color: var(--text);
+}
+
+/* Quick Drop Modal when dropping on Overview / Presets / Guide */
+.pub-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(8, 8, 10, 0.82);
+  backdrop-filter: blur(4px);
+  display: none;
+  place-items: center;
+  padding: 24px;
+}
+
+.pub-modal-backdrop.open {
+  display: grid;
+}
+
+.pub-modal {
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 26px;
+}
+
+.pub-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.pub-modal-head h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.pub-modal .pub {
+  border: none;
+  padding: 0;
+  background: transparent;
+  max-width: none;
+}
+
+/* Clean card format dropdown */
 .dl-select {
-  flex: 1.4;
+  flex: 1.3;
   min-width: 0;
   background: var(--surface);
   color: var(--accent);
   border: 1px solid rgba(240, 126, 62, 0.35);
-  border-radius: var(--radius);
+  border-radius: var(--small-radius);
   padding: 8px 10px;
-  font-size: 12.5px;
-  font-family: inherit;
+  font-size: 12px;
+  font-family: var(--mono);
   font-weight: 600;
   cursor: pointer;
 }
+
 .dl-select:hover,
 .dl-select:focus {
   outline: none;
@@ -908,8 +1093,16 @@ footer a:hover { color: var(--accent); }
   background: var(--raised);
 }
 
+@media (max-width: 960px) {
+  .daw-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
 @media (max-width: 900px) {
   .hero, .fl-drop-grid, .steps, .dl-grid, .dl-grid-2, .grid, .pub-row { grid-template-columns: 1fr; }
   .fl-diagram { grid-template-columns: 1fr; }
   .nav nav { display: none; }
+}
+
+@media (max-width: 560px) {
+  .daw-grid { grid-template-columns: repeat(2, 1fr); }
 }
