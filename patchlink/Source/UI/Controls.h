@@ -7,7 +7,7 @@ enum class Icon
 {
     none, plus, link, grid, list, library, scan, share, code, importFile, exportFile,
     open, power, more, close, trash, arrowUp, arrowDown, search, copy, check,
-    folder, chevronRight, warning
+    folder, chevronRight, warning, star, starFilled, globe, download, save, refresh, edit
 };
 
 void drawIcon(juce::Graphics&, Icon, juce::Rectangle<float>, juce::Colour, float stroke = 1.6f);

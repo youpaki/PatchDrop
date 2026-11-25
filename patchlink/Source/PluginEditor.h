@@ -4,10 +4,12 @@
 #include <map>
 #include "Chain/DawExport.h"
 #include "Core/I18n.h"
+#include "Core/PresetDatabase.h"
 #include "Core/Theme.h"
 #include "UI/Controls.h"
 #include "UI/ChainView.h"
 #include "UI/PatcherView.h"
+#include "UI/PresetHubView.h"
 
 class PatchLinkProcessor;
 class HostedPluginWindow;
@@ -40,15 +42,17 @@ public:
     void textDropped(const juce::String& text, int x, int y) override;
 
 private:
-    enum class Mode { simple = 1, patcher = 2 };
+    enum class Mode { simple = 1, patcher = 2, presets = 3 };
 
     PatchLinkProcessor& proc;
     theme::LookAndFeel lookAndFeel;
     Mode mode = Mode::simple;
     const juce::String apiBase { "https://gg.trenas.fr/patchdrop" };
+    patchdb::PresetDatabase presetDb;
 
     PlButton simpleButton { "Chain", Icon::list, PlButton::Style::ghost };
     PlButton patcherButton { "Patcher", Icon::grid, PlButton::Style::ghost };
+    PlButton presetsButton { "Presets", Icon::folder, PlButton::Style::ghost };
     PlButton themeButton { "Theme", Icon::none, PlButton::Style::ghost };
     PlButton langButton { "EN", Icon::none, PlButton::Style::ghost };
     PlButton libraryButton { "Library", Icon::library, PlButton::Style::secondary };
@@ -56,11 +60,13 @@ private:
     PlButton shareButton { "Share", Icon::share, PlButton::Style::secondary };
     PlButton importButton { "Import", Icon::importFile, PlButton::Style::ghost };
     PlButton exportButton { "Export", Icon::exportFile, PlButton::Style::ghost };
+    PlButton savePresetButton { "Save", Icon::save, PlButton::Style::ghost };
     PlButton dragDawButton { "Drag to DAW", Icon::exportFile, PlButton::Style::secondary };
     PlButton addButton { "Add plugin", Icon::plus, PlButton::Style::primary };
     juce::Label patchName, statusLabel, chainInfo, systemInfo;
     ChainView chainView;
     PatcherView patcherView;
+    std::unique_ptr<PresetHubView> presetHubView;
     Toast toast;
 
     std::unique_ptr<juce::Component> overlay;
@@ -101,10 +107,12 @@ private:
     void showFirstRunSetupModal();
 
     void openPluginBrowser(int x, int y);
-    void openShareDialog(bool publish);
+    void openShareDialog(bool publish, const juce::var& customPatch = {});
     void dismissOverlay();
     void doImport();
+    void doImportIntoLibrary(const juce::String& targetFolder);
     void importFiles(const juce::StringArray& files, int dropX, int dropY);
+    void importFilesIntoPresetDb(const juce::StringArray& files, const juce::String& targetFolder);
     void doExport();
     void confirmClearChain();
     void openScanDialog();

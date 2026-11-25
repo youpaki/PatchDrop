@@ -213,6 +213,12 @@ public:
         setColour(juce::TooltipWindow::backgroundColourId, raised);
         setColour(juce::TooltipWindow::textColourId, text);
         setColour(juce::TooltipWindow::outlineColourId, line);
+        setColour(juce::ComboBox::backgroundColourId, card);
+        setColour(juce::ComboBox::textColourId, text);
+        setColour(juce::ComboBox::outlineColourId, line);
+        setColour(juce::ComboBox::buttonColourId, card);
+        setColour(juce::ComboBox::arrowColourId, muted);
+        setColour(juce::ComboBox::focusedOutlineColourId, accent.withAlpha(0.75f));
     }
 
     juce::Font getLabelFont(juce::Label& l) override { return l.getFont(); }

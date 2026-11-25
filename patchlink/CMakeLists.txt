@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(PatchLink VERSION 1.6.4)
+project(PatchLink VERSION 1.7.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -41,6 +41,7 @@ target_sources(PatchLink PRIVATE
   Source/Chain/ShareClient.h
   Source/Core/ChainFormat.h
   Source/Core/I18n.h
+  Source/Core/PresetDatabase.h
   Source/Core/Theme.h
   Source/Core/Fonts.h
   Source/Scan/DawDetector.h
@@ -50,6 +51,8 @@ target_sources(PatchLink PRIVATE
   Source/UI/Controls.cpp
   Source/UI/PluginBrowser.h
   Source/UI/PluginBrowser.cpp
+  Source/UI/PresetHubView.h
+  Source/UI/PresetHubView.cpp
   Source/UI/ChainView.h
   Source/UI/ChainView.cpp
   Source/UI/PatcherView.h
@@ -93,6 +96,8 @@ target_sources(ScanTest PRIVATE
   Source/Scan/PluginScanManager.cpp
   Source/Chain/FlStudioFstParser.h
   Source/Chain/DawExport.h
+  Source/Chain/ShareClient.h
+  Source/Core/PresetDatabase.h
 )
 target_compile_definitions(ScanTest PRIVATE
   JUCE_WEB_BROWSER=0

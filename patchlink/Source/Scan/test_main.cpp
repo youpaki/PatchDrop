@@ -4,6 +4,8 @@
 #include "../Scan/PluginScanManager.h"
 #include "../Chain/FlStudioFstParser.h"
 #include "../Chain/DawExport.h"
+#include "../Chain/ShareClient.h"
+#include "../Core/PresetDatabase.h"
 
 namespace
 {
@@ -388,6 +390,166 @@ int runExportRoundtripTest(const juce::String& inputPath)
     printf("ALL 4 DAW FORMAT PREPARE DRAG TESTS PASSED!\n");
     return 0;
 }
+
+int runPresetDbAndCatalogTest()
+{
+    const auto tmpRoot = juce::File::getSpecialLocation(juce::File::tempDirectory)
+                             .getChildFile("PatchLink_PresetDbTest_" + juce::String(juce::Time::getMillisecondCounter()));
+    tmpRoot.deleteRecursively();
+
+    auto makeMockPatch = [](const juce::String& name, std::initializer_list<const char*> pluginNames) {
+        juce::DynamicObject::Ptr root = new juce::DynamicObject();
+        root->setProperty("app", "PatchLink");
+        root->setProperty("chainFormat", 2);
+        root->setProperty("name", name);
+        juce::Array<juce::var> nodes;
+        int idx = 0;
+        for (const char* pn : pluginNames)
+        {
+            juce::DynamicObject::Ptr no = new juce::DynamicObject();
+            no->setProperty("uid", 100 + idx++);
+            juce::DynamicObject::Ptr ids = new juce::DynamicObject();
+            ids->setProperty("name", juce::String(pn));
+            ids->setProperty("format", "VST3");
+            no->setProperty("ids", juce::var(ids.get()));
+            nodes.add(juce::var(no.get()));
+        }
+        root->setProperty("nodes", nodes);
+        return juce::var(root.get());
+    };
+
+    {
+        patchdb::PresetDatabase db(tmpRoot);
+        db.load();
+        if (db.getFolders().size() < 5)
+        {
+            printf("DB TEST FAIL: default folders missing\n");
+            tmpRoot.deleteRecursively();
+            return 21;
+        }
+        if (!db.addFolder("Drill Vocals"))
+        {
+            printf("DB TEST FAIL: addFolder failed\n");
+            tmpRoot.deleteRecursively();
+            return 22;
+        }
+
+        patchdb::LocalPreset m1;
+        m1.title = "Lead Rap";
+        m1.folder = "Drill Vocals";
+        m1.author = "leve";
+        m1.tags.add("#rap");
+        const auto id1 = db.savePreset(makeMockPatch("Lead Rap", { "FabFilter Pro-Q 3" }), std::move(m1));
+
+        patchdb::LocalPreset m2;
+        m2.title = "Warm Master";
+        m2.folder = "Mix Bus & Master";
+        m2.author = "leve";
+        m2.tags.add("#master");
+        m2.sourceCode = "TEST99";
+        const auto id2 = db.savePreset(makeMockPatch("Warm Master", { "FabFilter Pro-L 2", "Ozone 10" }), std::move(m2));
+
+        if (id1.isEmpty() || id2.isEmpty() || id1 == id2)
+        {
+            printf("DB TEST FAIL: savePreset returned invalid ids\n");
+            tmpRoot.deleteRecursively();
+            return 23;
+        }
+
+        patchdb::LocalQuery q1;
+        q1.search = "rap pro-q";
+        if (db.query(q1).size() != 1 || db.query(q1)[0].id != id1)
+        {
+            printf("DB TEST FAIL: search query failed\n");
+            tmpRoot.deleteRecursively();
+            return 24;
+        }
+
+        patchdb::LocalQuery q2;
+        q2.folder = "Drill Vocals";
+        if (db.query(q2).size() != 1)
+        {
+            printf("DB TEST FAIL: folder query failed\n");
+            tmpRoot.deleteRecursively();
+            return 25;
+        }
+
+        db.toggleFavorite(id2);
+        patchdb::LocalQuery qFav;
+        qFav.folder = "__FAV__";
+        if (db.query(qFav).size() != 1 || db.query(qFav)[0].id != id2)
+        {
+            printf("DB TEST FAIL: favorite query failed\n");
+            tmpRoot.deleteRecursively();
+            return 26;
+        }
+
+        db.recordUse(id1);
+        patchdb::LocalQuery qSort;
+        qSort.sort = patchdb::LocalSort::mostUsed;
+        if (db.query(qSort).size() != 2 || db.query(qSort)[0].id != id1)
+        {
+            printf("DB TEST FAIL: mostUsed sort failed\n");
+            tmpRoot.deleteRecursively();
+            return 27;
+        }
+
+        qSort.sort = patchdb::LocalSort::mostPlugins;
+        if (db.query(qSort)[0].id != id2)
+        {
+            printf("DB TEST FAIL: mostPlugins sort failed\n");
+            tmpRoot.deleteRecursively();
+            return 28;
+        }
+
+        if (!db.renameFolder("Drill Vocals", "Rap Vocals") || db.countInFolder("Rap Vocals") != 1)
+        {
+            printf("DB TEST FAIL: renameFolder failed\n");
+            tmpRoot.deleteRecursively();
+            return 29;
+        }
+
+        if (!db.deleteFolder("Rap Vocals") || db.countInFolder("__UNSORTED__") != 1)
+        {
+            printf("DB TEST FAIL: deleteFolder failed\n");
+            tmpRoot.deleteRecursively();
+            return 30;
+        }
+    }
+
+    // Verify persistence across reload
+    {
+        patchdb::PresetDatabase dbReload(tmpRoot);
+        dbReload.load();
+        if (dbReload.getAllPresets().size() != 2 || !dbReload.hasSourceCode("TEST99"))
+        {
+            printf("DB TEST FAIL: reload persistence check failed (count=%d)\n",
+                   (int)dbReload.getAllPresets().size());
+            tmpRoot.deleteRecursively();
+            return 31;
+        }
+        juce::var loadedPatch;
+        if (!dbReload.loadPresetPatch(dbReload.getAllPresets()[0].id, loadedPatch) || !loadedPatch.isObject())
+        {
+            printf("DB TEST FAIL: loadPresetPatch roundtrip failed\n");
+            tmpRoot.deleteRecursively();
+            return 32;
+        }
+    }
+    tmpRoot.deleteRecursively();
+    printf("LOCAL PRESET DB TESTS PASSED!\n");
+
+    const auto cat = ShareClient::fetchCatalog("https://gg.trenas.fr/patchdrop", {}, {}, {}, "newest", 20);
+    if (!cat.ok || cat.presets.empty())
+    {
+        printf("ONLINE CATALOG TEST FAIL: ok=%d count=%d err=%s\n",
+               cat.ok ? 1 : 0, (int)cat.presets.size(), cat.error.toRawUTF8());
+        return 33;
+    }
+    printf("ONLINE CATALOG TEST PASSED: %d presets (allTotal=%d, popularTags=%d)\n",
+           (int)cat.presets.size(), cat.allTotal, (int)cat.popularTags.size());
+    return 0;
+}
 } // namespace
 
 int main(int argc, char** argv)
@@ -396,6 +558,7 @@ int main(int argc, char** argv)
     juce::ScopedJuceInitialiser_GUI lib;
     bool full = false;
     bool instantiate = false;
+    bool testDb = false;
     juce::String singleFolder;
     juce::String testFstPath;
     juce::String testExportPath;
@@ -403,10 +566,14 @@ int main(int argc, char** argv)
     {
         if (juce::String(argv[i]) == "--full") full = true;
         if (juce::String(argv[i]) == "--instantiate") instantiate = true;
+        if (juce::String(argv[i]) == "--test-db") testDb = true;
         if (juce::String(argv[i]) == "--folder" && i + 1 < argc) singleFolder = argv[++i];
         if (juce::String(argv[i]) == "--test-fst" && i + 1 < argc) testFstPath = argv[++i];
         if (juce::String(argv[i]) == "--test-export" && i + 1 < argc) testExportPath = argv[++i];
     }
+
+    if (testDb)
+        return runPresetDbAndCatalogTest();
 
     if (testExportPath.isNotEmpty())
         return runExportRoundtripTest(testExportPath);

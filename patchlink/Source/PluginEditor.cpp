@@ -53,8 +53,11 @@ PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& processor)
     setResizable(true, true);
     setWantsKeyboardFocus(true);
 
+    presetDb.load();
+
     simpleButton.onClick = [this] { setMode(Mode::simple); };
     patcherButton.onClick = [this] { setMode(Mode::patcher); };
+    presetsButton.onClick = [this] { setMode(Mode::presets); };
     themeButton.onClick = [this] { openThemeMenu(); };
     langButton.onClick = [this] { openLanguageMenu(); };
     addButton.onClick = [this] {
@@ -66,10 +69,14 @@ PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& processor)
     codeButton.onClick = [this] { openShareDialog(false); };
     importButton.onClick = [this] { doImport(); };
     exportButton.onClick = [this] { doExport(); };
+    savePresetButton.onClick = [this] {
+        if (presetHubView != nullptr)
+            presetHubView->openSaveCurrentDialog();
+    };
     dragDawButton.onDragStart = [this] { startExternalDawDrag({}, -1); };
     dragDawButton.onClick = [this] { showFormatPickerMenu({}, -1, false); };
-    for (auto* button : { &simpleButton, &patcherButton, &themeButton, &langButton, &libraryButton, &codeButton,
-                          &shareButton, &importButton, &exportButton, &dragDawButton, &addButton })
+    for (auto* button : { &simpleButton, &patcherButton, &presetsButton, &themeButton, &langButton, &libraryButton, &codeButton,
+                          &shareButton, &importButton, &exportButton, &savePresetButton, &dragDawButton, &addButton })
         addAndMakeVisible(button);
 
     patchName.setText(proc.getPatchName(), juce::dontSendNotification);
@@ -129,6 +136,51 @@ PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& processor)
         if (!left || !right) showToast("That connection could not be made. Check for a feedback loop.", true);
     };
     addChildComponent(patcherView);
+
+    presetHubView = std::make_unique<PresetHubView>(presetDb, proc.getKnownList(), apiBase);
+    presetHubView->onLoadPatch = [this](const juce::var& patch, const juce::String& title) {
+        setMode(Mode::simple);
+        loadPatchIntoProcessor(patch, title);
+    };
+    presetHubView->onStagePatch = [this](const juce::var& patch, const juce::String& title) {
+        stagePatch(patch, title,
+                   i18n::tr("Staged \"", "Chaîne \"") + title
+                       + i18n::tr("\" (zero-load) - drag button to your DAW",
+                                  "\" prête (sans chargement) - glissez vers votre DAW"));
+    };
+    presetHubView->onDragPatchToDaw = [this](const juce::var& patch, const juce::String& title, bool startDrag) {
+        stagePatch(patch, title);
+        if (startDrag)
+            startExternalDawDrag(patch, -1);
+        else
+            showFormatPickerMenu(patch, -1, false);
+    };
+    presetHubView->onSharePatch = [this](const juce::var& patch, const juce::String&) {
+        openShareDialog(true, patch);
+    };
+    presetHubView->onImportFilesRequested = [this](const juce::String& targetFolder) {
+        doImportIntoLibrary(targetFolder);
+    };
+    presetHubView->onRequestCurrentPatch = [this]() { return getActiveOrStagedPatchVar(); };
+    presetHubView->onRequestCurrentTitle = [this]() {
+        const auto t = patchName.getText().trim();
+        return t.isNotEmpty() ? t : proc.getPatchName();
+    };
+    presetHubView->onToast = [this](const juce::String& msg, bool err) { showToast(msg, err); };
+    presetHubView->onStatus = [this](const juce::String& txt) { setStatus(txt); };
+    presetHubView->onShowModal = [this](std::unique_ptr<juce::Component> modal) {
+        dismissOverlay();
+        overlay = std::move(modal);
+        if (overlay != nullptr)
+        {
+            overlay->setBounds(getLocalBounds());
+            addAndMakeVisible(overlay.get());
+            overlay->grabKeyboardFocus();
+        }
+    };
+    presetHubView->onDismissModal = [this] { dismissOverlay(); };
+    addChildComponent(presetHubView.get());
+
     addChildComponent(toast);
 
     hostDetection = dawexport::detectHostDaw(proc.wrapperType);
@@ -138,7 +190,7 @@ PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& processor)
 
     proc.addChangeListener(this);
     proc.getScanManager().addChangeListener(this);
-    setMode(proc.preferredMode == 2 ? Mode::patcher : Mode::simple);
+    setMode(proc.preferredMode == 2 ? Mode::patcher : (proc.preferredMode == 3 ? Mode::presets : Mode::simple));
     setStatus(i18n::tr("Ready  ·  ", "Prêt  ·  ")
               + (hostDetection.isStandalone ? i18n::tr("Standalone", "Autonome")
                                             : (i18n::tr("Host: ", "Hôte : ") + hostDetection.hostName)));
@@ -173,19 +225,33 @@ void PatchLinkEditor::setMode(Mode newMode)
     mode = newMode;
     simpleButton.setSelected(mode == Mode::simple);
     patcherButton.setSelected(mode == Mode::patcher);
-    proc.preferredMode = mode == Mode::simple ? 1 : 2;
+    presetsButton.setSelected(mode == Mode::presets);
+    proc.preferredMode = static_cast<int>(mode);
     if (mode == Mode::simple)
     {
         proc.autoConnectSerial = true;
         proc.rebuildSerialIfNeeded();
         chainView.setVisible(true);
         patcherView.setVisible(false);
+        if (presetHubView != nullptr) presetHubView->setVisible(false);
     }
-    else
+    else if (mode == Mode::patcher)
     {
         proc.autoConnectSerial = false;
         chainView.setVisible(false);
         patcherView.setVisible(true);
+        if (presetHubView != nullptr) presetHubView->setVisible(false);
+    }
+    else
+    {
+        chainView.setVisible(false);
+        patcherView.setVisible(false);
+        if (presetHubView != nullptr)
+        {
+            presetHubView->setVisible(true);
+            presetHubView->refreshPluginAvailability();
+            presetHubView->refreshLocal(true);
+        }
     }
     refreshViews();
     resized();
@@ -214,6 +280,8 @@ void PatchLinkEditor::applyCurrentTheme(int idx)
     patchName.setColour(juce::Label::textColourId, theme::text);
     chainView.applyTheme();
     patcherView.applyTheme();
+    if (presetHubView != nullptr)
+        presetHubView->applyTheme();
     for (auto* window : pluginWindows)
         window->setBackgroundColour(theme::background);
     if (scanWindow != nullptr && !proc.getScanManager().isScanning() && !scanWindow->isVisible())
@@ -245,6 +313,9 @@ void PatchLinkEditor::applyLanguage(i18n::Lang lang, bool notify)
     simpleButton.setTooltip(i18n::tr("A serial chain from top to bottom", "Une chaîne en série de haut en bas"));
     patcherButton.setButtonText("Patcher");
     patcherButton.setTooltip(i18n::tr("A free-form stereo routing canvas", "Un espace libre de routage stéréo"));
+    presetsButton.setButtonText(i18n::tr("Presets", "Presets"));
+    presetsButton.setTooltip(i18n::tr("Browse your local preset folders and download chains from PatchDrop",
+                                      "Explorer vos dossiers de presets locaux et télécharger depuis PatchDrop"));
     themeButton.setButtonText(i18n::tr("Theme", "Thème"));
     themeButton.setTooltip(i18n::tr("Switch interface color theme", "Changer le thème de couleurs"));
     langButton.setButtonText(i18n::langCode());
@@ -256,6 +327,9 @@ void PatchLinkEditor::applyLanguage(i18n::Lang lang, bool notify)
     shareButton.setButtonText(i18n::tr("Share", "Partager"));
     importButton.setButtonText(i18n::tr("Import", "Importer"));
     exportButton.setButtonText(i18n::tr("Export", "Exporter"));
+    savePresetButton.setButtonText(i18n::tr("Save", "Sauver"));
+    savePresetButton.setTooltip(i18n::tr("Save current chain to Local Preset Library (Ctrl+S)",
+                                         "Enregistrer la chaîne dans la bibliothèque locale (Ctrl+S)"));
     addButton.setButtonText(i18n::tr("Add plugin", "Ajouter"));
     addButton.setTooltip(i18n::tr("Search your plugin library (Ctrl+F)", "Chercher un plugin (Ctrl+F)"));
     patchName.setTooltip(i18n::tr("Double-click to rename this chain", "Double-clic pour renommer la chaîne"));
@@ -263,6 +337,8 @@ void PatchLinkEditor::applyLanguage(i18n::Lang lang, bool notify)
     updateExportButtonState();
     chainView.applyLanguage();
     patcherView.applyLanguage();
+    if (presetHubView != nullptr)
+        presetHubView->applyLanguage();
     if (scanWindow != nullptr && !proc.getScanManager().isScanning())
         scanWindow.reset();
     refreshViews();
@@ -288,6 +364,8 @@ void PatchLinkEditor::refreshViews()
     chainView.setLibraryEmpty(proc.getKnownList().getNumTypes() == 0);
     chainView.refresh(nodes);
     patcherView.refresh(nodes, proc.getWires());
+    if (presetHubView != nullptr && presetHubView->isVisible())
+        presetHubView->refreshPluginAvailability();
 
     int stagedCount = 0;
     if (nodes.empty())
@@ -368,31 +446,36 @@ void PatchLinkEditor::paint(juce::Graphics& g)
 void PatchLinkEditor::resized()
 {
     auto r = getLocalBounds();
-    auto header = r.removeFromTop(theme::headerHeight).reduced(20, 13);
-    header.removeFromLeft(166);
-    simpleButton.setBounds(header.removeFromLeft(90));
+    auto header = r.removeFromTop(theme::headerHeight).reduced(16, 13);
+    header.removeFromLeft(154);
+    simpleButton.setBounds(header.removeFromLeft(78));
     header.removeFromLeft(4);
-    patcherButton.setBounds(header.removeFromLeft(96));
-    header.removeFromLeft(8);
-    shareButton.setBounds(header.removeFromRight(100));
-    header.removeFromRight(6);
-    codeButton.setBounds(header.removeFromRight(112));
-    header.removeFromRight(6);
-    libraryButton.setBounds(header.removeFromRight(100));
-    header.removeFromRight(6);
-    langButton.setBounds(header.removeFromRight(50));
-    header.removeFromRight(6);
-    themeButton.setBounds(header.removeFromRight(80));
+    patcherButton.setBounds(header.removeFromLeft(84));
+    header.removeFromLeft(4);
+    presetsButton.setBounds(header.removeFromLeft(84));
+    header.removeFromLeft(6);
+    shareButton.setBounds(header.removeFromRight(90));
+    header.removeFromRight(4);
+    codeButton.setBounds(header.removeFromRight(98));
+    header.removeFromRight(4);
+    libraryButton.setBounds(header.removeFromRight(88));
+    header.removeFromRight(4);
+    langButton.setBounds(header.removeFromRight(42));
+    header.removeFromRight(4);
+    themeButton.setBounds(header.removeFromRight(72));
 
     auto toolbar = r.removeFromTop(theme::toolbarHeight).reduced(22, 10);
-    addButton.setBounds(toolbar.removeFromRight(132));
+    addButton.setBounds(toolbar.removeFromRight(126));
     toolbar.removeFromRight(6);
-    dragDawButton.setBounds(toolbar.removeFromRight(134));
+    dragDawButton.setBounds(toolbar.removeFromRight(130));
     toolbar.removeFromRight(6);
-    exportButton.setBounds(toolbar.removeFromRight(88));
+    savePresetButton.setBounds(toolbar.removeFromRight(78));
+    savePresetButton.setVisible(toolbar.getWidth() > 260);
+    toolbar.removeFromRight(4);
+    exportButton.setBounds(toolbar.removeFromRight(84));
     exportButton.setVisible(toolbar.getWidth() > 210);
     toolbar.removeFromRight(4);
-    importButton.setBounds(toolbar.removeFromRight(88));
+    importButton.setBounds(toolbar.removeFromRight(84));
     importButton.setVisible(toolbar.getWidth() > 160);
     patchName.setBounds(toolbar.withTrimmedRight(16));
 
@@ -404,6 +487,7 @@ void PatchLinkEditor::resized()
 
     chainView.setBounds(r);
     patcherView.setBounds(r);
+    if (presetHubView != nullptr) presetHubView->setBounds(r);
     if (overlay != nullptr) overlay->setBounds(getLocalBounds());
     toast.setCentrePosition(getWidth() / 2, getHeight() - theme::footerHeight - 32);
 }
@@ -416,6 +500,7 @@ bool PatchLinkEditor::keyPressed(const juce::KeyPress& key)
         if (c == 'f' || c == 'F') { addButton.triggerClick(); return true; }
         if (c == 'i' || c == 'I') { doImport(); return true; }
         if (c == 'e' || c == 'E') { doExport(); return true; }
+        if (c == 's' || c == 'S') { if (presetHubView) presetHubView->openSaveCurrentDialog(); return true; }
     }
     return false;
 }
@@ -461,11 +546,11 @@ void PatchLinkEditor::openPluginBrowser(int x, int y)
     browser->grabKeyboardFocus();
 }
 
-void PatchLinkEditor::openShareDialog(bool publish)
+void PatchLinkEditor::openShareDialog(bool publish, const juce::var& customPatch)
 {
     dismissOverlay();
     auto mode = publish ? ShareDialog::Mode::publish : ShareDialog::Mode::openCode;
-    const auto activePatch = publish ? getActiveOrStagedPatchVar() : juce::var();
+    const auto activePatch = publish ? (customPatch.isObject() ? customPatch : getActiveOrStagedPatchVar()) : juce::var();
     auto* dialog = new ShareDialog(mode, activePatch);
     overlay.reset(dialog);
     dialog->onDismiss = [safe = juce::Component::SafePointer<PatchLinkEditor>(this)] { if (safe) safe->dismissOverlay(); };
@@ -606,6 +691,116 @@ void PatchLinkEditor::doImport()
             if (!file.existsAsFile()) return;
             safe->importFiles({ file.getFullPathName() }, -1, -1);
         });
+}
+
+void PatchLinkEditor::doImportIntoLibrary(const juce::String& targetFolder)
+{
+    auto chooser = std::make_shared<juce::FileChooser>(
+        i18n::tr("Import presets into Local Library", "Importer des presets dans la bibliothèque"),
+        juce::File(),
+        "*.patchlink;*.fst;*.rfxchain;*.rpp;*.adg;*.adv;*.als;*.vstpreset;*.bwpreset;*.fxchainpreset;*.fxchain;*.multipreset");
+    chooser->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles
+                             | juce::FileBrowserComponent::canSelectMultipleItems,
+        [safe = juce::Component::SafePointer<PatchLinkEditor>(this), chooser, targetFolder](const juce::FileChooser&) mutable {
+            if (!safe) return;
+            juce::StringArray paths;
+            for (const auto& f : chooser->getResults())
+                if (f.existsAsFile())
+                    paths.add(f.getFullPathName());
+            if (!paths.isEmpty())
+                safe->importFilesIntoPresetDb(paths, targetFolder);
+        });
+}
+
+void PatchLinkEditor::importFilesIntoPresetDb(const juce::StringArray& files, const juce::String& targetFolder)
+{
+    auto cachedFiles = std::move(droppedFileCache);
+    droppedFileCache.clear();
+
+    int imported = 0;
+    int skipped = 0;
+    juce::String lastId;
+    for (const auto& path : files)
+    {
+        const juce::File file(path);
+        if (!file.hasFileExtension(".fst;.patchlink;.rfxchain;.rpp;.adg;.adv;.als;.vstpreset;.bwpreset;.fxchainpreset;.fxchain;.multipreset"))
+            continue;
+
+        juce::MemoryBlock rawBlock;
+        if (const auto it = cachedFiles.find(file.getFullPathName()); it != cachedFiles.end() && it->second.getSize() > 0)
+            rawBlock = it->second;
+        else if (file.existsAsFile())
+            file.loadFileAsData(rawBlock);
+
+        if (rawBlock.getSize() == 0)
+        {
+            ++skipped;
+            continue;
+        }
+
+        juce::var patchVar;
+        juce::String title = file.getFileNameWithoutExtension();
+        juce::String dawTag;
+        if (file.hasFileExtension(".patchlink"))
+        {
+            patchVar = juce::JSON::parse(rawBlock.toString());
+            if (auto* o = patchVar.getDynamicObject())
+                if (o->getProperty("name").toString().trim().isNotEmpty())
+                    title = o->getProperty("name").toString().trim();
+        }
+        else
+        {
+            auto parsed = flstudio::parseAnyDawFile(file, rawBlock.getData(), rawBlock.getSize());
+            dawexport::enrichParsedFstFromCache(parsed);
+            if (!parsed.valid || parsed.plugins.empty())
+            {
+                ++skipped;
+                continue;
+            }
+            dawTag = parsed.sourceDaw;
+            if (parsed.trackName.trim().isNotEmpty())
+                title = parsed.trackName.trim();
+            patchVar = flstudio::parsedFstToPatchVar(parsed, &proc.getKnownList());
+        }
+
+        if (!patchVar.isObject())
+        {
+            ++skipped;
+            continue;
+        }
+
+        patchdb::LocalPreset meta;
+        meta.title = title;
+        meta.folder = targetFolder;
+        if (dawTag.isNotEmpty())
+            meta.tags.add("#" + dawTag.toLowerCase().retainCharacters("abcdefghijklmnopqrstuvwxyz0123456789"));
+        const auto savedId = presetDb.savePreset(patchVar, std::move(meta), false);
+        if (savedId.isNotEmpty())
+        {
+            lastId = savedId;
+            ++imported;
+        }
+        else
+        {
+            ++skipped;
+        }
+    }
+
+    if (presetHubView != nullptr)
+        presetHubView->refreshLocal(imported == 0);
+
+    if (imported > 0)
+    {
+        const auto msg = i18n::tr("Imported ", "Importé ") + juce::String(imported)
+                       + i18n::tr(" preset(s) into Local Library", " preset(s) dans la bibliothèque");
+        setStatus(msg);
+        showToast(msg);
+    }
+    else if (skipped > 0)
+    {
+        showToast(i18n::tr("No supported VST3 presets found in dropped file(s)",
+                           "Aucun preset VST3 compatible dans les fichiers"), true);
+    }
 }
 
 void PatchLinkEditor::doExport()
@@ -917,6 +1112,11 @@ void PatchLinkEditor::filesDropped(const juce::StringArray& files, int x, int y)
 {
     isDraggingFile = false;
     repaint();
+    if (mode == Mode::presets && presetHubView != nullptr && presetHubView->isLocalScope())
+    {
+        importFilesIntoPresetDb(files, presetHubView->getActiveLocalFolderForDrop());
+        return;
+    }
     importFiles(files, x, y);
 }
 
@@ -1582,7 +1782,7 @@ void PatchLinkEditor::importFiles(const juce::StringArray& files, int x, int y)
     for (const auto& path : files)
     {
         const juce::File file(path);
-        if (!isSupportedDropFile(file))
+        if (!file.hasFileExtension(".fst;.patchlink;.rfxchain;.rpp;.adg;.adv;.als;.vstpreset;.bwpreset;.fxchainpreset;.fxchain;.multipreset"))
             continue;
 
         PendingItem item;

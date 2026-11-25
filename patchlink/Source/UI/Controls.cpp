@@ -146,6 +146,66 @@ void drawIcon(juce::Graphics& g, Icon icon, juce::Rectangle<float> r, juce::Colo
             g.drawLine(cx, y + 6, cx, cy + 2, stroke);
             g.fillEllipse(cx - 1, bottom - 6, 2, 2);
             break;
+        case Icon::star:
+        case Icon::starFilled:
+        {
+            const float outerR = juce::jmin(w, h) * 0.46f;
+            const float innerR = outerR * 0.44f;
+            for (int i = 0; i < 10; ++i)
+            {
+                const float angle = -juce::MathConstants<float>::halfPi + i * (juce::MathConstants<float>::pi / 5.0f);
+                const float rad = (i % 2 == 0) ? outerR : innerR;
+                const float px = cx + std::cos(angle) * rad;
+                const float py = cy + std::sin(angle) * rad;
+                if (i == 0) p.startNewSubPath(px, py);
+                else p.lineTo(px, py);
+            }
+            p.closeSubPath();
+            if (icon == Icon::starFilled) g.fillPath(p);
+            else g.strokePath(p, line);
+            break;
+        }
+        case Icon::globe:
+        {
+            const float rad = juce::jmin(w, h) * 0.43f;
+            g.drawEllipse(cx - rad, cy - rad, rad * 2.0f, rad * 2.0f, stroke);
+            g.drawEllipse(cx - rad * 0.46f, cy - rad, rad * 0.92f, rad * 2.0f, stroke * 0.85f);
+            g.drawLine(cx - rad, cy, cx + rad, cy, stroke * 0.85f);
+            break;
+        }
+        case Icon::download:
+            p.startNewSubPath(cx, y + 2); p.lineTo(cx, bottom - 5);
+            p.startNewSubPath(cx - 4, bottom - 9); p.lineTo(cx, bottom - 4); p.lineTo(cx + 4, bottom - 9);
+            g.strokePath(p, line);
+            p.clear();
+            p.startNewSubPath(x + 2, bottom - 5); p.lineTo(x + 2, bottom - 1); p.lineTo(right - 2, bottom - 1); p.lineTo(right - 2, bottom - 5);
+            g.strokePath(p, line);
+            break;
+        case Icon::save:
+            g.drawRoundedRectangle(x + 2, y + 2, w - 4, h - 4, 2.0f, stroke);
+            g.drawRect(x + 5, y + 2, w - 10, h * 0.34f, stroke * 0.85f);
+            g.drawRect(x + 4, cy + 1, w - 8, bottom - cy - 3, stroke * 0.85f);
+            break;
+        case Icon::refresh:
+        {
+            const float rad = juce::jmin(w, h) * 0.38f;
+            p.addArc(cx - rad, cy - rad, rad * 2.0f, rad * 2.0f, 0.35f, juce::MathConstants<float>::twoPi - 0.55f, true);
+            g.strokePath(p, line);
+            const float ax = cx + rad * std::cos(0.35f - juce::MathConstants<float>::halfPi);
+            const float ay = cy + rad * std::sin(0.35f - juce::MathConstants<float>::halfPi);
+            g.drawLine(ax - 3.5f, ay - 0.5f, ax + 1.0f, ay - 0.5f, stroke);
+            g.drawLine(ax + 1.0f, ay - 0.5f, ax + 1.0f, ay + 4.0f, stroke);
+            break;
+        }
+        case Icon::edit:
+            p.startNewSubPath(x + 2, bottom - 2);
+            p.lineTo(x + 3, bottom - 6);
+            p.lineTo(right - 5, y + 2);
+            p.lineTo(right - 2, y + 5);
+            p.lineTo(x + 6, bottom - 3);
+            p.closeSubPath();
+            g.strokePath(p, line);
+            break;
         case Icon::none: break;
     }
 }
