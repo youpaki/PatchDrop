@@ -16,6 +16,8 @@ public:
     void paint(juce::Graphics&) override;
     void resized() override;
 
+    std::function<void()> onClose;
+
 private:
     PluginScanManager& mgr;
     theme::LookAndFeel lookAndFeel;

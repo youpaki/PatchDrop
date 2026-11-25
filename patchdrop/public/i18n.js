@@ -11,13 +11,13 @@
       'nav.presets': 'Presets',
       'nav.publish': 'Publish',
       'footer.top': 'Top',
-      'footer.credit': 'PATCHDROP · PatchLink v1.7.0 by leve · ',
+      'footer.credit': 'PATCHDROP · PatchLink v1.7.1 by leve · ',
 
       // Home Hero
       'hero.eyebrow': 'VST3 + Standalone Chainer · Multi-DAW Converter',
       'hero.title': 'Pack your FX rack into 6 characters.',
       'hero.lede': 'Share complete VST3 effect chains with a short code like <b class="code-inline">K7Q2XA</b>, or drag racks effortlessly between your DAWs.',
-      'hero.dl': 'Download PatchLink 1.7.0',
+      'hero.dl': 'Download PatchLink 1.7.1',
       'hero.browse': 'Browse presets',
       'hero.spec': 'Windows 64-bit VST3 + Standalone · Website → PatchLink → DAW',
       'hero.rack.foot1': '4/4 VST3 blobs packed',
@@ -55,14 +55,14 @@
       // Download (Home)
       'dl.h2': 'Download',
       'dl.sub': 'Install PatchLink once, choose your VST3 folders at first launch, and trade chains across DAWs.',
-      'dl.win.tag': 'Windows 64-bit · v1.7.0',
+      'dl.win.tag': 'Windows 64-bit · v1.7.1',
       'dl.win.title': 'Windows Installer',
       'dl.win.desc': 'Includes both the VST3 plugin (<span class="mono">C:\\Program Files\\Common Files\\VST3\\</span>) and the Standalone converter.',
       'dl.mac.tag': 'macOS · Source / CMake',
       'dl.mac.title': 'macOS (VST3 + AU)',
       'dl.mac.desc': 'JUCE 8 CMake repository supporting VST3 and Audio Unit hosting for macOS and Windows.',
       'dl.mac.btn': 'View on GitHub',
-      'dl.note': 'Current official Windows release: v1.7.0 (EN / FR) · Source &amp; release notes on <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.',
+      'dl.note': 'Current official Windows release: v1.7.1 (EN / FR) · Source &amp; release notes on <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.',
       'dl.missing': 'That file is not published yet. Source + build instructions: <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.',
 
       // Guide Page
@@ -179,13 +179,13 @@
       'nav.presets': 'Presets',
       'nav.publish': 'Publier',
       'footer.top': 'Haut de page',
-      'footer.credit': 'PATCHDROP · PatchLink v1.7.0 par leve · ',
+      'footer.credit': 'PATCHDROP · PatchLink v1.7.1 par leve · ',
 
       // Home Hero
       'hero.eyebrow': 'Chainer VST3 + Autonome · Convertisseur Multi-DAW',
       'hero.title': 'Emballez votre chaîne FX en 6 caractères.',
       'hero.lede': 'Partagez des chaînes d\'effets VST3 complètes avec un code comme <b class="code-inline">K7Q2XA</b>, ou transférez vos racks facilement entre DAW.',
-      'hero.dl': 'Télécharger PatchLink 1.7.0',
+      'hero.dl': 'Télécharger PatchLink 1.7.1',
       'hero.browse': 'Parcourir les presets',
       'hero.spec': 'Windows 64-bit VST3 + Autonome · Site Web → PatchLink → DAW',
       'hero.rack.foot1': '4/4 états VST3 inclus',
@@ -223,14 +223,14 @@
       // Download (Home)
       'dl.h2': 'Téléchargement',
       'dl.sub': 'Installez PatchLink, choisissez vos dossiers VST3 au premier lancement, et échangez vos chaînes entre DAWs.',
-      'dl.win.tag': 'Windows 64-bit · v1.7.0',
+      'dl.win.tag': 'Windows 64-bit · v1.7.1',
       'dl.win.title': 'Installateur Windows',
       'dl.win.desc': 'Inclut le plugin VST3 (<span class="mono">C:\\Program Files\\Common Files\\VST3\\</span>) et l\'application autonome.',
       'dl.mac.tag': 'macOS · Sources / CMake',
       'dl.mac.title': 'macOS (VST3 + AU)',
       'dl.mac.desc': 'Dépôt CMake JUCE 8 avec support VST3 et Audio Unit pour macOS et Windows.',
       'dl.mac.btn': 'Voir sur GitHub',
-      'dl.note': 'Version Windows officielle actuelle : v1.7.0 (FR / EN) · Sources sur <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.',
+      'dl.note': 'Version Windows officielle actuelle : v1.7.1 (FR / EN) · Sources sur <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.',
       'dl.missing': 'Ce fichier n\'est pas encore publié. Sources : <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.',
 
       // Guide Page

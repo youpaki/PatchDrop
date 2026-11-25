@@ -34,13 +34,6 @@ public:
     std::function<void(HostedPluginWindow*)> onClosed;
 };
 
-class ScanManagerWindow final : public juce::DialogWindow
-{
-public:
-    ScanManagerWindow() : juce::DialogWindow(i18n::tr("Plugin Library", "Bibliothèque de plugins"), theme::background, true, false) {}
-    void closeButtonPressed() override { setVisible(false); }
-};
-
 PatchLinkEditor::PatchLinkEditor(PatchLinkProcessor& processor)
     : AudioProcessorEditor(processor), proc(processor)
 {
@@ -215,7 +208,6 @@ PatchLinkEditor::~PatchLinkEditor()
     proc.getScanManager().removeChangeListener(this);
     proc.removeChangeListener(this);
     pluginWindows.clear();
-    scanWindow.reset();
     overlay.reset();
     setLookAndFeel(nullptr);
 }
@@ -284,8 +276,6 @@ void PatchLinkEditor::applyCurrentTheme(int idx)
         presetHubView->applyTheme();
     for (auto* window : pluginWindows)
         window->setBackgroundColour(theme::background);
-    if (scanWindow != nullptr && !proc.getScanManager().isScanning() && !scanWindow->isVisible())
-        scanWindow.reset();
     sendLookAndFeelChange();
     repaint();
     showToast(i18n::tr("Theme: ", "Thème : ") + theme::themeName(theme::currentThemeIndex));
@@ -320,9 +310,9 @@ void PatchLinkEditor::applyLanguage(i18n::Lang lang, bool notify)
     themeButton.setTooltip(i18n::tr("Switch interface color theme", "Changer le thème de couleurs"));
     langButton.setButtonText(i18n::langCode());
     langButton.setTooltip(i18n::tr("Switch language (EN / FR)", "Changer de langue (EN / FR)"));
-    libraryButton.setButtonText(i18n::tr("Library", "Dossiers"));
-    libraryButton.setTooltip(i18n::tr("Manage plugin folders, scans, and blacklist",
-                                      "Gérer les dossiers VST, scans et liste noire"));
+    libraryButton.setButtonText(i18n::tr("VST Folders", "Dossiers VST"));
+    libraryButton.setTooltip(i18n::tr("Manage VST3/AU plugin folders, scans, and blacklist",
+                                      "Gérer les dossiers de plugins VST3/AU, scans et liste noire"));
     codeButton.setButtonText(i18n::tr("Open code", "Ouvrir code"));
     shareButton.setButtonText(i18n::tr("Share", "Partager"));
     importButton.setButtonText(i18n::tr("Import", "Importer"));
@@ -339,8 +329,6 @@ void PatchLinkEditor::applyLanguage(i18n::Lang lang, bool notify)
     patcherView.applyLanguage();
     if (presetHubView != nullptr)
         presetHubView->applyLanguage();
-    if (scanWindow != nullptr && !proc.getScanManager().isScanning())
-        scanWindow.reset();
     refreshViews();
     resized();
     if (notify)
@@ -447,22 +435,22 @@ void PatchLinkEditor::resized()
 {
     auto r = getLocalBounds();
     auto header = r.removeFromTop(theme::headerHeight).reduced(16, 13);
-    header.removeFromLeft(154);
-    simpleButton.setBounds(header.removeFromLeft(78));
+    header.removeFromLeft(150);
+    simpleButton.setBounds(header.removeFromLeft(76));
     header.removeFromLeft(4);
-    patcherButton.setBounds(header.removeFromLeft(84));
+    patcherButton.setBounds(header.removeFromLeft(80));
     header.removeFromLeft(4);
-    presetsButton.setBounds(header.removeFromLeft(84));
-    header.removeFromLeft(6);
-    shareButton.setBounds(header.removeFromRight(90));
+    presetsButton.setBounds(header.removeFromLeft(80));
+    header.removeFromLeft(4);
+    shareButton.setBounds(header.removeFromRight(84));
     header.removeFromRight(4);
-    codeButton.setBounds(header.removeFromRight(98));
+    codeButton.setBounds(header.removeFromRight(94));
     header.removeFromRight(4);
-    libraryButton.setBounds(header.removeFromRight(88));
+    libraryButton.setBounds(header.removeFromRight(100));
     header.removeFromRight(4);
-    langButton.setBounds(header.removeFromRight(42));
+    langButton.setBounds(header.removeFromRight(40));
     header.removeFromRight(4);
-    themeButton.setBounds(header.removeFromRight(72));
+    themeButton.setBounds(header.removeFromRight(68));
 
     auto toolbar = r.removeFromTop(theme::toolbarHeight).reduced(22, 10);
     addButton.setBounds(toolbar.removeFromRight(126));
@@ -850,21 +838,45 @@ void PatchLinkEditor::confirmClearChain()
         }));
 }
 
+namespace
+{
+class ScanDialogOverlay final : public ModalOverlay
+{
+public:
+    explicit ScanDialogOverlay(PluginScanManager& mgr) : dialog(mgr)
+    {
+        dialog.onClose = [this] { if (onDismiss) onDismiss(); };
+        addAndMakeVisible(dialog);
+    }
+
+    juce::Rectangle<int> getCardBounds() const override
+    {
+        const int w = juce::jmin(920, getWidth() - 40);
+        const int h = juce::jmin(640, getHeight() - 40);
+        return juce::Rectangle<int>(w, h).withCentre(getLocalBounds().getCentre());
+    }
+
+private:
+    ScanDialog dialog;
+
+    void layoutCard(juce::Rectangle<int> card) override
+    {
+        dialog.setBounds(card.reduced(4));
+    }
+};
+} // namespace
+
 void PatchLinkEditor::openScanDialog()
 {
-    if (scanWindow == nullptr)
-    {
-        auto* window = new ScanManagerWindow();
-        scanWindow.reset(window);
-        window->setLookAndFeel(&lookAndFeel);
-        window->setContentOwned(new ScanDialog(proc.getScanManager()), true);
-        window->setResizable(true, true);
-        window->setResizeLimits(690, 560, 1500, 1100);
-    }
-    scanWindow->centreAroundComponent(this, juce::jmin(900, getWidth() + 40), juce::jmin(720, getHeight() + 40));
-    scanWindow->setVisible(true);
-    scanWindow->toFront(true);
-    scanWindow->setLookAndFeel(&lookAndFeel);
+    dismissOverlay();
+    auto* modal = new ScanDialogOverlay(proc.getScanManager());
+    overlay.reset(modal);
+    modal->onDismiss = [safe = juce::Component::SafePointer<PatchLinkEditor>(this)] {
+        if (safe) safe->dismissOverlay();
+    };
+    modal->setBounds(getLocalBounds());
+    addAndMakeVisible(modal);
+    modal->grabKeyboardFocus();
 }
 
 void PatchLinkEditor::openPluginWindow(juce::AudioProcessorGraph::NodeID id)
@@ -1687,7 +1699,6 @@ void PatchLinkEditor::showFirstRunSetupModal()
         if (!safe) return;
         safe->proc.getScanManager().setSetupCompleted(true);
         safe->dismissOverlay();
-        safe->scanWindow.reset();
         safe->proc.getScanManager().startScan(false);
         safe->openScanDialog();
     };

@@ -204,6 +204,11 @@ ScanDialog::ScanDialog(PluginScanManager& manager)
     removeBlacklistButton.onClick = [this] { removeSelectedBlacklistEntries(); };
     closeButton.onClick = [this]
     {
+        if (onClose)
+        {
+            onClose();
+            return;
+        }
         if (auto* window = findParentComponentOfClass<juce::DialogWindow>())
         {
             if (window->isCurrentlyModal())
@@ -220,6 +225,8 @@ ScanDialog::ScanDialog(PluginScanManager& manager)
     addFolderButton.setButtonText(i18n::tr("Add folder", "Ajouter dossier"));
     scanButton.setButtonText(i18n::tr("Scan selected", "Scanner"));
     rescanButton.setButtonText(i18n::tr("Full rescan", "Tout rescanner"));
+    cancelButton.setButtonText(i18n::tr("Cancel", "Annuler"));
+    closeButton.setButtonText(i18n::tr("Done", "Fermer"));
     removeBlacklistButton.setButtonText(i18n::tr("Remove selected", "Retirer"));
     scanButton.setTooltip(i18n::tr("Scan new or changed plugins in enabled folders", "Analyser les nouveaux plugins des dossiers cochés"));
     rescanButton.setTooltip(i18n::tr("Rescan every plugin in enabled folders", "Réanalyser tous les plugins des dossiers cochés"));
@@ -262,9 +269,7 @@ void ScanDialog::parentHierarchyChanged()
 
 void ScanDialog::paint(juce::Graphics& g)
 {
-    g.fillAll(theme::background);
-    g.setColour(theme::accent);
-    g.fillRect(0, 0, getWidth(), 2);
+    g.fillAll(theme::surface);
 
     auto drawPanel = [&g](juce::Rectangle<int> area)
     {

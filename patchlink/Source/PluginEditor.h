@@ -70,7 +70,6 @@ private:
     Toast toast;
 
     std::unique_ptr<juce::Component> overlay;
-    std::unique_ptr<juce::DialogWindow> scanWindow;
     juce::OwnedArray<HostedPluginWindow> pluginWindows;
     juce::String lastShareCode;
     dawexport::HostDetection hostDetection;
