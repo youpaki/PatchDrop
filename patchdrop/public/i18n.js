@@ -19,7 +19,7 @@
       'hero.lede': 'Share complete VST3 effect chains with a short code like <b class="code-inline">K7Q2XA</b>, or drag racks effortlessly between your DAWs.',
       'hero.dl': 'Download PatchLink 1.7.1',
       'hero.browse': 'Browse presets',
-      'hero.spec': 'Windows 64-bit VST3 + Standalone · Website → PatchLink → DAW',
+      'hero.spec': 'Windows 64-bit & macOS Universal · VST3 / AU + Standalone',
       'hero.rack.foot1': '4/4 VST3 blobs packed',
       'hero.rack.foot2': 'AUTO DAW EXPORT',
 
@@ -58,11 +58,10 @@
       'dl.win.tag': 'Windows 64-bit · v1.7.1',
       'dl.win.title': 'Windows Installer',
       'dl.win.desc': 'Includes both the VST3 plugin (<span class="mono">C:\\Program Files\\Common Files\\VST3\\</span>) and the Standalone converter.',
-      'dl.mac.tag': 'macOS · Source / CMake',
-      'dl.mac.title': 'macOS (VST3 + AU)',
-      'dl.mac.desc': 'JUCE 8 CMake repository supporting VST3 and Audio Unit hosting for macOS and Windows.',
-      'dl.mac.btn': 'View on GitHub',
-      'dl.note': 'Current official Windows release: v1.7.1 (EN / FR) · Source &amp; release notes on <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.',
+      'dl.mac.tag': 'macOS Universal · v1.7.1',
+      'dl.mac.title': 'macOS Installer (Apple Silicon & Intel)',
+      'dl.mac.desc': 'Includes VST3, Audio Unit (AU), and Standalone app (<span class="mono">/Library/Audio/Plug-Ins/</span>). Unsigned indie build — right-click → Open if Gatekeeper asks.',
+      'dl.note': 'Current official releases (Windows &amp; macOS): v1.7.1 (EN / FR) · Source &amp; release notes on <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.',
       'dl.missing': 'That file is not published yet. Source + build instructions: <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.',
 
       // Guide Page
@@ -187,7 +186,7 @@
       'hero.lede': 'Partagez des chaînes d\'effets VST3 complètes avec un code comme <b class="code-inline">K7Q2XA</b>, ou transférez vos racks facilement entre DAW.',
       'hero.dl': 'Télécharger PatchLink 1.7.1',
       'hero.browse': 'Parcourir les presets',
-      'hero.spec': 'Windows 64-bit VST3 + Autonome · Site Web → PatchLink → DAW',
+      'hero.spec': 'Windows 64-bit & macOS Universel · VST3 / AU + Autonome',
       'hero.rack.foot1': '4/4 états VST3 inclus',
       'hero.rack.foot2': 'EXPORT DAW AUTO',
 
@@ -226,11 +225,10 @@
       'dl.win.tag': 'Windows 64-bit · v1.7.1',
       'dl.win.title': 'Installateur Windows',
       'dl.win.desc': 'Inclut le plugin VST3 (<span class="mono">C:\\Program Files\\Common Files\\VST3\\</span>) et l\'application autonome.',
-      'dl.mac.tag': 'macOS · Sources / CMake',
-      'dl.mac.title': 'macOS (VST3 + AU)',
-      'dl.mac.desc': 'Dépôt CMake JUCE 8 avec support VST3 et Audio Unit pour macOS et Windows.',
-      'dl.mac.btn': 'Voir sur GitHub',
-      'dl.note': 'Version Windows officielle actuelle : v1.7.1 (FR / EN) · Sources sur <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.',
+      'dl.mac.tag': 'macOS Universel · v1.7.1',
+      'dl.mac.title': 'Installateur macOS (Apple Silicon & Intel)',
+      'dl.mac.desc': 'Inclut VST3, Audio Unit (AU) et l\'application autonome (<span class="mono">/Library/Audio/Plug-Ins/</span>). Build indépendant non signé — clic droit → Ouvrir si Gatekeeper demande.',
+      'dl.note': 'Versions officielles actuelles (Windows &amp; macOS) : v1.7.1 (FR / EN) · Sources sur <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.',
       'dl.missing': 'Ce fichier n\'est pas encore publié. Sources : <a href="https://github.com/youpaki/PatchDrop">youpaki/PatchDrop</a>.',
 
       // Guide Page
