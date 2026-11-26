@@ -17,13 +17,15 @@ FetchContent_MakeAvailable(JUCE)
 
 if(APPLE)
   set(PATCHLINK_FORMATS VST3 AU Standalone)
+  set(PATCHLINK_MFR_CODE Leve)
 else()
   set(PATCHLINK_FORMATS VST3 Standalone)
+  set(PATCHLINK_MFR_CODE leve)
 endif()
 
 juce_add_plugin(PatchLink
   COMPANY_NAME "leve"
-  PLUGIN_MANUFACTURER_CODE leve
+  PLUGIN_MANUFACTURER_CODE ${PATCHLINK_MFR_CODE}
   PLUGIN_CODE Plnk
   FORMATS ${PATCHLINK_FORMATS}
   PRODUCT_NAME "PatchLink"
