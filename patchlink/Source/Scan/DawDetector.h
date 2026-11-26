@@ -314,6 +314,8 @@ inline juce::Array<DawHit> detectInstalledDaws()
     const App apps[] = {
         { "/Applications/FL Studio.app", "FL Studio" },
         { "/Applications/Ableton Live 12 Suite.app", "Ableton Live" },
+        { "/Applications/Ableton Live 11 Suite.app", "Ableton Live" },
+        { "/Applications/REAPER.app", "REAPER" },
         { "/Applications/REAPER64.app", "REAPER" },
         { "/Applications/Bitwig Studio.app", "Bitwig Studio" },
         { "/Applications/Logic Pro.app", "Logic Pro" },
@@ -327,7 +329,7 @@ inline juce::Array<DawHit> detectInstalledDaws()
         for (auto line : juce::StringArray::fromLines(rini.loadFileAsString()))
             for (auto key : { juce::String("vstpath"), juce::String("vstpath64") })
                 if (line.upToFirstOccurrenceOf("=", false, false).trim().equalsIgnoreCase(key))
-                    for (auto p : juce::StringArray::fromTokens(line.fromFirstOccurrenceOf("=", false, false), ";", ":"))
+                    for (auto p : juce::StringArray::fromTokens(line.fromFirstOccurrenceOf("=", false, false), ";:", ""))
                         if (!hits.isEmpty()) addUniqueFolder(hits.getReference(hits.size() - 1).folders, p, "REAPER VST path");
 #endif
     return hits;

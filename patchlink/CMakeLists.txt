@@ -15,12 +15,20 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(JUCE)
 
+if(APPLE)
+  set(PATCHLINK_FORMATS VST3 AU Standalone)
+else()
+  set(PATCHLINK_FORMATS VST3 Standalone)
+endif()
+
 juce_add_plugin(PatchLink
   COMPANY_NAME "leve"
   PLUGIN_MANUFACTURER_CODE leve
   PLUGIN_CODE Plnk
-  FORMATS VST3 Standalone
+  FORMATS ${PATCHLINK_FORMATS}
   PRODUCT_NAME "PatchLink"
+  BUNDLE_ID "fr.trenas.patchlink"
+  AU_MAIN_TYPE kAudioUnitType_Effect
   IS_SYNTH FALSE
   NEEDS_MIDI_INPUT FALSE
   NEEDS_MIDI_OUTPUT FALSE

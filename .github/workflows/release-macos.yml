@@ -1,0 +1,79 @@
+name: Release macOS Installer
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to attach the macOS .pkg to (e.g. v1.7.1). Defaults to v<CMakeVersion>."
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos:
+    runs-on: macos-14
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine version and release tag
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          CMAKE_VER=$(grep -E 'project\(PatchLink VERSION ' patchlink/CMakeLists.txt | sed -E 's/.*VERSION ([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          TAG="${{ github.event.inputs.tag || github.event.release.tag_name }}"
+          if [ -z "$TAG" ]; then
+            TAG="v${CMAKE_VER}"
+          fi
+          VERSION="${TAG#v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "Building macOS Universal for tag=$TAG version=$VERSION (CMake=$CMAKE_VER)"
+
+      - name: Configure CMake (Universal arm64 + x86_64)
+        run: |
+          cmake -S patchlink -B patchlink/build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0
+
+      - name: Build VST3, AU, Standalone, and ScanTest
+        run: |
+          cmake --build patchlink/build --config Release \
+            --target PatchLink_VST3 PatchLink_AU PatchLink_Standalone ScanTest \
+            --parallel "$(sysctl -n hw.ncpu)"
+
+      - name: Run headless DB & online catalog test on macOS
+        run: |
+          ./patchlink/build/ScanTest_artefacts/Release/ScanTest --test-db
+
+      - name: Build Universal .pkg installer
+        run: |
+          chmod +x patchlink/installer/macos/build_pkg.sh
+          bash patchlink/installer/macos/build_pkg.sh "${{ steps.meta.outputs.version }}" patchlink/build dist
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PatchLink-macOS-${{ steps.meta.outputs.version }}
+          path: dist/PatchLink-Setup-macOS-${{ steps.meta.outputs.version }}.pkg
+
+      - name: Attach .pkg to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          PKG="dist/PatchLink-Setup-macOS-${{ steps.meta.outputs.version }}.pkg"
+          TAG="${{ steps.meta.outputs.tag }}"
+          if gh release view "$TAG" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            gh release upload "$TAG" \
+              "${PKG}#PatchLink-Setup-macOS-${{ steps.meta.outputs.version }}.pkg (macOS Universal VST3 + AU + Standalone)" \
+              --repo "${{ github.repository }}" --clobber
+          else
+            echo "Release $TAG not found yet; .pkg is saved as a workflow artifact."
+          fi
